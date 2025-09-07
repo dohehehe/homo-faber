@@ -43,6 +43,7 @@ export const DetailPageName = styled.h1`
     top: 15px;
     left: 10px;
     font-size: 1rem;
+    z-index: 10;
   }
 `
 
@@ -198,7 +199,7 @@ export const StoreAdress = styled.h3`
 
 export const InterviewButton = styled.button`
   margin-top: 0px;
-  padding: 12px 0px;
+  padding: 8px 0px;
   background-color: rgba(0,0,0,0);
   color: black;
   border: none;
@@ -351,7 +352,7 @@ export const StoreCardImg = styled.img`
 `
 export const StoreImgList = styled.div`
   width: 100%;
-  margin-top: -56px;
+  margin-top: -45px;
   padding: 0 40px 10px 40px;
   margin-bottom: 40px;
 
@@ -368,8 +369,6 @@ export const StoreImg = styled.img`
   vertical-align: top;
   position: relative;
   box-shadow: -1px 1px 3px 6px rgba(255,255,255,1), -2px -1px 20px 0.3px rgba(116, 116, 116, 0.63), 3px 15px 30px 10px rgba(177, 177, 177, 0.36);
-  margin-bottom: -10px;
-  position: relative;
   transition: all .4s ;
 
   &:hover{
