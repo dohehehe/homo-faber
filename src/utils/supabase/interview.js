@@ -43,7 +43,8 @@ export async function getInterviews() {
       *,
       stores(
         id,
-        name
+        name,
+        person
       )
     `)
     .order('created_at', { ascending: false });
