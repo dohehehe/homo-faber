@@ -10,7 +10,7 @@ import {
   getStoreById,
   getStoreTypes,
 } from '@/utils/api/stores-api';
-import { createStoreWithImages, updateStoreWithImages } from '@/utils/api/image-upload-api';
+import { createStoreWithImages } from '@/utils/api/image-upload-api';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import Button from '@/components/admin/Button';
 import * as S from '@/styles/admin/adminForm.style';
@@ -53,7 +53,7 @@ const StoreForm = ({
   const [isDataLoading, setIsDataLoading] = useState(false);
 
   // 이미지 업로드 훅 사용
-  const { processImageForPreview } = useImageUpload({ bucket: 'gallery', maxSizeInMB: 0.5 });
+  const { processImageForPreview, uploadImageToServer } = useImageUpload({ bucket: 'gallery', maxSizeInMB: 0.5 });
 
   // react-hook-form 설정
   const {
@@ -360,20 +360,39 @@ const StoreForm = ({
         alert('스토어가 성공적으로 등록되었습니다.');
         router.push('/admin/store');
       } else {
-        // edit 모드에서는 기존 이미지 URL 유지
+        // edit 모드에서는 이미지를 먼저 업로드하고 URL을 가져온 후 스토어 업데이트
+        let finalCardImg = cardImgPreview || storeData?.card_img;
+        let finalThumbnailImg = thumbnailImgPreview || storeData?.thumbnail_img;
+
+        // 새 이미지가 있는 경우 서버에서 업로드
+        if (cardImageFile) {
+          const result = await uploadImageToServer(cardImageFile);
+          if (result.success) {
+            finalCardImg = result.file.url;
+          }
+        }
+
+        if (thumbnailImageFile) {
+          const result = await uploadImageToServer(thumbnailImageFile);
+          if (result.success) {
+            finalThumbnailImg = result.file.url;
+          }
+        }
+
+        // 갤러리 이미지 처리
+        const processedGallery = watch('gallery').filter(item => item.image_url).map((item, index) => ({
+          image_url: item.image_url,
+          order_num: index + 1
+        }));
+
         const finalStoreData = {
           ...storeData,
-          card_img: cardImgPreview || storeData?.card_img,
-          thumbnail_img: thumbnailImgPreview || storeData?.thumbnail_img
+          card_img: finalCardImg,
+          thumbnail_img: finalThumbnailImg,
+          gallery: processedGallery
         };
 
-        if (cardImageFile || thumbnailImageFile || galleryFiles.length > 0) {
-          // 새 이미지가 있는 경우 서버에서 처리
-          await updateStoreWithImages(formStoreId, finalStoreData, cardImageFile, thumbnailImageFile, galleryFiles);
-        } else {
-          // 이미지 변경이 없는 경우 기존 API 사용
-          await updateStore(formStoreId, finalStoreData);
-        }
+        await updateStore(formStoreId, finalStoreData);
         alert('수정 완료');
         router.push('/admin/store');
       }
