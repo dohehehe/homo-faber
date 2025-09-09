@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { checkAndCompressImage, logImageInfo } from '@/utils/imageCompression';
-import { uploadImage, uploadMultipleImages } from '@/utils/api/image-upload-api';
+import { uploadImage as uploadImageApi, uploadMultipleImages as uploadMultipleImagesApi } from '@/utils/api/image-upload-api';
 
 /**
  * 이미지 업로드를 위한 커스텀 훅
@@ -64,24 +64,29 @@ export const useImageUpload = (options = {}) => {
    */
   const uploadImageToServer = useCallback(async (file) => {
     try {
+      console.log('uploadImageToServer 시작:', { file, bucket, maxSizeInMB });
+
       // 이미지 정보 로그
       logImageInfo(file, '서버 업로드 전');
 
       // 서버사이드 이미지 업로드
-      const result = await uploadImage(file, bucket, maxSizeInMB);
+      const result = await uploadImageApi(file, bucket, maxSizeInMB);
 
-      if (result.success) {
-        console.log('서버사이드 이미지 업로드 성공:', result.data.url);
+      console.log('uploadImage 결과:', result);
+
+      if (result && result.success) {
+        console.log('서버사이드 이미지 업로드 성공:', result.data?.url);
         return {
           success: 1,
           file: {
-            url: result.data.url,
-            name: result.data.name,
-            size: result.data.size,
+            url: result.data?.url,
+            name: result.data?.name,
+            size: result.data?.size,
           }
         };
       } else {
-        throw new Error(result.error || '이미지 업로드에 실패했습니다.');
+        console.error('이미지 업로드 실패:', result);
+        throw new Error(result?.error || '이미지 업로드에 실패했습니다.');
       }
     } catch (error) {
       console.error('서버사이드 이미지 업로드 오류:', error);

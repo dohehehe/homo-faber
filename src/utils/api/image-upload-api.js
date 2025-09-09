@@ -12,26 +12,40 @@
  */
 export async function uploadImage(file, bucket = 'gallery', maxSizeInMB = 1) {
   try {
+    console.log('uploadImage API 호출:', { file, bucket, maxSizeInMB });
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('bucket', bucket);
     formData.append('maxSizeInMB', maxSizeInMB.toString());
+
+    console.log('FormData 생성 완료, API 요청 시작');
 
     const response = await fetch('/api/upload', {
       method: 'POST',
       body: formData,
     });
 
+    console.log('API 응답 상태:', response.status, response.ok);
+
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || '이미지 업로드 중 오류가 발생했습니다.');
+      console.error('API 에러 응답:', errorData);
+      return {
+        success: false,
+        error: errorData.error || '이미지 업로드 중 오류가 발생했습니다.'
+      };
     }
 
     const result = await response.json();
+    console.log('API 성공 응답:', result);
     return result;
   } catch (error) {
     console.error('Image upload error:', error);
-    throw error;
+    return {
+      success: false,
+      error: error.message || '이미지 업로드 중 오류가 발생했습니다.'
+    };
   }
 }
 
@@ -49,7 +63,10 @@ export async function uploadMultipleImages(files, bucket = 'gallery', maxSizeInM
     return results;
   } catch (error) {
     console.error('Multiple images upload error:', error);
-    throw error;
+    return {
+      success: false,
+      error: error.message || '여러 이미지 업로드 중 오류가 발생했습니다.'
+    };
   }
 }
 

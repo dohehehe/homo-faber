@@ -5,13 +5,24 @@ import { checkAndCompressImage } from '@/utils/imageCompression';
 // POST /api/upload - 이미지 업로드
 export async function POST(request) {
   try {
+    console.log('API 업로드 요청 시작');
+
     const supabase = createServerSupabaseClientSimple();
     const formData = await request.formData();
     const file = formData.get('file');
     const bucket = formData.get('bucket') || 'gallery';
     const maxSizeInMB = parseInt(formData.get('maxSizeInMB')) || 1;
 
+    console.log('업로드 파라미터:', {
+      fileName: file?.name,
+      fileSize: file?.size,
+      fileType: file?.type,
+      bucket,
+      maxSizeInMB
+    });
+
     if (!file) {
+      console.error('파일이 없습니다');
       return NextResponse.json(
         { error: '파일이 필요합니다.' },
         { status: 400 }
@@ -62,7 +73,9 @@ export async function POST(request) {
       .from(bucket)
       .getPublicUrl(filePath);
 
-    return NextResponse.json({
+    console.log('업로드 성공:', { publicUrl, filePath });
+
+    const result = {
       success: true,
       data: {
         url: publicUrl,
@@ -71,7 +84,10 @@ export async function POST(request) {
         size: compressedFile.size,
         originalSize: file.size
       }
-    });
+    };
+
+    console.log('최종 응답:', result);
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Upload API error:', error);
     return NextResponse.json(

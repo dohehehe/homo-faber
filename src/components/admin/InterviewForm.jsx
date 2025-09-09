@@ -11,7 +11,7 @@ import {
   getInterviewById,
   updateInterview,
   createInterview,
-} from '@/utils/supabase/interview';
+} from '@/utils/api/interview-api';
 import * as S from '@/styles/admin/adminForm.style';
 import Button from '@/components/admin/Button';
 
@@ -51,7 +51,7 @@ const InterviewForm = ({
     mode: 'onChange',
   });
 
-  const { uploadImage, processImageForPreview } = useImageUpload({
+  const { uploadImageToServer, processImageForPreview } = useImageUpload({
     bucket: 'gallery',
     maxSizeInMB: 0.5,
   });
@@ -127,11 +127,15 @@ const InterviewForm = ({
           outputData = await editorRef.current.save();
         }
 
-        // 이미지 업로드
+        // 이미지 업로드 (서버사이드)
         let coverImgUrl = coverImgPreview;
         if (localCoverImage) {
-          const coverImg = await uploadImage(localCoverImage);
-          coverImgUrl = coverImg.file.url;
+          const coverImg = await uploadImageToServer(localCoverImage);
+          if (coverImg.success) {
+            coverImgUrl = coverImg.file.url;
+          } else {
+            throw new Error(`이미지 업로드 실패: ${coverImg.error}`);
+          }
         }
 
         const updateData = {
@@ -162,7 +166,7 @@ const InterviewForm = ({
     [
       selectedStoreId,
       localCoverImage,
-      uploadImage,
+      uploadImageToServer,
       mode,
       interviewId,
       router,
