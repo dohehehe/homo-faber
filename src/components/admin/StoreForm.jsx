@@ -154,6 +154,13 @@ const StoreForm = ({
           setCardImgPreview(store.card_img || '');
           setThumbnailImgPreview(store.thumbnail_img || '');
 
+          // localImages 초기화 (edit 모드에서 기존 이미지 유지)
+          setLocalImages({
+            card_img: null,
+            thumbnail_img: null,
+            gallery: {}
+          });
+
           // 연락처 정보 설정
           if (store.store_contacts && store.store_contacts.length > 0) {
             const contact = store.store_contacts[0];
@@ -327,6 +334,9 @@ const StoreForm = ({
         } else {
           throw new Error('카드 이미지 업로드 실패: ' + result.error);
         }
+      } else if (formMode === 'edit' && storeData?.card_img) {
+        // edit 모드에서 새 이미지가 선택되지 않았다면 기존 이미지 유지
+        cardImgUrl = storeData.card_img;
       }
 
       // 썸네일 이미지 업로드 (새로 선택된 경우만)
@@ -337,6 +347,9 @@ const StoreForm = ({
         } else {
           throw new Error('썸네일 이미지 업로드 실패: ' + result.error);
         }
+      } else if (formMode === 'edit' && storeData?.thumbnail_img) {
+        // edit 모드에서 새 이미지가 선택되지 않았다면 기존 이미지 유지
+        thumbnailImgUrl = storeData.thumbnail_img;
       }
 
       // 갤러리 이미지들 업로드
@@ -353,11 +366,24 @@ const StoreForm = ({
 
       // 갤러리 데이터 준비
       const currentGallery = watch('gallery');
-      const processedGallery = currentGallery.map((item, index) => ({
-        ...item,
-        image_url: galleryUrls[index] || item.image_url || galleryPreviews[index] || '',
-        order_num: index + 1, // 현재 순서에 맞게 order_num 업데이트
-      })).filter((item) => item.image_url);
+      const processedGallery = currentGallery.map((item, index) => {
+        // 새로 업로드된 이미지가 있으면 사용, 없으면 기존 이미지 유지
+        let imageUrl = galleryUrls[index] || item.image_url || galleryPreviews[index] || '';
+
+        // edit 모드에서 기존 갤러리 이미지가 있다면 유지
+        if (formMode === 'edit' && !galleryUrls[index] && !item.image_url && storeData?.store_gallery) {
+          const existingGalleryItem = storeData.store_gallery.find(g => g.order_num === index + 1);
+          if (existingGalleryItem) {
+            imageUrl = existingGalleryItem.image_url;
+          }
+        }
+
+        return {
+          ...item,
+          image_url: imageUrl,
+          order_num: index + 1, // 현재 순서에 맞게 order_num 업데이트
+        };
+      }).filter((item) => item.image_url);
 
       // keyword 처리
       const processedKeyword = formData.keyword ? formData.keyword.split(',').map(k => k.trim()).filter(k => k) : [];
@@ -375,8 +401,8 @@ const StoreForm = ({
         move_latitude: formData.move_latitude,
         move_longitude: formData.move_longitude,
         keyword: processedKeyword,
-        card_img: cardImgUrl || (formMode === 'edit' ? storeData?.card_img : ''),
-        thumbnail_img: thumbnailImgUrl || (formMode === 'edit' ? storeData?.thumbnail_img : ''),
+        card_img: cardImgUrl,
+        thumbnail_img: thumbnailImgUrl,
         contacts: {
           phone: formData.phone,
           telephone: formData.telephone,
@@ -483,7 +509,7 @@ const StoreForm = ({
                 setValue={setValue}
                 register={register}
                 setAddress={setAddress}
-                watch={watch}
+              // watch={watch}
               />
               {errors.address && (
                 <S.ErrorInputMessage>
@@ -521,7 +547,7 @@ const StoreForm = ({
                   setValue={setValue}
                   register={register}
                   setAddress={(address) => setValue('move_address', address)}
-                  watch={watch}
+                  // watch={watch}
                   fieldPrefix="move_"
                 />
                 {errors.move_address && (
