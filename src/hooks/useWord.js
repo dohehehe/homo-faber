@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getWordById, getWords, getWordsByName } from '@/utils/supabase/word';
+import { getWordById, getWords, getWordsByName } from '@/utils/api/word-api';
 
 // 단어 목록 조회 훅
 export function useWords() {

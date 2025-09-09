@@ -19,7 +19,7 @@ const Editor = forwardRef(({ data }, ref) => {
   const editorInstanceRef = useRef(null);
   const [isMounted, setIsMounted] = useState(false);
 
-  const { uploadImage } = useImageUpload({
+  const { uploadImageToServer } = useImageUpload({
     bucket: 'gallery',
     maxSizeInMB: 0.5
   });
@@ -72,9 +72,12 @@ const Editor = forwardRef(({ data }, ref) => {
                 uploader: {
                   uploadByFile: async (file) => {
                     try {
-                      const result = await uploadImage(file);
+                      console.log('Editor 이미지 업로드 시작:', file);
+                      const result = await uploadImageToServer(file);
+                      console.log('Editor 이미지 업로드 결과:', result);
                       return result;
                     } catch (error) {
+                      console.error('Editor 이미지 업로드 에러:', error);
                       return { success: 0, error: error.message };
                     }
                   }
@@ -107,7 +110,7 @@ const Editor = forwardRef(({ data }, ref) => {
         editorInstanceRef.current = null;
       }
     };
-  }, [isMounted, data, uploadImage]);
+  }, [isMounted, data, uploadImageToServer]);
 
   if (!isMounted) {
     return (

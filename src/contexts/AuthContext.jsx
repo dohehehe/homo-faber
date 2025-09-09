@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
+import { signIn as signInApi, signUp as signUpApi, signOut as signOutApi, refreshUser as refreshUserApi } from '@/utils/api/auth-api';
 
 const AuthContext = createContext({});
 
@@ -41,10 +42,7 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (email, password) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error } = await signInApi(email, password);
 
       if (error) throw error;
 
@@ -62,14 +60,7 @@ export const AuthProvider = ({ children }) => {
 
   const signUp = async (email, password, userData) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: userData,
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
+      const { data, error } = await signUpApi(email, password, userData);
 
       if (error) throw error;
 
@@ -82,7 +73,7 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
+      const { error } = await signOutApi();
       if (error) throw error;
 
       // 로그아웃 후 상태 초기화
@@ -96,7 +87,7 @@ export const AuthProvider = ({ children }) => {
 
   const refreshUser = async () => {
     try {
-      const { data: { user: refreshedUser }, error } = await supabase.auth.getUser();
+      const { user: refreshedUser, error } = await refreshUserApi();
       if (error) throw error;
 
       setUser(refreshedUser);

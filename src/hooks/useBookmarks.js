@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { getBookmarks, addBookmark, removeBookmark, isBookmarked } from '@/utils/supabase/bookmarks';
+import { getBookmarks, addBookmark, removeBookmark, isBookmarked } from '@/utils/api/bookmarks-api';
 
 export const useBookmarks = () => {
   const { user } = useAuth();
@@ -20,7 +20,7 @@ export const useBookmarks = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getBookmarks(user.id);
+      const data = await getBookmarks();
       setBookmarks(data);
 
       // 북마크된 스토어 ID들을 Set으로 관리
@@ -47,7 +47,7 @@ export const useBookmarks = () => {
 
       if (isCurrentlyBookmarked) {
         // 북마크 제거
-        await removeBookmark(user.id, storeId);
+        await removeBookmark(storeId);
         setBookmarkedStores(prev => {
           const newSet = new Set(prev);
           newSet.delete(storeId);
@@ -56,7 +56,7 @@ export const useBookmarks = () => {
         setBookmarks(prev => prev.filter(bookmark => bookmark.store_id !== storeId));
       } else {
         // 북마크 추가
-        await addBookmark(user.id, storeId);
+        await addBookmark(storeId);
         setBookmarkedStores(prev => new Set([...prev, storeId]));
         // 새로 추가된 북마크는 나중에 loadBookmarks에서 전체 목록을 다시 로드
         await loadBookmarks();

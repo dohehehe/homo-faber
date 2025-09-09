@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getInterviews, getInterviewById } from '@/utils/supabase/interview';
+import { getInterviews, getInterviewById, getInterviewsByStore } from '@/utils/api/interview-api';
 
 // 전역 캐시 객체
 let interviewsCache = null;
@@ -54,6 +54,55 @@ export function useInterviews() {
   const invalidateCache = useCallback(() => {
     interviewsCache = null;
     interviewsCacheTimestamp = null;
+  }, []);
+
+  return {
+    interviews,
+    isLoading,
+    error,
+    refetch: () => fetchInterviews(true),
+    invalidateCache
+  };
+}
+
+/**
+ * 특정 스토어의 인터뷰 목록을 가져오는 훅
+ * @param {string} storeId - 스토어 ID
+ * @returns {Object} interviews, isLoading, error, refetch, invalidateCache
+ */
+export function useInterviewsByStore(storeId) {
+  const [interviews, setInterviews] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchInterviews = useCallback(async (forceRefresh = false) => {
+    if (!storeId) {
+      setInterviews([]);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await getInterviewsByStore(storeId);
+      const interviewsArray = Array.isArray(data) ? data : [];
+
+      setInterviews(interviewsArray);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [storeId]);
+
+  useEffect(() => {
+    fetchInterviews();
+  }, [fetchInterviews]);
+
+  // 캐시 무효화 함수
+  const invalidateCache = useCallback(() => {
+    // 스토어별 인터뷰는 별도 캐시를 사용하지 않음
   }, []);
 
   return {
