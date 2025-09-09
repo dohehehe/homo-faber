@@ -8,10 +8,8 @@ import {
   createStore,
   updateStore,
   getStoreById,
-  getIndustryTypes,
-  getCapacityTypes,
-  getMaterialTypes,
-} from '@/utils/supabase/stores';
+  getStoreTypes,
+} from '@/utils/api/stores-api';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import Button from '@/components/admin/Button';
 import * as S from '@/styles/admin/adminForm.style';
@@ -217,15 +215,11 @@ const StoreForm = ({
         }
 
         // 태그 타입들 로드
-        const [industryData, capacityData, materialData] = await Promise.all([
-          getIndustryTypes(),
-          getCapacityTypes(),
-          getMaterialTypes()
-        ]);
+        const typesData = await getStoreTypes();
 
-        setIndustryTypes(industryData);
-        setCapacityTypes(capacityData);
-        setMaterialTypes(materialData);
+        setIndustryTypes(typesData.industryTypes);
+        setCapacityTypes(typesData.capacityTypes);
+        setMaterialTypes(typesData.materialTypes);
 
         // 폼 유효성 검사 트리거 (edit 모드에서만)
         if (formMode === 'edit') {

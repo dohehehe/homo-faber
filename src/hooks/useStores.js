@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { getStores, getStoreById } from '@/utils/supabase/stores';
+import { getStores, getStoreById } from '@/utils/api/stores-api';
 
 // 전역 캐시 객체
 let storesCache = null;

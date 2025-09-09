@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStoreDetail } from '@/hooks/useStores';
 import { convertIndustryNameToKorean } from '@/utils/converters';
-import { getCapacityTypes } from '@/utils/supabase/stores';
+import { getStoreTypes } from '@/utils/api/stores-api';
 import { getInterviewsByStore } from '@/utils/supabase/interview';
 import { useCustomScrollbar } from '@/hooks/useCustomScrollbar';
 import CustomScrollbar from '@/components/common/CustomScrollbar';
@@ -33,8 +33,8 @@ function StoreDetailContainer({ }) {
   useEffect(() => {
     const fetchCapacityTypes = async () => {
       try {
-        const types = await getCapacityTypes();
-        setCapacityTypes(types);
+        const typesData = await getStoreTypes();
+        setCapacityTypes(typesData.capacityTypes);
       } catch (error) {
         console.error('Capacity types 가져오기 실패:', error);
       }
