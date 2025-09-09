@@ -68,6 +68,7 @@ const StoreForm = ({
   } = useForm({
     defaultValues: {
       name: '',
+      person: '',
       address: '',
       description: '',
       keyword: '',
@@ -132,6 +133,7 @@ const StoreForm = ({
           // 기본 정보 설정
           setValue('name', store.name || '');
           setValue('description', store.description || '');
+          setValue('person', store.person || '');
           setValue('address', store.address || '');
           setValue('latitude', store.latitude || '');
           setValue('longitude', store.longitude || '');
@@ -362,6 +364,7 @@ const StoreForm = ({
 
       const updateData = {
         name: formData.name,
+        person: formData.person,
         description: formData.description,
         address: formData.address,
         latitude: formData.latitude,
@@ -462,6 +465,16 @@ const StoreForm = ({
                   {errors.name.message}
                 </S.ErrorInputMessage>
               )}
+            </S.FormField>
+
+            <S.FormField>
+              <label htmlFor="person">기술자명</label>
+              <input
+                id="person"
+                type="text"
+                {...register('person')}
+                placeholder="기술자명을 입력하세요"
+              />
             </S.FormField>
 
             <S.FormField>
