@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { createWord, updateWord, getWordById } from '@/utils/supabase/word';
+import { createWord, updateWord, getWordById } from '@/utils/api/word-api';
 import Button from '@/components/admin/Button';
 import * as S from '@/styles/admin/adminForm.style';
 
