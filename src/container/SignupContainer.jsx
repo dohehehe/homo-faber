@@ -9,6 +9,8 @@ import { motion } from 'motion/react';
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Loader from '@/components/common/Loader';
+import Error from '@/components/common/Error';
 
 const SignupWrapper = styled(motion.main)`
   width: 100%;
@@ -267,10 +269,12 @@ function SignupContainer({ onLoadComplete }) {
           {errors.confirmPassword && <ErrorMessage>{errors.confirmPassword.message}</ErrorMessage>}
         </FormGroup>
 
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {error && <Error message={error} size="small" showIcon={false} />}
 
         <SubmitButton type="submit" disabled={isLoading}>
-          {isLoading ? '가입 중...' : '회원가입'}
+          {isLoading ? (
+            <Loader size="small" showText={'가입중'} />
+          ) : '회원가입'}
         </SubmitButton>
 
         <LoginLink>

@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { usePathname } from 'next/navigation';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { convertIndustryNameToKorean } from '@/utils/converters';
+import Loader from '@/components/common/Loader';
 
 const MyPageWrapper = styled(motion.main)`
   width: 100%;
@@ -299,7 +300,7 @@ function MypageContainer({ onLoadComplete }) {
   if (loading) {
     return (
       <MyPageWrapper>
-        <LoadingText>로딩 중...</LoadingText>
+        <Loader text="로딩 중..." />
       </MyPageWrapper>
     );
   }
@@ -307,7 +308,7 @@ function MypageContainer({ onLoadComplete }) {
   if (!user) {
     return (
       <MyPageWrapper>
-        <LoadingText>인증 중...</LoadingText>
+        <Loader text="인증 중..." />
       </MyPageWrapper>
     );
   }
@@ -342,7 +343,7 @@ function MypageContainer({ onLoadComplete }) {
           <BookmarkTitle>북마크한 가게</BookmarkTitle>
           <BookmarkList>
             {bookmarksLoading ? (
-              <NoBookmarks>로딩 중...</NoBookmarks>
+              <Loader text="북마크를 불러오는 중..." showText={false} />
             ) : bookmarks.length > 0 ? (
               bookmarks.map((bookmark) => {
                 const store = bookmark.stores;

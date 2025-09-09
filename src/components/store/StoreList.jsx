@@ -6,8 +6,10 @@ import { useBookmarks } from '@/hooks/useBookmarks';
 import { useAuth } from '@/contexts/AuthContext';
 import * as S from '@/styles/store/storeList.style';
 import useWindowSize from '@/hooks/useWindowSize';
+import Loader from '@/components/common/Loader';
+import Error from '@/components/common/Error';
 
-const StoreList = ({ stores }) => {
+const StoreList = ({ stores, isLoading, error }) => {
   const router = useRouter();
   const { user } = useAuth();
   const { toggleBookmark, isStoreBookmarked, loading } = useBookmarks();
@@ -41,54 +43,60 @@ const StoreList = ({ stores }) => {
         </S.TableHeader>
 
         <S.TableBody>
-          {stores.map((store) => (
-            <S.TableRow key={store.id} onClick={() => handleStoreClick(store.id)}>
-              {user && (
-                <S.BookmarkCell>
-                  <S.BookmarkButton
-                    onClick={(e) => handleBookmarkClick(e, store.id)}
-                    disabled={loading}
-                    title={isStoreBookmarked(store.id) ? '북마크 제거' : '북마크 추가'}
-                  >
-                    <S.BookmarkIcon isBookmarked={isStoreBookmarked(store.id)}>
-                      {isStoreBookmarked(store.id) ? '★' : null}
-                    </S.BookmarkIcon>
-                  </S.BookmarkButton>
-                </S.BookmarkCell>
-              )}
-
-              <S.TitleCell>
-                <S.Name>{store.name}</S.Name>
-                {!isMobile && (
-                  store.store_industry?.length > 0 && (
-                    <S.Industry>
-                      {store.store_industry
-                        .map(item => item.industry_types?.name)
-                        .filter(Boolean)
-                        .map(convertIndustryNameToKorean)
-                        .join(' • ')}
-                    </S.Industry>
-                  )
+          {isLoading ? (
+            <Loader baseColor="var(--yellow)" style={{ marginTop: '5px' }} />
+          ) : error ? (
+            <Error />
+          ) : (
+            stores.map((store) => (
+              <S.TableRow key={store.id} onClick={() => handleStoreClick(store.id)}>
+                {user && (
+                  <S.BookmarkCell>
+                    <S.BookmarkButton
+                      onClick={(e) => handleBookmarkClick(e, store.id)}
+                      disabled={loading}
+                      title={isStoreBookmarked(store.id) ? '북마크 제거' : '북마크 추가'}
+                    >
+                      <S.BookmarkIcon isBookmarked={isStoreBookmarked(store.id)}>
+                        {isStoreBookmarked(store.id) ? '★' : null}
+                      </S.BookmarkIcon>
+                    </S.BookmarkButton>
+                  </S.BookmarkCell>
                 )}
-                <S.Line></S.Line>
-              </S.TitleCell>
 
-              <S.KeywordCell>
-                {Array.isArray(store.keyword) && store.keyword.length > 0
-                  ? <>{store.keyword.join(', ')}</>
-                  : <S.Line style={{ marginLeft: '-9px' }}></S.Line>}
-              </S.KeywordCell>
+                <S.TitleCell>
+                  <S.Name>{store.name}</S.Name>
+                  {!isMobile && (
+                    store.store_industry?.length > 0 && (
+                      <S.Industry>
+                        {store.store_industry
+                          .map(item => item.industry_types?.name)
+                          .filter(Boolean)
+                          .map(convertIndustryNameToKorean)
+                          .join(' • ')}
+                      </S.Industry>
+                    )
+                  )}
+                  <S.Line></S.Line>
+                </S.TitleCell>
 
-              {!isMobile && (
-                <>
-                  <S.ContactCell>
-                    {store.store_contacts?.[0]?.phone || <S.Line style={{ marginLeft: '-14px', marginRight: '-4px' }}></S.Line>}
-                  </S.ContactCell>
+                <S.KeywordCell>
+                  {Array.isArray(store.keyword) && store.keyword.length > 0
+                    ? <>{store.keyword.join(', ')}</>
+                    : <S.Line style={{ marginLeft: '-9px' }}></S.Line>}
+                </S.KeywordCell>
 
-                  <S.TableCell style={{ paddingLeft: '19px' }}>{store.address}</S.TableCell></>
-              )}
-            </S.TableRow>
-          ))}
+                {!isMobile && (
+                  <>
+                    <S.ContactCell>
+                      {store.store_contacts?.[0]?.phone || <S.Line style={{ marginLeft: '-14px', marginRight: '-4px' }}></S.Line>}
+                    </S.ContactCell>
+
+                    <S.TableCell style={{ paddingLeft: '19px' }}>{store.address}</S.TableCell></>
+                )}
+              </S.TableRow>
+            ))
+          )}
         </S.TableBody>
       </S.StoreTable>
     </S.TableWrapper>

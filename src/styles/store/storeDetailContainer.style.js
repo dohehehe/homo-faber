@@ -390,21 +390,3 @@ export const StoreImg = styled.img`
       }
   }
 `
-
-export const LoadingContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-family: var(--font-gothic);
-  font-size: 1.5rem;
-`;
-
-export const ErrorContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-size: 1.5rem;
-`;
-

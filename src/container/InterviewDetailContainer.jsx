@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useLayoutEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useInterviewDetail } from '@/hooks/useInterviews';
 import EditorInterviewRender from '@/components/interview/EditorInterviewRenderer';
 import { useCustomScrollbar } from '@/hooks/useCustomScrollbar';
@@ -10,6 +10,8 @@ import CustomScrollbar from '@/components/common/CustomScrollbar';
 import useWindowSize from '@/hooks/useWindowSize';
 import * as S from '@/styles/interview/interviewDetailContainer.style';
 import Link from 'next/link';
+import Loader from '@/components/common/Loader';
+import Error from '@/components/common/Error';
 
 function InterviewDetailContainer({ }) {
   const pathname = usePathname();
@@ -52,10 +54,6 @@ function InterviewDetailContainer({ }) {
     }
   }, [pathname, isMobile, isReady]);
 
-  // isReady가 false면 로딩 상태 표시
-  if (!isReady) {
-    return null;
-  }
 
   return (
     <AnimatePresence mode="wait">
@@ -71,22 +69,16 @@ function InterviewDetailContainer({ }) {
           exit={isMobile ? { bottom: '-100dvh' } : { right: '-100dvw' }}
           transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
         >
+          <S.DetailPageName>인터뷰: {interview?.stores.name} {interview?.stores.person} 기술자 </S.DetailPageName>
+
           {error ? (
-            <S.ErrorContainer>
-              <div>에러가 발생했습니다: {error.message}</div>
-            </S.ErrorContainer>
+            <Error style={{ marginTop: isMobile ? '20px' : '-4px' }} />
           ) : isLoading ? (
-            <S.LoadingContainer>
-              <div>로딩 중...</div>
-            </S.LoadingContainer>
+            <Loader baseColor="#F7F7F7" style={{ marginTop: isMobile ? '-22px' : '-10px', marginLeft: isMobile ? '-12px' : '-10px', transform: isMobile ? 'none' : 'rotate(90deg)', transformOrigin: isMobile ? 'none' : 'top left', position: "relative", zIndex: "-10" }} />
           ) : !interview ? (
-            <S.ErrorContainer>
-              <div>인터뷰를 찾을 수 없습니다.</div>
-            </S.ErrorContainer>
+            <Error style={{ marginTop: isMobile ? '20px' : '-4px' }} message="인터뷰를 찾을 수 없습니다." />
           ) : (
             <>
-              <S.DetailPageName>{interview?.stores.name}</S.DetailPageName>
-
               <S.InterviewHeader>
                 <S.InterviewTitle>
                   <S.InterviewStore data-text={interview?.stores.name}>{interview?.stores.name}</S.InterviewStore>
@@ -98,9 +90,12 @@ function InterviewDetailContainer({ }) {
               </S.InterviewHeader>
 
               <EditorInterviewRender item={interview?.contents} />
+
               <S.InterviewLink> {interview?.stores.name} {interview?.stores.person} 기술자와 <br />산림동의 다른 기술자들의 이야기를 <br /><span style={{ fontWeight: '900', padding: '8px 0px', color: 'rgb(71, 71, 71)' }}> &lt;산림동의 만드는 사람들&gt;</span> 책에서 계속 만나 보실 수 있습니다<Link href='https://tumblbug.com/homofaber' target='_blank'> 구매 링크 바로가기</Link></S.InterviewLink>
+
             </>
           )}
+
 
           {/* 커스텀 스크롤바 */}
           {!isMobile && (

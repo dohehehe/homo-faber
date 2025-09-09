@@ -4,7 +4,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { useWords } from '@/hooks/useWord';
 import * as S from '@/styles/word/wordContainer.style';
-
+import Loader from '@/components/common/Loader';
+import Error from '@/components/common/Error';
+import useWindowSize from '@/hooks/useWindowSize';
 
 function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }) {
   const pathname = usePathname();
@@ -13,6 +15,8 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
   const [cursorPositionPercent, setCursorPositionPercent] = useState({ x: 50, y: 50 });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWordIds, setSelectedWordIds] = useState(initialSelectedWordId ? [initialSelectedWordId] : []);
+  const { words, loading, error, searchWordsByName, fetchWords } = useWords();
+  const { isMobile } = useWindowSize();
 
   const handleMouseMove = useCallback((event) => {
     if (!wrapperRef.current) return;
@@ -54,9 +58,6 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
       router.push('/word');
     }
   };
-
-  const { words, loading, error, searchWordsByName, fetchWords } = useWords();
-
 
   const handleWordClick = (wordId, e) => {
     e.stopPropagation();
@@ -111,7 +112,15 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
       onClick={pathname === '/' ? handleWordWrapperClick : undefined}
     >
       <S.WordPageName>단어 목록</S.WordPageName>
-
+      {loading && (
+        <Loader baseColor="rgb(173, 203, 237)" style={{ marginTop: isMobile ? '-34px' : '83px', marginLeft: isMobile ? '69px' : '-19px', transform: isMobile ? 'none' : 'rotate(90deg)', transformOrigin: isMobile ? 'none' : 'top left' }} />
+      )}
+      {error && (
+        <Error style={{ marginLeft: isMobile ? '-8px' : '-23px', marginTop: isMobile ? '20px' : '94px' }} />
+      )}
+      {words.length === 0 && (
+        <Error message={searchQuery ? `"${searchQuery}"에 대한 검색 결과가 없습니다.` : '등록된 단어가 없습니다.'} style={{ marginLeft: isMobile ? '-8px' : '-23px', marginTop: isMobile ? '20px' : '94px' }} />
+      )}
       <S.SearchContainer onClick={(e) => e.stopPropagation()}>
         <S.SearchInput
           type="text"
@@ -134,20 +143,9 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
 
       <S.WordItemWrapper>
         <S.WordList>
-          {loading ? (
-            <div style={{ color: 'white', padding: '20px', textAlign: 'center' }}>
-              단어 목록을 불러오는 중...
-            </div>
-          ) : error ? (
-            <div style={{ color: 'white', padding: '20px', textAlign: 'center' }}>
-              오류가 발생했습니다: {error}
-            </div>
-          ) : words.length === 0 ? (
-            <div style={{ color: 'white', padding: '20px', textAlign: 'center' }}>
-              {searchQuery ? `"${searchQuery}"에 대한 검색 결과가 없습니다.` : '등록된 단어가 없습니다.'}
-            </div>
-          ) : (
-            words.map((word) => (
+
+          <>
+            {words.map((word) => (
               <S.WordItem
                 key={word.id}
                 onClick={(e) => handleWordClick(word.id, e)}
@@ -156,7 +154,8 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
                 <S.WordTitle>{word.name}</S.WordTitle>
               </S.WordItem>
             ))
-          )}
+            }
+          </>
         </S.WordList>
         {selectedWordIds.length > 0 && (
           <S.WordMeaningsContainer>
@@ -214,7 +213,7 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
           </S.WordMeaningsContainer>
         )}
       </S.WordItemWrapper>
-    </S.WordWrapper>
+    </S.WordWrapper >
   );
 }
 

@@ -8,6 +8,7 @@ import StoreList from '@/components/store/StoreList';
 import { useStores, useStoreFilters, extractAllTags } from '@/hooks/useStores';
 import useWindowSize from '@/hooks/useWindowSize';
 import * as S from '@/styles/store/storeContainer.style';
+import Error from '@/components/common/Error';
 
 function StoreContainer() {
   const pathname = usePathname();
@@ -143,15 +144,6 @@ function StoreContainer() {
     }
   };
 
-  // isReady가 false면 로딩 상태 표시
-  if (!isReady) {
-    return null; // 또는 로딩 스피너를 표시할 수 있습니다
-  }
-
-  if (error) {
-    return <div>에러가 발생했습니다: {error.message}</div>;
-  }
-
   return (
     <S.StoreWrapper
       pathname={pathname}
@@ -185,13 +177,7 @@ function StoreContainer() {
         )}
       </S.StoreFilterWrapper>
 
-
-
-      {isLoading ? (
-        <div>로딩 중...</div>
-      ) : (
-        <StoreList stores={filteredStores} />
-      )}
+      <StoreList stores={filteredStores} isLoading={isLoading} error={error} />
     </S.StoreWrapper>
   );
 }

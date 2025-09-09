@@ -1,5 +1,4 @@
 'use client';
-
 import styled from '@emotion/styled';
 import theme from '@/styles/Theme';
 
@@ -8,7 +7,7 @@ export const WordWrapper = styled.main`
   height: 100%;
   padding-left: 70px;
   position: relative;
-  background: #4A90E2;
+  background:rgb(74, 144, 226);
   background: ${(props) => props.gradientCss};
   background-size: 200% 200%;
   background-position: -100% -100%;
