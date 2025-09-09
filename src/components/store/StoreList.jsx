@@ -44,9 +44,17 @@ const StoreList = ({ stores, isLoading, error }) => {
 
         <S.TableBody>
           {isLoading ? (
-            <Loader baseColor="var(--yellow)" style={{ marginTop: '5px' }} />
-          ) : error ? (
-            <Error />
+            <tr>
+              <td colSpan={user ? (isMobile ? 3 : 5) : (isMobile ? 2 : 4)}>
+                <Loader baseColor="var(--yellow)" style={{ marginTop: '5px' }} />
+              </td>
+            </tr>
+          ) : !error ? (
+            <tr>
+              <td colSpan={user ? (isMobile ? 3 : 5) : (isMobile ? 2 : 4)}>
+                <Error />
+              </td>
+            </tr>
           ) : (
             stores.map((store) => (
               <S.TableRow key={store.id} onClick={() => handleStoreClick(store.id)}>

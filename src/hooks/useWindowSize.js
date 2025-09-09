@@ -2,9 +2,9 @@ import { useState, useLayoutEffect } from 'react';
 
 const useWindowSize = () => {
   const [size, setSize] = useState({
-    width: 0,
-    height: 0,
-    isMobile: false
+    width: typeof window !== 'undefined' ? window.innerWidth : 1024,
+    height: typeof window !== 'undefined' ? window.innerHeight : 768,
+    isMobile: typeof window !== 'undefined' ? window.innerWidth <= 767 : false
   });
   const [isReady, setIsReady] = useState(false);
 
