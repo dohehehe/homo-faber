@@ -76,6 +76,7 @@ export async function createStore(storeData) {
       .from('stores')
       .insert({
         name: storeData.name,
+        person: storeData.person,
         description: storeData.description,
         address: storeData.address,
         latitude: storeData.latitude,
@@ -279,6 +280,7 @@ export async function updateStore(storeId, storeData) {
       .from('stores')
       .update({
         name: storeData.name,
+        person: storeData.person,
         description: storeData.description,
         address: storeData.address,
         latitude: storeData.latitude,

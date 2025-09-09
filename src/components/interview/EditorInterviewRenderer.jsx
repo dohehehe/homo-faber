@@ -2,12 +2,18 @@
 
 import styled from '@emotion/styled';
 import { memo } from 'react';
+import theme from '@/styles/Theme';
 
 const EditorArticle = styled.article`
   display: flex;
   flex-direction: column;
-  margin-left: 20px;
+  margin-left: 28px;
   margin-bottom: 200px;
+
+  ${theme.media.mobile} {
+    margin: 0 14px;
+    margin-bottom: 100px;
+  }
 `
 const EditorPara = styled.p`
   font-family: var(--font-noto);
@@ -19,7 +25,11 @@ const EditorPara = styled.p`
   margin-left: 11dvw;
   text-indent: 80px;
   position: relative;
-  
+
+  ${theme.media.mobile} {
+    font-size: 1.25rem;
+    line-height: 2;
+  }
 
   & b {
     display: block;
@@ -33,6 +43,13 @@ const EditorPara = styled.p`
     margin-left: -11dvw;
     margin-right: 2dvw;
     text-indent: 0px;
+
+    ${theme.media.mobile} {
+        font-size: 1.17rem;
+        line-height: 1.8;
+        margin-bottom: 30px;
+        margin-top: 150px;
+    }
   }
 
   & .sticker{
@@ -54,13 +71,11 @@ const EditorPara = styled.p`
 
   & i {
     position: relative;
-    // width: 21dvw;
     width: 0px;
     height: 0px;
     margin: unset;
     margin-left: -12px;
     margin-top: 2px;
-    // background: yellow;
     font-size: 1rem;
     padding: 17px 0px 19px 18px;
     z-index: 10;
@@ -80,25 +95,18 @@ const EditorPara = styled.p`
     }
     &::after{
       content: ')';
-      // display: block;
-      // text-align: right;
-      // margin-top: 20px;
     }
   }
 
   & mark {
     background: none;
     position: relative;
-    display: inline;
-    text-decoration: underline dotted 2px black;
-    text-underline-position: under;
-    text-underline-offset: 4.5px;
-    line-height: 2.1;
+    text-decoration: unset;
   }
 `
 
 const EditorImgWrapper = styled.div`
-  width: calc(100% - 11dvw - 9px);
+  width: calc(100% - 11dvw - 5px);
   margin-left: auto;
   margin-top: 40px;
 `
@@ -111,9 +119,10 @@ const EditorImgCaption = styled.div`
   margin-top: 6px;
   text-align: right;
   opacity: 0.5;
-`
-const EditorInfo = styled.div`
-  box-shadow: inset 0 0 10px 10px yellow;
+
+  ${theme.media.mobile} {
+    font-size: 0.9rem;
+  }
 `
 
 function EditorInterviewRender({ item }) {

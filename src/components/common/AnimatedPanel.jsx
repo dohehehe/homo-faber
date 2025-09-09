@@ -2,8 +2,9 @@
 
 import { usePathname } from 'next/navigation';
 import styled from '@emotion/styled';
-import { useCallback, useMemo, useRef, useState, useEffect, lazy, Suspense } from 'react';
+import { useCallback, useMemo, useState, useEffect, lazy, Suspense, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import useWindowSize from '@/hooks/useWindowSize';
 
 // Lazy loading으로 컨테이너들을 동적으로 import
 const InterviewContainer = lazy(() => import('@/container/InterviewContainer'));
@@ -14,11 +15,12 @@ const SignupContainer = lazy(() => import('@/container/SignupContainer'));
 const MypageContainer = lazy(() => import('@/container/MypageContainer'));
 
 const SidePanelWrapper = styled(motion.div)`
-  width: 80dvw;
-  height: 100dvh;
+  width: ${(props) => props.isMobile ? '100vw' : '80dvw'};
+  height: ${(props) => props.isMobile ? '87dvh' : '100dvh'};
   position: fixed;
-  right: ${(props) => props.right};
-  top: 0px;
+  right: ${(props) => props.isMobile ? 'unset' : props.right};
+  bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
+  top: ${(props) => props.isMobile ? 'unset' : '0px'};
   z-index: 2;
   overflow: hidden;
   background: orange;
@@ -42,35 +44,61 @@ function AnimatedPanel({
   className
 }) {
   const pathname = usePathname();
+  const { isMobile, isReady } = useWindowSize();
   const [right, setRight] = useState('-81dvw');
+  const [bottom, setBottom] = useState('-100dvh');
   const [isVisible, setIsVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [shouldAnimate, setShouldAnimate] = useState(false);
   const [isClient, setIsClient] = useState(false);
-
-  // 클라이언트 사이드에서만 실행
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   // 현재 경로가 이 패널의 baseRoute와 일치하는지 확인
   const isActiveRoute = useMemo(() => {
     return pathname.startsWith(`/${baseRoute}`);
   }, [pathname, baseRoute]);
 
+
+  const getMobileBottomPosition = (isActive) => {
+    if (isActive) {
+      return '0px';
+    } else {
+      return '-100dvh';
+    }
+  };
+
+
+  const getDesktopRightPosition = (isActive) => {
+    if (isActive) {
+      return '0';
+    } else {
+      return '-81dvw';
+    }
+  };
+
+  // 초기 상태 설정 및 pathname/isMobile 변경 시 업데이트
+  useLayoutEffect(() => {
+    if (!isReady) return;
+
+    if (isMobile) {
+      const newBottom = getMobileBottomPosition(isActiveRoute);
+      setBottom(newBottom);
+    } else {
+      const newRight = getDesktopRightPosition(isActiveRoute);
+      setRight(newRight);
+    }
+  }, [pathname, isMobile, isReady, isActiveRoute]);
+
+  // 클라이언트 사이드에서만 실행
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   useEffect(() => {
     if (!isClient) return;
-
-    const newRight = isActiveRoute ? '0' : '-81dvw';
-    setRight(newRight);
 
     // 패널이 활성화되면 렌더링 시작
     if (isActiveRoute) {
       setIsVisible(true);
-      // 컴포넌트가 로드되면 상태 업데이트
       setIsLoaded(true);
-      // 직접 URL 접근 시에도 애니메이션 작동하도록 설정
-      setShouldAnimate(true);
     } else {
       // 패널이 비활성화되면 애니메이션 완료 후 렌더링 중지
       const timer = setTimeout(() => {
@@ -79,7 +107,6 @@ function AnimatedPanel({
         setTimeout(() => {
           if (!isActiveRoute) {
             setIsLoaded(false);
-            setShouldAnimate(false);
           }
         }, 500);
       }, 1000); // 애니메이션 duration과 동일
@@ -88,7 +115,7 @@ function AnimatedPanel({
     }
   }, [isActiveRoute, isClient]);
 
-  // baseRoute에 따라 컴포넌트 렌더링 (조건부 렌더링)
+  // baseRoute에 따라 컴포넌트 렌더링
   const renderComponent = useCallback(() => {
     if (!isVisible || !isLoaded) return null;
 
@@ -115,28 +142,36 @@ function AnimatedPanel({
 
     return (
       <Suspense fallback={<LoadingFallback>Loading...</LoadingFallback>}>
-        <Component onLoadComplete={() => setShouldAnimate(true)} />
+        <Component />
       </Suspense>
     );
   }, [baseRoute, isVisible, isLoaded]);
 
-  // 패널이 완전히 숨겨져 있으면 아예 렌더링하지 않음
+  // isReady가 false면 로딩 상태 표시
+  if (!isReady) {
+    return null;
+  }
+
+  // 패널이 완전히 숨겨져 있으면 렌더링하지 않음
   if (!isVisible && !isActiveRoute) {
     return null;
   }
 
   // 클라이언트 사이드에서만 애니메이션 적용
-  const currentRight = isClient ? right : null;
+  const currentRight = isClient && !isMobile ? right : null;
+  const currentBottom = isClient && isMobile ? bottom : null;
 
   return (
     <AnimatePresence mode="wait">
       <SidePanelWrapper
         onClick={onWrapperClick}
-        initial={{ right: '-81dvw' }}
-        animate={{ right: isClient ? right : '-81dvw' }}
-        exit={{ right: '-81dvw' }}
+        initial={isMobile ? { bottom: '-100dvh' } : { right: '-81dvw' }}
+        animate={isMobile ? { bottom: currentBottom } : { right: currentRight }}
+        exit={isMobile ? { bottom: '-100dvh' } : { right: '-81dvw' }}
         transition={{ duration: 1, ease: [0.2, 0, 0.4, 1] }}
-        right={currentRight}
+        right={isMobile ? 'unset' : currentRight}
+        bottom={isMobile ? currentBottom : 'unset'}
+        isMobile={isMobile}
         className={className}
       >
         {renderComponent()}
