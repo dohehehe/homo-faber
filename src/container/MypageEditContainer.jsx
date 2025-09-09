@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'motion/react';
 import { usePathname } from 'next/navigation';
-import { updateUserProfile } from '@/utils/supabase/user';
+import { updateUserProfile } from '@/utils/api/user-api';
 
 const EditWrapper = styled(motion.main)`
   width: calc(80vw - 60px);
@@ -208,7 +208,7 @@ function MypageEditContainer({ }) {
     setSuccess('');
 
     try {
-      await updateUserProfile(user.id, formData);
+      await updateUserProfile(formData);
       await refreshUser(); // 사용자 정보 새로고침
       setSuccess('프로필이 성공적으로 업데이트되었습니다!');
 
