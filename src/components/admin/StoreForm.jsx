@@ -10,6 +10,7 @@ import {
   getStoreById,
   getStoreTypes,
 } from '@/utils/api/stores-api';
+import { createStoreWithImages, updateStoreWithImages } from '@/utils/api/image-upload-api';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import Button from '@/components/admin/Button';
 import * as S from '@/styles/admin/adminForm.style';
@@ -52,7 +53,7 @@ const StoreForm = ({
   const [isDataLoading, setIsDataLoading] = useState(false);
 
   // 이미지 업로드 훅 사용
-  const { uploadImage, processImageForPreview } = useImageUpload({ bucket: 'gallery', maxSizeInMB: 0.5 });
+  const { processImageForPreview } = useImageUpload({ bucket: 'gallery', maxSizeInMB: 0.5 });
 
   // react-hook-form 설정
   const {
@@ -315,74 +316,11 @@ const StoreForm = ({
     try {
       setIsSaving(true);
 
-      // 이미지 업로드 처리
-      let cardImgUrl = cardImgPreview; // 기존 이미지 URL 유지
-      let thumbnailImgUrl = thumbnailImgPreview; // 기존 이미지 URL 유지
-      const galleryUrls = {};
-
-      // 카드 이미지 업로드 (새로 선택된 경우만)
-      if (localImages.card_img) {
-        const result = await uploadImage(localImages.card_img);
-        if (result.success) {
-          cardImgUrl = result.file.url;
-        } else {
-          throw new Error('카드 이미지 업로드 실패: ' + result.error);
-        }
-      } else if (formMode === 'edit' && storeData?.card_img) {
-        // edit 모드에서 새 이미지가 선택되지 않았다면 기존 이미지 유지
-        cardImgUrl = storeData.card_img;
-      }
-
-      // 썸네일 이미지 업로드 (새로 선택된 경우만)
-      if (localImages.thumbnail_img) {
-        const result = await uploadImage(localImages.thumbnail_img);
-        if (result.success) {
-          thumbnailImgUrl = result.file.url;
-        } else {
-          throw new Error('썸네일 이미지 업로드 실패: ' + result.error);
-        }
-      } else if (formMode === 'edit' && storeData?.thumbnail_img) {
-        // edit 모드에서 새 이미지가 선택되지 않았다면 기존 이미지 유지
-        thumbnailImgUrl = storeData.thumbnail_img;
-      }
-
-      // 갤러리 이미지들 업로드
-      for (const [index, file] of Object.entries(localImages.gallery)) {
-        if (file) {
-          const result = await uploadImage(file);
-          if (result.success) {
-            galleryUrls[index] = result.file.url;
-          } else {
-            throw new Error(`갤러리 이미지 ${parseInt(index) + 1} 업로드 실패: ${result.error}`);
-          }
-        }
-      }
-
-      // 갤러리 데이터 준비
-      const currentGallery = watch('gallery');
-      const processedGallery = currentGallery.map((item, index) => {
-        // 새로 업로드된 이미지가 있으면 사용, 없으면 기존 이미지 유지
-        let imageUrl = galleryUrls[index] || item.image_url || galleryPreviews[index] || '';
-
-        // edit 모드에서 기존 갤러리 이미지가 있다면 유지
-        if (formMode === 'edit' && !galleryUrls[index] && !item.image_url && storeData?.store_gallery) {
-          const existingGalleryItem = storeData.store_gallery.find(g => g.order_num === index + 1);
-          if (existingGalleryItem) {
-            imageUrl = existingGalleryItem.image_url;
-          }
-        }
-
-        return {
-          ...item,
-          image_url: imageUrl,
-          order_num: index + 1, // 현재 순서에 맞게 order_num 업데이트
-        };
-      }).filter((item) => item.image_url);
-
       // keyword 처리
       const processedKeyword = formData.keyword ? formData.keyword.split(',').map(k => k.trim()).filter(k => k) : [];
 
-      const updateData = {
+      // 스토어 데이터 준비
+      const storeData = {
         name: formData.name,
         person: formData.person,
         description: formData.description,
@@ -395,8 +333,6 @@ const StoreForm = ({
         move_latitude: formData.move_latitude,
         move_longitude: formData.move_longitude,
         keyword: processedKeyword,
-        card_img: cardImgUrl,
-        thumbnail_img: thumbnailImgUrl,
         contacts: {
           phone: formData.phone,
           telephone: formData.telephone,
@@ -407,26 +343,48 @@ const StoreForm = ({
         capacities: selectedCapacityTypes,
         industries: selectedIndustryTypes,
         materials: selectedMaterialTypes,
-        gallery: processedGallery,
+        gallery: watch('gallery').filter(item => item.image_url).map((item, index) => ({
+          image_url: item.image_url,
+          order_num: index + 1
+        }))
       };
 
+      // 이미지 파일들 준비
+      const cardImageFile = localImages.card_img || null;
+      const thumbnailImageFile = localImages.thumbnail_img || null;
+      const galleryFiles = Object.values(localImages.gallery).filter(file => file);
+
       if (formMode === 'create') {
-        await createStore(updateData);
+        // 서버에서 이미지 업로드와 스토어 생성을 한 번에 처리
+        await createStoreWithImages(storeData, cardImageFile, thumbnailImageFile, galleryFiles);
         alert('스토어가 성공적으로 등록되었습니다.');
         router.push('/admin/store');
       } else {
-        await updateStore(formStoreId, updateData);
+        // edit 모드에서는 기존 이미지 URL 유지
+        const finalStoreData = {
+          ...storeData,
+          card_img: cardImgPreview || storeData?.card_img,
+          thumbnail_img: thumbnailImgPreview || storeData?.thumbnail_img
+        };
+
+        if (cardImageFile || thumbnailImageFile || galleryFiles.length > 0) {
+          // 새 이미지가 있는 경우 서버에서 처리
+          await updateStoreWithImages(formStoreId, finalStoreData, cardImageFile, thumbnailImageFile, galleryFiles);
+        } else {
+          // 이미지 변경이 없는 경우 기존 API 사용
+          await updateStore(formStoreId, finalStoreData);
+        }
         alert('수정 완료');
         router.push('/admin/store');
       }
 
     } catch (error) {
       console.error('저장 중 오류 발생:', error);
-      alert('저장 중 오류가 발생했습니다.');
+      alert('저장 중 오류가 발생했습니다: ' + error.message);
     } finally {
       setIsSaving(false);
     }
-  }, [formMode, formStoreId, selectedIndustryTypes, selectedCapacityTypes, selectedMaterialTypes, localImages, uploadImage, watch, router]);
+  }, [formMode, formStoreId, selectedIndustryTypes, selectedCapacityTypes, selectedMaterialTypes, localImages, cardImgPreview, thumbnailImgPreview, watch, router]);
 
   if (isDataLoading) {
     return (
