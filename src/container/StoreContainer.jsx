@@ -153,7 +153,9 @@ function StoreContainer() {
       onClick={handleStoreWrapperClick}
     >
       <S.StorePageName>업체 목록</S.StorePageName>
-      <Search onSearch={handleSearch} />
+      {pathname === '/store' && (
+        <Search onSearch={handleSearch} showClear={true} />
+      )}
 
       <S.StoreFilterWrapper isFilterOpen={isFilterOpen}>
         <S.StoreFilterBtn onClick={handleFilterToggle}>
