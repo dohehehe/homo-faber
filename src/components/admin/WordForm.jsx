@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import Image from 'next/image';
 import { createWord, updateWord, getWordById } from '@/utils/api/word-api';
+import { useImageUpload } from '@/hooks/useImageUpload';
 import Button from '@/components/admin/Button';
 import * as S from '@/styles/admin/adminForm.style';
 
@@ -20,6 +22,17 @@ const WordForm = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
 
+  // 이미지 관련 상태
+  const [imagePreview, setImagePreview] = useState('');
+  const [localImage, setLocalImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  // 이미지 업로드 훅 사용
+  const { processImageForPreview, uploadImageToServer } = useImageUpload({
+    bucket: 'gallery',
+    maxSizeInMB: 0.5
+  });
+
   // react-hook-form 설정
   const {
     setValue,
@@ -32,9 +45,19 @@ const WordForm = ({
       name: '',
       meaning: '',
       source: '',
+      image: '',
     },
     mode: 'onChange', // 실시간 유효성 검사
   });
+
+  // 컴포넌트 언마운트 시 로컬 URL 정리
+  useEffect(() => {
+    return () => {
+      if (imagePreview && imagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -52,6 +75,12 @@ const WordForm = ({
           setValue('name', word.name || '');
           setValue('meaning', word.meaning || '');
           setValue('source', word.source || '');
+          setValue('image', word.image || '');
+
+          // 이미지 미리보기 설정
+          if (word.img) {
+            setImagePreview(word.img);
+          }
 
           // 폼 유효성 검사 트리거
           await trigger(['name', 'meaning']);
@@ -70,22 +99,69 @@ const WordForm = ({
     router.push('/admin/word');
   };
 
+  const handleImagePreview = async (file) => {
+    try {
+      const result = await processImageForPreview(file);
+      if (result.success) {
+        const imageUrl = result.file.url;
+        const originalFile = result.file.originalFile;
+
+        // 로컬 파일 저장
+        setLocalImage(originalFile);
+        // 미리보기 설정
+        setImagePreview(imageUrl);
+      } else {
+        alert('이미지 처리에 실패했습니다: ' + result.error);
+      }
+    } catch (error) {
+      console.error('이미지 처리 오류:', error);
+      alert('이미지 처리 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleImageSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('이미지 파일만 선택할 수 있습니다.');
+        return;
+      }
+      handleImagePreview(file);
+    }
+  };
+
   const handleSave = useCallback(async (formData) => {
     try {
       setIsSaving(true);
 
-      const wordData = {
+      let imageData = wordData?.img || [];
+
+      // 이미지가 선택된 경우 업로드
+      if (localImage) {
+        setIsUploading(true);
+        const uploadResult = await uploadImageToServer(localImage);
+        if (uploadResult.success) {
+          imageData = uploadResult.file.url;
+        } else {
+          alert('이미지 업로드에 실패했습니다: ' + uploadResult.error);
+          return;
+        }
+        setIsUploading(false);
+      }
+
+      const newWordData = {
         name: formData.name,
         meaning: formData.meaning,
         source: formData.source || '',
+        img: imageData ? imageData : (wordData?.img || []),
       };
 
       if (formMode === 'create') {
-        await createWord(wordData);
+        await createWord(newWordData);
         alert('단어가 성공적으로 등록되었습니다.');
         router.push('/admin/word');
       } else {
-        await updateWord(formWordId, wordData);
+        await updateWord(formWordId, newWordData);
         alert('수정 완료');
         router.push('/admin/word');
       }
@@ -96,7 +172,7 @@ const WordForm = ({
     } finally {
       setIsSaving(false);
     }
-  }, [formMode, formWordId, router]);
+  }, [formMode, formWordId, router, localImage, uploadImageToServer, wordData]);
 
   if (isDataLoading) {
     return (
@@ -128,8 +204,8 @@ const WordForm = ({
         <h1>{formMode === 'create' ? '단어 등록' : '단어 수정'}</h1>
         <S.Actions>
           <Button onClick={handleBack}>목록으로</Button>
-          <Button className="edit" onClick={handleSubmit(handleSave)} disabled={isSaving}>
-            {isSaving ? '저장 중...' : '저장'}
+          <Button className="edit" onClick={handleSubmit(handleSave)} disabled={isSaving || isUploading}>
+            {isSaving ? '저장 중...' : isUploading ? '이미지 업로드 중...' : '저장'}
           </Button>
         </S.Actions>
       </S.Header>
@@ -184,6 +260,35 @@ const WordForm = ({
                 <S.ErrorInputMessage>
                   {errors.meaning.message}
                 </S.ErrorInputMessage>
+              )}
+            </S.FormField>
+
+            <S.FormField>
+              <label htmlFor="image">이미지</label>
+              <input
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageSelect}
+                style={{ display: 'none' }}
+              />
+              <Button
+                className="create"
+                onClick={() => document.getElementById('image').click()}
+                disabled={isUploading}
+              >
+                {isUploading ? '업로드 중...' : '이미지 선택'}
+              </Button>
+              {imagePreview && (
+                <div className="image-preview" style={{ marginTop: '10px' }}>
+                  <Image
+                    src={imagePreview}
+                    alt="이미지 미리보기"
+                    width={300}
+                    height={200}
+                    style={{ objectFit: 'cover', borderRadius: '8px' }}
+                  />
+                </div>
               )}
             </S.FormField>
           </div>
