@@ -6,7 +6,11 @@ import { useWords } from '@/hooks/useWord';
 import * as S from '@/styles/word/wordContainer.style';
 import Loader from '@/components/common/Loader';
 import Error from '@/components/common/Error';
+import Search from '@/components/common/Search';
 import useWindowSize from '@/hooks/useWindowSize';
+import CustomScrollbar from '@/components/common/CustomScrollbar';
+import { useCustomScrollbar } from '@/hooks/useCustomScrollbar';
+import Image from 'next/image';
 
 function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }) {
   const pathname = usePathname();
@@ -17,6 +21,7 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
   const [selectedWordIds, setSelectedWordIds] = useState(initialSelectedWordId ? [initialSelectedWordId] : []);
   const { words, loading, error, searchWordsByName, fetchWords } = useWords();
   const { isMobile } = useWindowSize();
+  const { containerRef, scrollState, scrollToRatio } = useCustomScrollbar();
 
   const handleMouseMove = useCallback((event) => {
     if (!wrapperRef.current) return;
@@ -78,19 +83,14 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
     }
   };
 
-  const handleSearch = () => {
-    searchWordsByName(searchQuery);
+  const handleSearch = (keyword) => {
+    setSearchQuery(keyword);
+    searchWordsByName(keyword);
   };
 
   const handleClearSearch = () => {
     setSearchQuery('');
     fetchWords();
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
   };
 
   // initialSelectedWordId가 변경될 때 selectedWordIds 업데이트
@@ -112,6 +112,20 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
       onClick={pathname === '/' ? handleWordWrapperClick : undefined}
     >
       <S.WordPageName>단어 목록</S.WordPageName>
+
+      <S.WordSearchWrapper onClick={(e) => e.stopPropagation()}>
+        <Search
+          placeholder="단어 검색"
+          showClear={true}
+          onSearch={handleSearch}
+          onClear={handleClearSearch}
+          backgroundColor="rgba(253, 253, 253, 0.82)"
+          textColor="#2E5BBA"
+          inputBackgroundColor="rgba(255, 255, 255, 0)"
+          focusOutlineColor="rgba(255, 255, 255, 0.8)"
+        />
+      </S.WordSearchWrapper>
+
       {loading && (
         <Loader baseColor="rgb(173, 203, 237)" style={{ marginTop: isMobile ? '-34px' : '83px', marginLeft: isMobile ? '69px' : '-19px', transform: isMobile ? 'none' : 'rotate(90deg)', transformOrigin: isMobile ? 'none' : 'top left' }} />
       )}
@@ -121,29 +135,9 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
       {words.length === 0 && (
         <Error message={searchQuery ? `"${searchQuery}"에 대한 검색 결과가 없습니다.` : '등록된 단어가 없습니다.'} style={{ marginLeft: isMobile ? '-8px' : '-23px', marginTop: isMobile ? '20px' : '94px' }} />
       )}
-      <S.SearchContainer onClick={(e) => e.stopPropagation()}>
-        <S.SearchInput
-          type="text"
-          placeholder="단어 검색"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
-        />
-
-        <S.SearchButton onClick={handleSearch}>
-          검색
-        </S.SearchButton>
-
-        {searchQuery && (
-          <S.ClearButton onClick={handleClearSearch} title="검색 초기화">
-            ✕
-          </S.ClearButton>
-        )}
-      </S.SearchContainer>
 
       <S.WordItemWrapper>
         <S.WordList>
-
           <>
             {words.map((word) => (
               <S.WordItem
@@ -157,59 +151,44 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
             }
           </>
         </S.WordList>
+
         {selectedWordIds.length > 0 && (
-          <S.WordMeaningsContainer>
+          <S.WordMeaningsContainer ref={containerRef}>
             {selectedWordIds.map((wordId, index) => {
               const selectedWord = words.find(word => word.id === wordId);
               return selectedWord ? (
                 <S.WordMeaning
                   key={wordId}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '15px' }}>
-                    <h3 style={{ margin: '0', fontSize: '1.5rem', color: '#2E5BBA' }}>
-                      {selectedWord.name}
-                    </h3>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedWordIds(prev => prev.filter(id => id !== wordId));
-                      }}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '1.2rem',
-                        color: '#666',
-                        cursor: 'pointer',
-                        padding: '0',
-                        marginLeft: '10px'
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  <p style={{ margin: '0 0 20px 0' }}>
+                  <S.WordMeaningTitle>
+                    {selectedWord.name}
+                  </S.WordMeaningTitle>
+
+                  <S.WordMeaningCloseButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedWordIds(prev => prev.filter(id => id !== wordId));
+                    }}>
+                    ✕
+                  </S.WordMeaningCloseButton>
+
+                  <S.WordMeaningContent>
                     {selectedWord.meaning}
-                  </p>
-                  {selectedWord.img && selectedWord.img.length > 0 && (
-                    <div style={{ marginTop: '20px' }}>
-                      {selectedWord.img.map((img) => (
-                        <img
-                          key={img.id}
-                          src={img.url}
-                          alt={img.caption || selectedWord.name}
-                          style={{
-                            width: '100%',
-                            height: 'auto',
-                            borderRadius: '8px',
-                            marginBottom: '10px'
-                          }}
-                        />
-                      ))}
-                    </div>
+                  </S.WordMeaningContent>
+
+                  {selectedWord.img && (
+                    <S.WordMeaningImage src={selectedWord.img} alt={selectedWord.name} />
                   )}
                 </S.WordMeaning>
               ) : null;
             })}
+            {!isMobile && (
+              <CustomScrollbar
+                scrollState={scrollState}
+                onScrollToRatio={scrollToRatio}
+              />
+            )}
+
           </S.WordMeaningsContainer>
         )}
       </S.WordItemWrapper>

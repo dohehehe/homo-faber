@@ -35,7 +35,6 @@ export const WordWrapper = styled.main`
   }
 `;
 
-
 export const WordPageName = styled.h1`
   font-size: 1rem;
   font-weight: 700;
@@ -49,28 +48,52 @@ export const WordPageName = styled.h1`
   ${theme.media.mobile} { 
     transform: rotate(0deg);
     transform-origin: top left;
-    top: 22px;
+    top: 18px;
     left:10px;
     font-size: 1rem;
   }
 `;
 
+export const WordSearchWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+  z-index: 3;
+
+  ${theme.media.mobile} {
+      position: fixed;
+  }
+`;
+
 export const WordItemWrapper = styled.section`
   display:flex;
-  overflow-y: hidden;
+  gap: 100px;
+  // overflow-y: visible;
+
+  ${theme.media.mobile} {
+    gap: 20px;
+  }
 `;
 
 export const WordList = styled.ul`
   color: #2E5BBA;
-  padding-top: 24px;
-  overflow-y: auto;
+  margin-top: -65px;
+  padding-top: 110px;
   z-index: 2;
+  flex-shrink: 0;
+  overflow-y: auto;
+  height: 100dvh;
 
   &::-webkit-scrollbar {
     display: none;
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+
+  ${theme.media.mobile} {
+    margin-top: -30px;
+    padding-top: 50px;
+  }
 `;
 
 export const WordItem = styled.li`
@@ -109,54 +132,49 @@ export const WordTitle = styled.h2`
 export const WordMeaningsContainer = styled.section`
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
   overflow-y: auto;
-  padding-top: 15px;
-  margin-left: -400px;
-  padding-left: 400px;
-  padding-right: 100px;
+  flex-grow: 1;
+  margin-right: 80px;
+  overflow-x: hidden;
   height: 100dvh;
-  z-index: 1000;
-  position: absolute;
-  top: 0;
-  left: 400px;
-  z-index: 1;
-  
+  margin-top: -65px;
+  padding-top: 96px;
+  overflow-y: auto;
+  padding-bottom: 20px;
+
   &::-webkit-scrollbar {
-    width: 8px;
+    display: none;
   }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   
-  &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba(46, 91, 186, 0.3);
-    border-radius: 4px;
-  }
-  
-  &::-webkit-scrollbar-thumb:hover {
-    background: rgba(46, 91, 186, 0.5);
+  ${theme.media.mobile} {
+      margin-right: 0px;
+      margin-top: -30px;
+      padding-top: 35px;
+      padding-bottom: 100px;
   }
 `;
 
 export const WordMeaning = styled.div`
+  font-family: var(--font-gothic);
   background: rgba(255, 255, 255, 0.95);
-  padding: 30px;
+  padding: 20px 60px 18px 23px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
   border-radius: 15px;
   font-weight: 600;
   font-size: 1.3rem;
   line-height: 1.6;
   word-break: keep-all;
   color: #2E5BBA;
-  max-width: 400px;
-  z-index: 1000;
+  z-index: 2;
   backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.4);
   animation: slideIn 0.4s ease-out;
   margin: 10px;
-  box-shadow: 2px 1px 10px 3px rgba(79, 90, 247, 0.2);
+  box-shadow: 4px 2px 10px 3px rgba(79, 90, 247, 0.23);
   
   @keyframes slideIn {
     from {
@@ -166,85 +184,69 @@ export const WordMeaning = styled.div`
       opacity: 1;
     }
   }
+
+  ${theme.media.mobile} {
+    font-size: 1rem;
+    flex-direction: column;
+    padding: 15px 20px 10px 10px;
+    gap: 10px;
+  }
 `;
 
+export const WordMeaningTitle = styled.h3`
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #2E5BBA;
+  position: relative;
+  width: 70px;
+  flex-shrink: 0;
 
-export const SearchContainer = styled.aside`
+  ${theme.media.mobile} {
+    font-size: 1.2rem;
+    width: 100%;
+  }
+`;
+
+export const WordMeaningContent = styled.p`
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2E5BBA;
+  padding-top: 1px;
+
+  ${theme.media.mobile} {
+    font-size: 1rem;
+  }
+`;
+
+export const WordMeaningImage = styled.img`
+  width: auto;
+  max-width: 50%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+
+  ${theme.media.mobile} {
+    width: 100%;
+    height: auto;
+    max-width: unset;
+  }
+`;
+
+export const WordMeaningCloseButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #666;
+  cursor: pointer;
   position: absolute;
-  top: 20px;
-  right: 70px;
-  z-index: 10;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-`;
-
-export const SearchInput = styled.input`
-  padding: 10px 15px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 25px;
-  background: rgba(255, 255, 255, 0.1);
+  top: 15px;
+  font-weight: 700;
+  right: 24px;
   color: #2E5BBA;
-  font-size: 1rem;
-  font-weight: 600;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  min-width: 200px;
 
-  &::placeholder {
-    color: rgba(46, 91, 186, 0.7);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: rgba(255, 255, 255, 0.8);
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-  }
-`;
-
-export const SearchButton = styled.button`
-  padding: 10px 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 25px;
-  background: rgba(46, 91, 186, 0.8);
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-
-  &:hover {
-    background: rgba(46, 91, 186, 1);
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-`;
-
-
-export const ClearButton = styled.button`
-  padding: 8px 12px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  color: #2E5BBA;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.8);
+  ${theme.media.mobile} {
+    right: 10px;
+    top: 3px;
   }
 `;
