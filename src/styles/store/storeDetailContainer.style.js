@@ -6,7 +6,7 @@ import theme from '@/styles/Theme';
 export const DetailWrapper = styled(motion.main)`
   width: calc(80vw - 60px);
   height: 100dvh;
-  padding: 0px 10px 0px 50px;
+  padding: 0px 5px 0px 50px;
   background-color: #F7F7F7;
   position: ${(props) => props.isMobile ? 'fixed' : 'absolute'};
   right: ${(props) => props.isMobile ? 'unset' : props.right};
@@ -17,6 +17,7 @@ export const DetailWrapper = styled(motion.main)`
   box-shadow: -2px 0 4px 0 rgba(79,75,31,0.57);
   display: flex;
   overflow: hidden;
+  
 
   ${theme.media.mobile} {
     width: 100dvw;
@@ -60,6 +61,10 @@ export const StoreDetailCard = styled.article`
     padding-top: 34px;
     overflow-y: scroll;
     display: block;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 `;
 
@@ -87,7 +92,7 @@ export const StoreImgSection = styled(StoreDetailSection)`
   overflow-x: hidden;
   width: 46%;
   margin-top: -20px;
-  margin-right: 2dvw;
+  margin-right: 1dvw;
 
   &::-webkit-scrollbar {
     display: none;
@@ -352,7 +357,7 @@ export const StoreCardImg = styled.img`
 `
 export const StoreImgList = styled.div`
   width: 100%;
-  margin-top: -45px;
+  margin-top: -30px;
   padding: 0 40px 10px 40px;
   margin-bottom: 40px;
 
@@ -368,7 +373,7 @@ export const StoreImg = styled.img`
   border: 0.6px solid black;
   vertical-align: top;
   position: relative;
-  box-shadow: -1px 1px 3px 6px rgba(255,255,255,1), -2px -1px 20px 0.3px rgba(116, 116, 116, 0.63), 3px 15px 30px 10px rgba(177, 177, 177, 0.36);
+  box-shadow: -1px 1px 3px 6px rgba(255,255,255,1), -2px -1px 20px 0.3px rgba(116, 116, 116, 0.63), 3px 13px 10px 1px rgba(177, 177, 177, 0.36);
   transition: all .4s ;
 
   &:hover{

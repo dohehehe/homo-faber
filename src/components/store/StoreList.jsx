@@ -49,7 +49,7 @@ const StoreList = ({ stores, isLoading, error }) => {
                 <Loader baseColor="var(--yellow)" style={{ marginTop: '5px' }} />
               </td>
             </tr>
-          ) : !error ? (
+          ) : error ? (
             <tr>
               <td colSpan={user ? (isMobile ? 3 : 5) : (isMobile ? 2 : 4)}>
                 <Error />
