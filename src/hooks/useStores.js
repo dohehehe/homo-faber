@@ -184,8 +184,8 @@ export function useStoreFilters(
     // 1. 검색어 필터링
     let filteredStores = stores;
 
-    if (searchKeyword && searchKeyword.length >= 2) {
-      const keyword = searchKeyword.toLowerCase();
+    if (searchKeyword && searchKeyword.trim().length > 0) {
+      const keyword = searchKeyword.toLowerCase().trim();
       filteredStores = filteredStores.filter(
         (store) =>
           store.name?.toLowerCase().includes(keyword) ||
