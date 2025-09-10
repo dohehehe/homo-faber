@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { Suspense } from 'react';
 import Map3DWrapper from '@/container/Map3DWrapper';
 import AnimatedPanel from '@/components/common/AnimatedPanel';
 import StoreContainer from '@/container/StoreContainer';
@@ -19,7 +20,9 @@ export default function ConditionalLayout() {
   return (
     <>
       <Map3DWrapper />
-      <StoreContainer />
+      <Suspense fallback={<div>Loading...</div>}>
+        <StoreContainer />
+      </Suspense>
       <AnimatedPanel baseRoute='interview' />
       <AnimatedPanel baseRoute='word' />
       <AnimatedPanel baseRoute='info' />

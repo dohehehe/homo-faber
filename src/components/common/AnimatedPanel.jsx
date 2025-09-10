@@ -15,7 +15,7 @@ const SignupContainer = lazy(() => import('@/container/SignupContainer'));
 const MypageContainer = lazy(() => import('@/container/MypageContainer'));
 
 const SidePanelWrapper = styled(motion.div, {
-  shouldForwardProp: (prop) => prop !== 'isMobile',
+  shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom',
 })`
   width: ${(props) => props.isMobile ? '100vw' : '80dvw'};
   height: ${(props) => props.isMobile ? '87dvh' : '100dvh'};

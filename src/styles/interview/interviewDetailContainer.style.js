@@ -3,7 +3,9 @@ import styled from '@emotion/styled';
 import { motion } from 'motion/react';
 import theme from '@/styles/Theme';
 
-export const DetailWrapper = styled(motion.main)`
+export const DetailWrapper = styled(motion.main, {
+  shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom'
+})`
   width: ${(props) => props.isMobile ? '100dvw' : 'calc(80vw - 50px)'};
   height: ${(props) => props.isMobile ? 'calc(87dvh - 47px)' : '100dvh'};
   padding: ${(props) => props.isMobile ? '0px' : '0px 10dvw 0px 60px'};
