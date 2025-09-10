@@ -8,7 +8,6 @@ import StoreList from '@/components/store/StoreList';
 import { useStores, useStoreFilters, extractAllTags } from '@/hooks/useStores';
 import useWindowSize from '@/hooks/useWindowSize';
 import * as S from '@/styles/store/storeContainer.style';
-import Error from '@/components/common/Error';
 
 function StoreContainer() {
   const pathname = usePathname();
