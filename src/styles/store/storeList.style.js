@@ -141,15 +141,16 @@ export const TitleCell = styled(TableCell)`
   padding-left: 10px;
   letter-spacing: 0.18rem;
   width: 201.8px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+      display: none;
+  }
 
   ${theme.media.mobile} {
     width: 120px;
     overflow-x: auto;
     padding-left: 7px;
-    -ms-overflow-style: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
   }
 `
 

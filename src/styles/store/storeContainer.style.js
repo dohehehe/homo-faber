@@ -5,7 +5,7 @@ export const StoreWrapper = styled.main`
   width: 80dvw;
   height: 100dvh;
   padding-left: 64px;
-  padding-top: 27px;
+  padding-top: 20px;
   position: fixed;
   right: ${(props) => props.isMobile ? 'unset' : props.right};
   bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};

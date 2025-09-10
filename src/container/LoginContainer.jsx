@@ -4,142 +4,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import styled from '@emotion/styled';
-import { motion } from 'motion/react';
+import * as S from '@/styles/user/userContainer.style';
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-
-const LoginWrapper = styled(motion.main)`
-  width: 100%;
-  height: 100%;
-  padding-left: 70px;
-  padding-top: 27px;
-  z-index: 3;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-left: solid 3px #DADADA;
-  box-shadow: -8px 4px 10px 0 rgba(0,0,0,0.25);
-  font-family: var(--font-gothic);
-  pointer-events: auto;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(270deg, rgba(102, 126, 234, 0.3) 19%, rgba(118, 75, 162, 0.2) 42%, rgba(102, 126, 234, 0.4) 95%);
-  }
-`;
-
-const LoginPageName = styled.h1`
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.3rem;
-  position: absolute;
-  transform: rotate(90deg);
-  transform-origin: top left;
-  top: 17px;
-  left: 26px;
-  color: white;
-`;
-
-const LoginForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 40px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  max-width: 400px;
-  width: 100%;
-  position: relative;
-  z-index: 1;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const Label = styled.label`
-  font-family: var(--font-gothic);
-  font-weight: 600;
-  color: #333;
-  font-size: 14px;
-`;
-
-const Input = styled.input`
-  padding: 12px 16px;
-  border: 2px solid #e1e5e9;
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: var(--font-gothic);
-  transition: border-color 0.2s ease;
-  
-  &:focus {
-    outline: none;
-    border-color: #007bff;
-  }
-  
-  &::placeholder {
-    color: #999;
-  }
-`;
-
-const ErrorMessage = styled.p`
-  color: #dc3545;
-  font-size: 14px;
-  margin: 0;
-  font-family: var(--font-gothic);
-`;
-
-const SubmitButton = styled.button`
-  padding: 12px 24px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  font-family: var(--font-gothic);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  
-  &:hover {
-    background: #0056b3;
-  }
-  
-  &:disabled {
-    background: #6c757d;
-    cursor: not-allowed;
-  }
-`;
-
-const SignupLink = styled.div`
-  text-align: center;
-  margin-top: 20px;
-  font-family: var(--font-gothic);
-  
-  a {
-    color: #007bff;
-    text-decoration: none;
-    
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
 
 function LoginContainer({ onLoadComplete }) {
   const [error, setError] = useState('');
@@ -154,6 +21,23 @@ function LoginContainer({ onLoadComplete }) {
       onLoadComplete();
     }
   }, [onLoadComplete]);
+
+  // ESC 키로 에러 팝업 닫기
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && error) {
+        setError('');
+      }
+    };
+
+    if (error) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [error]);
 
   // 로그인 패널 클릭 시 홈으로 이동
   const handleLoginWrapperClick = () => {
@@ -176,37 +60,31 @@ function LoginContainer({ onLoadComplete }) {
 
     try {
       const { data, error } = await signIn(formData.email, formData.password);
-
       if (error) {
-        throw error;
+        setError('이메일 또는 비밀번호를 다시 한 번 확인해주세요.');
+        return;
       }
-
       if (data?.user) {
         router.push('/mypage');
       }
     } catch (error) {
-      setError(error.message);
+      console.error('Login error:', error);
+      setError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <LoginWrapper onClick={handleLoginWrapperClick}>
-      <LoginPageName>로그인</LoginPageName>
-      <LoginForm onSubmit={handleSubmit(onSubmit)} onClick={(e) => e.stopPropagation()}>
-        <h2 style={{
-          textAlign: 'center',
-          marginBottom: '20px',
-          fontFamily: 'var(--font-gothic)',
-          color: '#333'
-        }}>
-          로그인
-        </h2>
+    <S.UserWrapper
+      onClick={handleLoginWrapperClick}
+    >
+      <S.PageName>로그인</S.PageName>
 
-        <FormGroup>
-          <Label htmlFor="email">이메일</Label>
-          <Input
+      <S.UserForm onSubmit={handleSubmit(onSubmit)} onClick={(e) => e.stopPropagation()}>
+        <S.FormGroup>
+          <S.Label htmlFor="email">이메일</S.Label>
+          <S.Input
             type="email"
             id="email"
             placeholder="이메일을 입력해주세요"
@@ -218,12 +96,12 @@ function LoginContainer({ onLoadComplete }) {
               },
             })}
           />
-          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
-        </FormGroup>
+          {errors.email && <S.ErrorMessage>{errors.email.message}</S.ErrorMessage>}
+        </S.FormGroup>
 
-        <FormGroup>
-          <Label htmlFor="password">비밀번호</Label>
-          <Input
+        <S.FormGroup>
+          <S.Label htmlFor="password">비밀번호</S.Label>
+          <S.Input
             type="password"
             id="password"
             placeholder="비밀번호를 입력해주세요"
@@ -235,20 +113,37 @@ function LoginContainer({ onLoadComplete }) {
               },
             })}
           />
-          {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
-        </FormGroup>
+          {errors.password && <S.ErrorMessage>{errors.password.message}</S.ErrorMessage>}
+        </S.FormGroup>
 
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {error && (
+          <S.ErrorPopupOverlay onClick={() => setError('')}>
+            <S.ErrorPopupContainer onClick={(e) => e.stopPropagation()}>
+              {error}
+              <S.ErrorPopupCloseButton onClick={() => setError('')}>
+                확인
+              </S.ErrorPopupCloseButton>
+            </S.ErrorPopupContainer>
+          </S.ErrorPopupOverlay>
+        )}
 
-        <SubmitButton type="submit" disabled={isLoading}>
-          {isLoading ? '로그인 중...' : '로그인'}
-        </SubmitButton>
+        <S.ButtonWrapper>
+          <S.SubmitButton
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              '로그인 중...'
+            ) : '로그인'}
+          </S.SubmitButton>
 
-        <SignupLink>
-          계정이 없으신가요? <Link href="/signup">회원가입</Link>
-        </SignupLink>
-      </LoginForm>
-    </LoginWrapper>
+          <S.SubmitButton type="button" onClick={() => router.push('/signup')}>
+            회원가입
+          </S.SubmitButton>
+        </S.ButtonWrapper>
+
+      </S.UserForm>
+    </S.UserWrapper>
   );
 }
 

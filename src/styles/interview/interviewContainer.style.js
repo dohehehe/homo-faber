@@ -9,7 +9,7 @@ export const InterviewWrapper = styled(motion.main)`
   padding-left: 70px;
   padding-top: 27px;
   z-index: 3;
-  background: #7C7C7C;
+  background:rgb(124, 124, 124);
   background: ${(props) => props.gradientCss};
   background-size: 200% 200%;
   background-position: -100% -100%;

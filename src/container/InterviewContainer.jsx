@@ -1,19 +1,19 @@
 'use client';
-
 import { usePathname, useRouter } from 'next/navigation';
-import styled from '@emotion/styled';
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
-import { motion } from 'motion/react';
 import { useInterviews } from '@/hooks/useInterviews';
 import * as S from '@/styles/interview/interviewContainer.style';
-
+import Loader from '@/components/common/Loader';
+import Error from '@/components/common/Error';
+import useWindowSize from '@/hooks/useWindowSize';
 
 function InterviewContainer({ onLoadComplete }) {
   const pathname = usePathname();
   const router = useRouter();
   const wrapperRef = useRef(null);
-
+  const { interviews, isLoading, error } = useInterviews();
   const [cursorPositionPercent, setCursorPositionPercent] = useState({ x: 50, y: 50 });
+  const { isMobile } = useWindowSize();
 
   const handleMouseMove = useCallback((event) => {
     if (!wrapperRef.current) return;
@@ -65,18 +65,12 @@ function InterviewContainer({ onLoadComplete }) {
     router.push(`/interview/${interviewId}`);
   }
 
-  const { interviews, isLoading, error } = useInterviews();
-
   // 데이터 로딩 완료 시 부모 컴포넌트에 알림
   useEffect(() => {
     if (!isLoading && interviews.length > 0 && onLoadComplete) {
       onLoadComplete();
     }
   }, [isLoading, interviews, onLoadComplete]);
-
-  if (error) {
-    return <div>에러가 발생했습니다: {error.message}</div>;
-  }
 
   return (
     <>
@@ -89,18 +83,26 @@ function InterviewContainer({ onLoadComplete }) {
       >
         <S.InterviwPageName>인터뷰 목록</S.InterviwPageName>
 
-        {isLoading ? (
-          <div style={{ padding: '16px' }}>로딩 중...</div>
-        ) : (
-          <S.InterviewList>
-            {interviews.map((interview) => (
-              <S.InterviewItem key={interview.id} onClick={() => handleInterviewClick(interview.id)}>
-                <S.InterviewStore>{interview.stores?.name}</S.InterviewStore>
-                <S.InterviewPerson>{interview.stores?.person}</S.InterviewPerson>
-              </S.InterviewItem>
-            ))}
-          </S.InterviewList>
-        )}
+
+        <S.InterviewList>
+          {isLoading ? (
+            <Loader style={{ marginTop: '-15px', marginLeft: '-10px' }} baseColor="rgb(224, 224, 224)" />
+          ) :
+            error ? (
+              <Error style={{ marginTop: '-15px', marginLeft: '-10px', position: 'relative', zIndex: '2' }} />
+            ) :
+              interviews.length === 0 ? (
+                <Error message="인터뷰 목록을 찾을 수 없습니다." />
+              ) : (
+                interviews.map((interview) => (
+                  <S.InterviewItem key={interview.id} onClick={() => handleInterviewClick(interview.id)}>
+                    <S.InterviewStore>{interview.stores?.name}</S.InterviewStore>
+                    <S.InterviewPerson>{interview.stores?.person}</S.InterviewPerson>
+                  </S.InterviewItem>
+                ))
+              )
+          }
+        </S.InterviewList>
       </S.InterviewWrapper>
     </>
   );

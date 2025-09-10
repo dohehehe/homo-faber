@@ -143,25 +143,18 @@ function StoreContainer() {
     }
   };
 
-  // isReady가 false면 로딩 상태 표시
-  if (!isReady) {
-    return null; // 또는 로딩 스피너를 표시할 수 있습니다
-  }
-
-  if (error) {
-    return <div>에러가 발생했습니다: {error.message}</div>;
-  }
-
   return (
     <S.StoreWrapper
       pathname={pathname}
       right={right}
       bottom={bottom}
-      isMobile={isMobile}
+      isMobile={isReady && isMobile}
       onClick={handleStoreWrapperClick}
     >
       <S.StorePageName>업체 목록</S.StorePageName>
-      <Search onSearch={handleSearch} />
+      {pathname === '/store' && (
+        <Search onSearch={handleSearch} showClear={true} />
+      )}
 
       <S.StoreFilterWrapper isFilterOpen={isFilterOpen}>
         <S.StoreFilterBtn onClick={handleFilterToggle}>
@@ -185,13 +178,7 @@ function StoreContainer() {
         )}
       </S.StoreFilterWrapper>
 
-
-
-      {isLoading ? (
-        <div>로딩 중...</div>
-      ) : (
-        <StoreList stores={filteredStores} />
-      )}
+      <StoreList stores={filteredStores} isLoading={isLoading} error={error} />
     </S.StoreWrapper>
   );
 }

@@ -4,7 +4,6 @@ import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStoreDetail } from '@/hooks/useStores';
-import { convertIndustryNameToKorean } from '@/utils/converters';
 import { getStoreTypes } from '@/utils/api/stores-api';
 import { getInterviewsByStore } from '@/utils/supabase/interview';
 import { useCustomScrollbar } from '@/hooks/useCustomScrollbar';
@@ -13,6 +12,8 @@ import { useBookmarks } from '@/hooks/useBookmarks';
 import { useAuth } from '@/contexts/AuthContext';
 import * as S from '@/styles/store/storeDetailContainer.style';
 import useWindowSize from '@/hooks/useWindowSize';
+import Loader from '@/components/common/Loader';
+import Error from '@/components/common/Error';
 
 function StoreDetailContainer({ }) {
   const router = useRouter();
@@ -94,11 +95,6 @@ function StoreDetailContainer({ }) {
     }
   };
 
-  // isReady가 false면 로딩 상태 표시
-  if (!isReady) {
-    return null;
-  }
-
   return (
     <AnimatePresence mode="wait">
       {storeId && (
@@ -112,22 +108,17 @@ function StoreDetailContainer({ }) {
           exit={isMobile ? { bottom: '-100dvh' } : { right: '-100dvw' }}
           transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
         >
-          {error ? (
-            <S.ErrorContainer>
-              <div>에러가 발생했습니다: {error.message}</div>
-            </S.ErrorContainer>
-          ) : isLoading ? (
-            <S.LoadingContainer>
-              <div>로딩 중...</div>
-            </S.LoadingContainer>
-          ) : !store ? (
-            <S.ErrorContainer>
-              <div>스토어를 찾을 수 없습니다.</div>
-            </S.ErrorContainer>
-          ) : (
-            <>
-              <S.DetailPageName>업체 상세</S.DetailPageName>
 
+
+          <>
+            <S.DetailPageName>업체 상세</S.DetailPageName>
+            {error ? (
+              <Error />
+            ) : isLoading ? (
+              <Loader baseColor="#F7F7F7" style={{ marginTop: isMobile ? '0px' : '-3px', transform: isMobile ? 'none' : 'rotate(90deg)', transformOrigin: isMobile ? 'none' : 'top left', position: "relative", zIndex: "-10" }} />
+            ) : !store ? (
+              <Error style={{ marginTop: isMobile ? '40px' : '4px' }} message="업체를 찾을 수 없습니다." />
+            ) : (
               <S.StoreDetailCard>
                 <S.StoreDetailSection>
                   <S.StoreName>
@@ -256,19 +247,19 @@ function StoreDetailContainer({ }) {
                   )}
                 </S.StoreImgSection>
               </S.StoreDetailCard>
+            )}
+            {!isMobile && (
+              <>
+                {/* 커스텀 스크롤바 */}
+                <CustomScrollbar
+                  scrollState={scrollState}
+                  onScrollToRatio={scrollToRatio}
+                  height={300}
+                />
+              </>
+            )}
+          </>
 
-              {!isMobile && (
-                <>
-                  {/* 커스텀 스크롤바 */}
-                  <CustomScrollbar
-                    scrollState={scrollState}
-                    onScrollToRatio={scrollToRatio}
-                    height={300}
-                  />
-                </>
-              )}
-            </>
-          )}
         </S.DetailWrapper>
       )}
     </AnimatePresence>

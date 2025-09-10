@@ -3,7 +3,9 @@ import styled from '@emotion/styled';
 import { motion } from 'motion/react';
 import theme from '@/styles/Theme';
 
-export const DetailWrapper = styled(motion.main)`
+export const DetailWrapper = styled(motion.main, {
+  shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom'
+})`
   width: ${(props) => props.isMobile ? '100dvw' : 'calc(80vw - 50px)'};
   height: ${(props) => props.isMobile ? 'calc(87dvh - 47px)' : '100dvh'};
   padding: ${(props) => props.isMobile ? '0px' : '0px 10dvw 0px 60px'};
@@ -51,12 +53,14 @@ export const InterviewHeader = styled.div`
   gap: 2dvw;
   margin-top: -14px;
   position: relative;
+  min-height: 70dvh;
 
   ${theme.media.mobile} {
     flex-direction: column;
     gap: 0px;
     margin-top: 0px;
     align-items: center;
+    min-height: unset;
   }
 `
 
@@ -169,7 +173,7 @@ export const InterviewCoverImg = styled.img`
   max-width: 70%;
   margin-right: -10dvw;
   margin-left: auto;
-  object-fit: contain;
+  object-fit: cover;
   border-radius: 0% 0 0% 43%;
 
   ${theme.media.mobile} {
@@ -246,20 +250,3 @@ export const InterviewLink = styled.div`
       font-size: 1.3rem;
     }
 `
-
-export const LoadingContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-family: var(--font-gothic);
-  font-size: 1.5rem;
-`;
-
-export const ErrorContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-size: 1.5rem;
-`;
