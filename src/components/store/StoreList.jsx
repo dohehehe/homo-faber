@@ -32,11 +32,11 @@ const StoreList = ({ stores, isLoading, error }) => {
         <S.TableHeader>
           <tr style={{ display: 'flex' }}>
             {user && <S.TableHeaderCellBookmark></S.TableHeaderCellBookmark>}
-            <S.TableHeaderCell style={{ width: isMobile ? '120px' : '200px' }}>이름</S.TableHeaderCell>
-            <S.TableHeaderCell style={{ width: isMobile ? '300px' : '572px' }}>취급 품목</S.TableHeaderCell>
-            {!isMobile && (
+            <S.TableHeaderCell style={{ width: isReady && isMobile ? '120px' : '200px' }}>이름</S.TableHeaderCell>
+            <S.TableHeaderCell style={{ width: isReady && isMobile ? '300px' : '572px' }}>취급 품목</S.TableHeaderCell>
+            {isReady && !isMobile && (
               <>
-                <S.TableHeaderCell style={{ width: isMobile ? '100px' : '148px' }}>연락처</S.TableHeaderCell>
+                <S.TableHeaderCell style={{ width: '148px' }}>연락처</S.TableHeaderCell>
                 <S.TableHeaderCell>주소</S.TableHeaderCell>
               </>)}
           </tr>
@@ -45,13 +45,13 @@ const StoreList = ({ stores, isLoading, error }) => {
         <S.TableBody>
           {isLoading ? (
             <tr>
-              <td colSpan={user ? (isMobile ? 3 : 5) : (isMobile ? 2 : 4)}>
+              <td colSpan={user ? (isReady && isMobile ? 3 : 5) : (isReady && isMobile ? 2 : 4)}>
                 <Loader baseColor="var(--yellow)" style={{ marginTop: '5px' }} />
               </td>
             </tr>
           ) : error ? (
             <tr>
-              <td colSpan={user ? (isMobile ? 3 : 5) : (isMobile ? 2 : 4)}>
+              <td colSpan={user ? (isReady && isMobile ? 3 : 5) : (isReady && isMobile ? 2 : 4)}>
                 <Error />
               </td>
             </tr>
@@ -74,7 +74,7 @@ const StoreList = ({ stores, isLoading, error }) => {
 
                 <S.TitleCell>
                   <S.Name>{store.name}</S.Name>
-                  {!isMobile && (
+                  {isReady && !isMobile && (
                     store.store_industry?.length > 0 && (
                       <S.Industry>
                         {store.store_industry
@@ -94,7 +94,7 @@ const StoreList = ({ stores, isLoading, error }) => {
                     : <S.Line style={{ marginLeft: '-9px' }}></S.Line>}
                 </S.KeywordCell>
 
-                {!isMobile && (
+                {isReady && !isMobile && (
                   <>
                     <S.ContactCell>
                       {store.store_contacts?.[0]?.phone || <S.Line style={{ marginLeft: '-14px', marginRight: '-4px' }}></S.Line>}

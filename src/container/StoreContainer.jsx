@@ -149,7 +149,7 @@ function StoreContainer() {
       pathname={pathname}
       right={right}
       bottom={bottom}
-      isMobile={isMobile}
+      isMobile={isReady && isMobile}
       onClick={handleStoreWrapperClick}
     >
       <S.StorePageName>업체 목록</S.StorePageName>
