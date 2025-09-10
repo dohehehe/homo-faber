@@ -127,13 +127,13 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
       </S.WordSearchWrapper>
 
       {loading && (
-        <Loader baseColor="rgb(173, 203, 237)" style={{ marginTop: isMobile ? '-34px' : '83px', marginLeft: isMobile ? '69px' : '-19px', transform: isMobile ? 'none' : 'rotate(90deg)', transformOrigin: isMobile ? 'none' : 'top left' }} />
+        <Loader baseColor="rgb(255, 255, 255)" style={{ marginTop: isMobile ? '-32px' : '-30px', marginLeft: isMobile ? '46px' : '-19px', transform: isMobile ? 'none' : 'rotate(90deg)', transformOrigin: isMobile ? 'none' : 'top left', mixBlendMode: 'multiply' }} />
       )}
       {error && (
-        <Error style={{ marginLeft: isMobile ? '-8px' : '-23px', marginTop: isMobile ? '20px' : '94px' }} />
+        <Error style={{ marginLeft: isMobile ? '-8px' : '-23px', marginTop: isMobile ? '20px' : '24px', zIndex: '3' }} />
       )}
-      {words.length === 0 && (
-        <Error message={searchQuery ? `"${searchQuery}"에 대한 검색 결과가 없습니다.` : '등록된 단어가 없습니다.'} style={{ marginLeft: isMobile ? '-8px' : '-23px', marginTop: isMobile ? '20px' : '94px' }} />
+      {!loading && words.length === 0 && (
+        <Error message={searchQuery ? `"${searchQuery}"에 대한 검색 결과가 없습니다.` : '등록된 단어가 없습니다.'} style={{ marginLeft: isMobile ? '-8px' : '-23px', marginTop: isMobile ? '20px' : '24px', zIndex: '3' }} />
       )}
 
       <S.WordItemWrapper>

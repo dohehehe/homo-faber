@@ -44,6 +44,7 @@ export const WordPageName = styled.h1`
   transform-origin: top left;
   top: 17px;
   left: 30px;
+  z-index: 3;
 
   ${theme.media.mobile} { 
     transform: rotate(0deg);
