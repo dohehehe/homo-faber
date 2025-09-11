@@ -17,12 +17,12 @@ export default function Navigation() {
   const { user, loading } = useAuth();
 
   const links = [
-    { href: '/', label: 'Home' },
-    { href: '/store', label: 'Store' },
-    { href: '/interview', label: 'Interview' },
-    { href: '/word', label: 'Word' },
-    { href: '/info', label: 'Info' },
-    { href: user ? '/mypage' : '/login', label: user ? 'MyPage' : 'Login' },
+    { href: '/', label: '홈' },
+    { href: '/store', label: '업체' },
+    { href: '/interview', label: '인터뷰' },
+    { href: '/word', label: '용어' },
+    { href: '/info', label: '소개' },
+    { href: user ? '/mypage' : '/login', label: user ? '내정보' : '로그인' },
   ];
 
   return (
@@ -31,8 +31,6 @@ export default function Navigation() {
         position: 'fixed',
         bottom: 16,
         left: 30,
-        // left: '50%',
-        // transform: 'translateX(-50%)',
         zIndex: 1000,
         background: 'rgba(255,255,255,0.9)',
         border: '1px solid #ddd',
