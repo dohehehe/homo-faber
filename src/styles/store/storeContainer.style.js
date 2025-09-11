@@ -2,17 +2,11 @@ import styled from '@emotion/styled';
 import theme from '@/styles/Theme';
 
 export const StoreWrapper = styled.main`
-  // width: 80dvw;
-  // height: 100dvh;
   width: 100%;
   height: 100%;
   padding-left: 64px;
   padding-top: 20px;
   position: relative;
-  // position: fixed;
-  // right: ${(props) => props.isMobile ? 'unset' : props.right};
-  // bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
-  // top: ${(props) => props.isMobile ? 'unset' : '0px'};
   z-index: 2;
   background-color: var(--yellow);
   cursor: ${(props) => (props.pathname && (props.pathname !== '/' || props.pathname.startsWith('/store/'))) ? 'pointer' : 'default'};
@@ -38,8 +32,6 @@ export const StoreWrapper = styled.main`
   }
 
   ${theme.media.mobile} {
-    width: 100dvw;
-    height: 87dvh;
     padding-left: 0;
   }
 `;

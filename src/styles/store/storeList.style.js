@@ -113,14 +113,19 @@ export const BookmarkButton = styled.button`
   cursor: pointer;
   border-radius: 4px;
   transition: all 0.2s ease;
+  margin-right: -12px;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
   }
-  hsla(0, 0.00%, 0.00%, 0.05)
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
+  }
+
+  ${theme.media.mobile} {
+    margin-right: -18px;
   }
 `;
 
@@ -180,6 +185,9 @@ export const KeywordCell = styled(TableCell)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 
   ${theme.media.mobile} {
     width: calc(100dvw - 132px);

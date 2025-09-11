@@ -90,7 +90,7 @@ const StoreList = ({ stores, isLoading, error }) => {
 
                 <S.KeywordCell>
                   {Array.isArray(store.keyword) && store.keyword.length > 0
-                    ? <>{store.keyword.join(', ')}</>
+                    ? <>{store.keyword.join(', ')}<S.Line></S.Line></>
                     : <S.Line style={{ marginLeft: '-9px' }}></S.Line>}
                 </S.KeywordCell>
 
