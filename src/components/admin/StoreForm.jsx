@@ -194,12 +194,14 @@ const StoreForm = ({
 
           // 갤러리 데이터 설정
           if (store.store_gallery && store.store_gallery.length > 0) {
-            // order_num으로 정렬
-            const sortedGallery = store.store_gallery.sort((a, b) => a.order_num - b.order_num);
+            // order_num으로 정렬하고 유효한 이미지만 필터링
+            const sortedGallery = store.store_gallery
+              .sort((a, b) => a.order_num - b.order_num)
+              .filter(item => item.image_url && !item.image_url.startsWith('blob:'));
 
             const galleryData = sortedGallery.map((item, index) => ({
               id: item.id || index,
-              image_url: item.image_url || '',
+              image_url: item.image_url,
               order_num: item.order_num || index + 1,
             }));
             setValue('gallery', galleryData);
@@ -207,20 +209,32 @@ const StoreForm = ({
             // 갤러리 미리보기 설정
             const previews = {};
             galleryData.forEach((item, index) => {
-              if (item.image_url) {
-                previews[index] = item.image_url;
-              }
+              previews[index] = item.image_url;
             });
             setGalleryPreviews(previews);
+
+            // 로컬 이미지 초기화 (기존 이미지는 서버에 있으므로 로컬에는 없음)
+            setLocalImages(prev => ({
+              ...prev,
+              gallery: {}
+            }));
+          } else {
+            // 갤러리가 없는 경우 빈 배열로 초기화
+            setValue('gallery', []);
+            setGalleryPreviews({});
+            setLocalImages(prev => ({
+              ...prev,
+              gallery: {}
+            }));
           }
         }
 
         // 태그 타입들 로드
         const typesData = await getStoreTypes();
 
-        setIndustryTypes(typesData.industryTypes);
-        setCapacityTypes(typesData.capacityTypes);
-        setMaterialTypes(typesData.materialTypes);
+        setIndustryTypes(typesData.industryTypes || []);
+        setCapacityTypes(typesData.capacityTypes || []);
+        setMaterialTypes(typesData.materialTypes || []);
 
         // 폼 유효성 검사 트리거 (edit 모드에서만)
         if (formMode === 'edit') {
@@ -271,10 +285,13 @@ const StoreForm = ({
             },
           }));
 
+          // 미리보기 설정
           setGalleryPreviews((prev) => ({
             ...prev,
             [index]: imageUrl,
           }));
+
+          // create 모드에서는 폼 데이터에 URL을 저장하지 않음 (서버 업로드 후 URL을 받아서 저장)
         }
       } else {
         alert('이미지 처리에 실패했습니다: ' + result.error);
@@ -319,6 +336,7 @@ const StoreForm = ({
       // keyword 처리
       const processedKeyword = formData.keyword ? formData.keyword.split(',').map(k => k.trim()).filter(k => k) : [];
 
+
       // 스토어 데이터 준비
       const storeData = {
         name: formData.name,
@@ -343,10 +361,7 @@ const StoreForm = ({
         capacities: selectedCapacityTypes,
         industries: selectedIndustryTypes,
         materials: selectedMaterialTypes,
-        gallery: watch('gallery').filter(item => item.image_url).map((item, index) => ({
-          image_url: item.image_url,
-          order_num: index + 1
-        }))
+        gallery: [] // create 모드에서는 갤러리 데이터를 별도로 처리
       };
 
       // 이미지 파일들 준비
@@ -379,11 +394,32 @@ const StoreForm = ({
           }
         }
 
-        // 갤러리 이미지 처리
-        const processedGallery = watch('gallery').filter(item => item.image_url).map((item, index) => ({
-          image_url: item.image_url,
-          order_num: index + 1
-        }));
+        // 갤러리 이미지 처리 - 새로 업로드된 이미지와 기존 이미지 모두 처리
+        const galleryData = watch('gallery');
+        const processedGallery = [];
+
+        // 기존 이미지 URL이 있는 항목들 처리
+        galleryData.forEach((item, index) => {
+          if (item.image_url) {
+            processedGallery.push({
+              image_url: item.image_url,
+              order_num: index + 1
+            });
+          }
+        });
+
+        // 새로 업로드된 갤러리 이미지들 처리
+        const newGalleryFiles = Object.values(localImages.gallery).filter(file => file);
+        for (let i = 0; i < newGalleryFiles.length; i++) {
+          const file = newGalleryFiles[i];
+          const result = await uploadImageToServer(file);
+          if (result.success) {
+            processedGallery.push({
+              image_url: result.file.url,
+              order_num: processedGallery.length + 1
+            });
+          }
+        }
 
         const finalStoreData = {
           ...storeData,
@@ -824,6 +860,36 @@ const StoreForm = ({
                         });
 
                         setGalleryPreviews(newPreviews);
+
+                        // 로컬 이미지도 동일한 방식으로 이동
+                        const newLocalImages = {};
+                        const localImageEntries = Object.entries(localImages.gallery);
+
+                        localImageEntries.forEach(([key, value]) => {
+                          const currentIndex = parseInt(key);
+                          let newIndex = currentIndex;
+
+                          if (currentIndex === fromIndex) {
+                            newIndex = toIndex;
+                          } else if (fromIndex < toIndex) {
+                            // 앞에서 뒤로 이동
+                            if (currentIndex > fromIndex && currentIndex <= toIndex) {
+                              newIndex = currentIndex - 1;
+                            }
+                          } else {
+                            // 뒤에서 앞으로 이동
+                            if (currentIndex >= toIndex && currentIndex < fromIndex) {
+                              newIndex = currentIndex + 1;
+                            }
+                          }
+
+                          newLocalImages[newIndex] = value;
+                        });
+
+                        setLocalImages(prev => ({
+                          ...prev,
+                          gallery: newLocalImages
+                        }));
                       }
                     }}
                     onDragEnd={(e) => {
@@ -849,6 +915,22 @@ const StoreForm = ({
                               }
                             });
                             return newPreviews;
+                          });
+                          // 로컬 이미지도 함께 삭제하고 인덱스 재정렬
+                          setLocalImages(prev => {
+                            const newLocalImages = {};
+                            Object.entries(prev.gallery).forEach(([key, value]) => {
+                              const currentIndex = parseInt(key);
+                              if (currentIndex < index) {
+                                newLocalImages[currentIndex] = value;
+                              } else if (currentIndex > index) {
+                                newLocalImages[currentIndex - 1] = value;
+                              }
+                            });
+                            return {
+                              ...prev,
+                              gallery: newLocalImages
+                            };
                           });
                         }}
                       >
@@ -891,12 +973,21 @@ const StoreForm = ({
 
               <Button
                 className="create"
-                onClick={() =>
+                onClick={() => {
+                  const newIndex = galleryFields.length;
                   appendGallery({
                     image_url: '',
-                    order_num: galleryFields.length + 1,
-                  })
-                }
+                    order_num: newIndex + 1,
+                  });
+                  // 새 갤러리 항목에 대한 로컬 이미지 초기화
+                  setLocalImages(prev => ({
+                    ...prev,
+                    gallery: {
+                      ...prev.gallery,
+                      [newIndex]: null,
+                    },
+                  }));
+                }}
               >
                 + 갤러리 이미지 추가
               </Button>

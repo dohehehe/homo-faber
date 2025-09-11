@@ -27,7 +27,7 @@ export async function POST(request) {
       if (!file || file.size === 0) return null;
 
       // 이미지 압축
-      const compressedFile = await checkAndCompressImage(file, 1); // 1MB 제한
+      const compressedFile = await checkAndCompressImage(file, 0.5); // 0.5MB 제한
 
       // 파일명 생성
       const fileExt = file.name.split('.').pop();
