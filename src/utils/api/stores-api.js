@@ -19,6 +19,7 @@ export async function getStores(searchKeyword = '') {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
       },
     });
 
@@ -171,6 +172,7 @@ export async function getStoreTypes() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
       },
     });
 
