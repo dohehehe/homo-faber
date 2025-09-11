@@ -13,6 +13,7 @@ const InfoContainer = lazy(() => import('@/container/InfoContainer'));
 const LoginContainer = lazy(() => import('@/container/LoginContainer'));
 const SignupContainer = lazy(() => import('@/container/SignupContainer'));
 const MypageContainer = lazy(() => import('@/container/MypageContainer'));
+const StoreContainer = lazy(() => import('@/container/StoreContainer'));
 
 const SidePanelWrapper = styled(motion.div, {
   shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom',
@@ -47,19 +48,53 @@ function AnimatedPanel({
 }) {
   const pathname = usePathname();
   const { isMobile, isReady } = useWindowSize();
-  const [right, setRight] = useState('-81dvw');
-  const [bottom, setBottom] = useState('-100dvh');
-  const [isVisible, setIsVisible] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [right, setRight] = useState(() => {
+    if (baseRoute === 'store') {
+      return 'calc(-80dvw + 120px)';
+    }
+    return '-81dvw';
+  });
+  const [bottom, setBottom] = useState(() => {
+    if (baseRoute === 'store') {
+      return 'calc(-80dvh + 20px)';
+    }
+    return '-100dvh';
+  });
+  const [isVisible, setIsVisible] = useState(() => {
+    if (baseRoute === 'store') {
+      return true;
+    }
+    return false;
+  });
+  const [isLoaded, setIsLoaded] = useState(() => {
+    if (baseRoute === 'store') {
+      return true;
+    }
+    return false;
+  });
   const [isClient, setIsClient] = useState(false);
 
   // 현재 경로가 이 패널의 baseRoute와 일치하는지 확인
   const isActiveRoute = useMemo(() => {
+    if (baseRoute === 'store') {
+      // store는 홈(/) 또는 /store로 시작하는 라우터에서 활성화
+      return pathname === '/' || pathname.startsWith('/store');
+    }
     return pathname.startsWith(`/${baseRoute}`);
   }, [pathname, baseRoute]);
 
 
   const getMobileBottomPosition = (isActive) => {
+    if (baseRoute === 'store') {
+      if (pathname === '/') {
+        return 'calc(-80dvh + 20px)';
+      } else if (pathname.startsWith('/store')) {
+        return '0px';
+      } else {
+        return 'calc(-80dvh + 20px)';
+      }
+    }
+
     if (isActive) {
       return '0px';
     } else {
@@ -69,6 +104,16 @@ function AnimatedPanel({
 
 
   const getDesktopRightPosition = (isActive) => {
+    if (baseRoute === 'store') {
+      if (pathname === '/') {
+        return 'calc(-80dvw + 120px)';
+      } else if (pathname.startsWith('/store')) {
+        return '0px';
+      } else {
+        return 'calc(-80dvw + 120px)';
+      }
+    }
+
     if (isActive) {
       return '0';
     } else {
@@ -87,7 +132,7 @@ function AnimatedPanel({
       const newRight = getDesktopRightPosition(isActiveRoute);
       setRight(newRight);
     }
-  }, [pathname, isMobile, isReady, isActiveRoute]);
+  }, [pathname, isMobile, isReady, isActiveRoute, baseRoute]);
 
   // 클라이언트 사이드에서만 실행
   useEffect(() => {
@@ -96,6 +141,13 @@ function AnimatedPanel({
 
   useEffect(() => {
     if (!isClient) return;
+
+    // store 라우터의 경우 항상 렌더링
+    if (baseRoute === 'store') {
+      setIsVisible(true);
+      setIsLoaded(true);
+      return;
+    }
 
     // 패널이 활성화되면 렌더링 시작
     if (isActiveRoute) {
@@ -115,7 +167,7 @@ function AnimatedPanel({
 
       return () => clearTimeout(timer);
     }
-  }, [isActiveRoute, isClient]);
+  }, [isActiveRoute, isClient, baseRoute]);
 
   // baseRoute에 따라 컴포넌트 렌더링
   const renderComponent = useCallback(() => {
@@ -135,6 +187,8 @@ function AnimatedPanel({
           return SignupContainer;
         case 'mypage':
           return MypageContainer;
+        case 'store':
+          return StoreContainer;
         default:
           return null;
       }

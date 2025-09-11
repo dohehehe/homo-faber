@@ -2,18 +2,20 @@ import styled from '@emotion/styled';
 import theme from '@/styles/Theme';
 
 export const StoreWrapper = styled.main`
-  width: 80dvw;
-  height: 100dvh;
+  // width: 80dvw;
+  // height: 100dvh;
+  width: 100%;
+  height: 100%;
   padding-left: 64px;
   padding-top: 20px;
-  position: fixed;
-  right: ${(props) => props.isMobile ? 'unset' : props.right};
-  bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
-  top: ${(props) => props.isMobile ? 'unset' : '0px'};
+  position: relative;
+  // position: fixed;
+  // right: ${(props) => props.isMobile ? 'unset' : props.right};
+  // bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
+  // top: ${(props) => props.isMobile ? 'unset' : '0px'};
   z-index: 2;
   background-color: var(--yellow);
   cursor: ${(props) => (props.pathname && (props.pathname !== '/' || props.pathname.startsWith('/store/'))) ? 'pointer' : 'default'};
-  transition: ${(props) => props.isMobile ? 'bottom 0.6s cubic-bezier(0.2, 0, 0.4, 1)' : 'right 0.6s cubic-bezier(0.2, 0, 0.4, 1)'};
   display: flex;
   flex-direction: column;
   box-shadow: -2px 4px 10px 0 rgba(0,0,0,0.25);
