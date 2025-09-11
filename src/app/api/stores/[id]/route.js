@@ -223,10 +223,18 @@ export async function PUT(request, { params }) {
     // 5. 재료 타입 정보 업데이트
     if (materials) {
       // 기존 재료 타입 삭제
-      await supabase
+      const { error: deleteError } = await supabase
         .from('store_material')
         .delete()
         .eq('store_id', id);
+
+      if (deleteError) {
+        console.error('Material delete error:', deleteError);
+        return NextResponse.json(
+          { error: '기존 재료 타입 정보 삭제 중 오류가 발생했습니다.' },
+          { status: 500 }
+        );
+      }
 
       // 새 재료 타입 삽입
       if (materials.length > 0) {
@@ -240,7 +248,7 @@ export async function PUT(request, { params }) {
           .insert(materialInserts);
 
         if (materialError) {
-          console.error('Material update error:', materialError);
+          console.error('Material insert error:', materialError);
           return NextResponse.json(
             { error: '재료 타입 정보 업데이트 중 오류가 발생했습니다.' },
             { status: 500 }

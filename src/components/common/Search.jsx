@@ -25,6 +25,7 @@ const Search = ({
     searchParams.get('keyword') || '',
   );
 
+
   const handleSearch = (value) => {
     const newParams = new URLSearchParams(searchParams.toString());
     if (value) {

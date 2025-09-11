@@ -69,8 +69,16 @@ export const useImageUpload = (options = {}) => {
       // 이미지 정보 로그
       logImageInfo(file, '서버 업로드 전');
 
+      // 이미지 압축 (maxSizeInMB 초과시)
+      const compressedFile = await checkAndCompressImage(file, maxSizeInMB);
+
+      // 압축 후 이미지 정보 로그
+      if (compressedFile !== file) {
+        logImageInfo(compressedFile, '압축 후');
+      }
+
       // 서버사이드 이미지 업로드
-      const result = await uploadImageApi(file, bucket, maxSizeInMB);
+      const result = await uploadImageApi(compressedFile, bucket, maxSizeInMB);
 
       console.log('uploadImage 결과:', result);
 

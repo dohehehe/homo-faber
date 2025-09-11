@@ -542,3 +542,28 @@ export const TermsPopupConfirmButton = styled.button`
 
 
 
+export const EditWrapper = styled(motion.main, {
+  shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom'
+})`
+  width: ${(props) => props.isMobile ? '100dvw' : 'calc(80vw - 50px)'};
+  height: ${(props) => props.isMobile ? 'calc(87dvh - 47px)' : '100dvh'};
+  padding: ${(props) => props.isMobile ? '0px' : '0px 10dvw 0px 60px'};
+  background-color: #F7F7F7;
+  position: fixed;
+  right: ${(props) => props.isMobile ? 'unset' : props.right};
+  bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
+  top: ${(props) => props.isMobile ? 'unset' : '0px'};
+  z-index: 4;
+  box-shadow: -2px 0 4px 0 rgba(84,84,84,0.57);
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  }
+`

@@ -19,40 +19,40 @@ function StoreContainer() {
   const [bottom, setBottom] = useState('calc(-80dvh + 20px)');
 
   // 초기 상태 설정 및 pathname/isMobile 변경 시 업데이트
-  useLayoutEffect(() => {
-    // isReady가 false면 아직 초기값이 설정되지 않았으므로 실행하지 않음
-    if (!isReady) return;
+  // useLayoutEffect(() => {
+  //   // isReady가 false면 아직 초기값이 설정되지 않았으므로 실행하지 않음
+  //   if (!isReady) return;
 
-    if (isMobile) {
-      const newBottom = getMobileBottomPosition(pathname);
-      setBottom(newBottom);
-    } else {
-      const newRight = getDesktopRightPosition(pathname);
-      setRight(newRight);
-    }
-  }, [pathname, isMobile, isReady]);
+  //   if (isMobile) {
+  //     const newBottom = getMobileBottomPosition(pathname);
+  //     setBottom(newBottom);
+  //   } else {
+  //     const newRight = getDesktopRightPosition(pathname);
+  //     setRight(newRight);
+  //   }
+  // }, [pathname, isMobile, isReady]);
 
-  // 모바일에서 사용할 bottom 위치를 계산하는 함수
-  const getMobileBottomPosition = (pathname) => {
-    if (pathname === '/') {
-      return 'calc(-80dvh + 20px)';
-    } else if (pathname.startsWith('/store')) {
-      return '0px';
-    } else {
-      return 'calc(-80dvh + 20px)';
-    }
-  };
+  // // 모바일에서 사용할 bottom 위치를 계산하는 함수
+  // const getMobileBottomPosition = (pathname) => {
+  //   if (pathname === '/') {
+  //     return 'calc(-80dvh + 20px)';
+  //   } else if (pathname.startsWith('/store')) {
+  //     return '0px';
+  //   } else {
+  //     return 'calc(-80dvh + 20px)';
+  //   }
+  // };
 
-  // 데스크톱에서 사용할 right 위치를 계산하는 함수
-  const getDesktopRightPosition = (pathname) => {
-    if (pathname === '/') {
-      return 'calc(-80dvw + 120px)';
-    } else if (pathname.startsWith('/store')) {
-      return '0px';
-    } else {
-      return 'calc(-80dvw + 120px)';
-    }
-  };
+  // // 데스크톱에서 사용할 right 위치를 계산하는 함수
+  // const getDesktopRightPosition = (pathname) => {
+  //   if (pathname === '/') {
+  //     return 'calc(-80dvw + 120px)';
+  //   } else if (pathname.startsWith('/store')) {
+  //     return '0px';
+  //   } else {
+  //     return 'calc(-80dvw + 120px)';
+  //   }
+  // };
 
 
   // 태그 필터링을 위한 상태
@@ -145,16 +145,11 @@ function StoreContainer() {
 
   return (
     <S.StoreWrapper
-      pathname={pathname}
-      right={right}
-      bottom={bottom}
-      isMobile={isReady && isMobile}
       onClick={handleStoreWrapperClick}
+      pathname={pathname}
     >
       <S.StorePageName>업체 목록</S.StorePageName>
-      {pathname === '/store' && (
-        <Search onSearch={handleSearch} showClear={true} />
-      )}
+      <Search onSearch={handleSearch} showClear={true} />
 
       <S.StoreFilterWrapper isFilterOpen={isFilterOpen}>
         <S.StoreFilterBtn onClick={handleFilterToggle}>

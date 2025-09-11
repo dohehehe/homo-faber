@@ -3,7 +3,9 @@ import styled from '@emotion/styled';
 import { motion } from 'motion/react';
 import theme from '@/styles/Theme';
 
-export const InterviewWrapper = styled(motion.main)`
+export const InterviewWrapper = styled(motion.main, {
+  shouldForwardProp: (prop) => prop !== 'gradientCss' && prop !== 'pathname',
+})`
   width: 100%;
   height: 100%;
   padding-left: 70px;

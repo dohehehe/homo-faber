@@ -22,6 +22,7 @@ function StoreDetailContainer({ }) {
   const [right, setRight] = useState('-100dvw');
   const [bottom, setBottom] = useState('-100dvh');
   const [capacityTypes, setCapacityTypes] = useState([]);
+  const [industryTypes, setIndustryTypes] = useState([]);
   const [interviews, setInterviews] = useState([]);
   const storeId = pathname.startsWith('/store/') && pathname !== '/store' ? pathname.split('/')[2] : null;
 
@@ -30,17 +31,18 @@ function StoreDetailContainer({ }) {
   const { store, isLoading, error } = useStoreDetail(storeId);
   const { containerRef, scrollState, scrollToRatio } = useCustomScrollbar();
 
-  // capacity 타입들을 가져오는 useEffect
+  // capacity와 industry 타입들을 가져오는 useEffect
   useEffect(() => {
-    const fetchCapacityTypes = async () => {
+    const fetchTypes = async () => {
       try {
         const typesData = await getStoreTypes();
         setCapacityTypes(typesData.capacityTypes);
+        setIndustryTypes(typesData.industryTypes);
       } catch (error) {
-        console.error('Capacity types 가져오기 실패:', error);
+        console.error('Types 가져오기 실패:', error);
       }
     };
-    fetchCapacityTypes();
+    fetchTypes();
   }, []);
 
   // store와 연결된 interview들을 가져오는 useEffect
@@ -112,6 +114,15 @@ function StoreDetailContainer({ }) {
 
           <>
             <S.DetailPageName>업체 상세</S.DetailPageName>
+            {interviews.length > 0 && (
+              <S.InterviewButton
+                onClick={() => router.push(`/interview/${interviews[0].id}`)}
+              >
+                {store?.person} 기술자 인터뷰
+              </S.InterviewButton>
+            )}
+
+
             {error ? (
               <Error />
             ) : isLoading ? (
@@ -163,13 +174,14 @@ function StoreDetailContainer({ }) {
                     </S.StoreAdress>
                   )}
 
-                  {interviews.length > 0 && (
-                    <S.InterviewButton
-                      onClick={() => router.push(`/interview/${interviews[0].id}`)}
-                    >
-                      {store.person} 기술자 인터뷰 보러가기 →
-                    </S.InterviewButton>
-                  )}
+                  {/* {store.store_industry?.some(industry => industry.industry_types?.name) && (
+                    <S.StoreIndustry>
+                      {store.store_industry
+                        .map(industry => industry.industry_types?.name)
+                        .filter(Boolean)
+                        .join(' • ')}
+                    </S.StoreIndustry>
+                  )} */}
 
                   <S.StoreTagList>
                     {store.keyword?.length > 0 && (
@@ -185,7 +197,7 @@ function StoreDetailContainer({ }) {
                         .map(capacity => {
                           const capacityTypeId = capacity.capacity_types?.id;
                           if (capacityTypeId === '7346574b-f036-4be2-803b-7614a908b53c') {
-                            return '개인 • 학생 작업 가능';
+                            return '- 개인 • 학생 작업 가능 -';
                           }
                         })
                       }

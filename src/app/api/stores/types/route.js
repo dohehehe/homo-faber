@@ -57,7 +57,14 @@ export async function GET(request) {
       materialTypes: materialTypesResult.data || []
     };
 
-    return NextResponse.json({ data });
+
+    return NextResponse.json({ data }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(

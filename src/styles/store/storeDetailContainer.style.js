@@ -10,7 +10,7 @@ export const DetailWrapper = styled(motion.main, {
   height: 100dvh;
   padding: 0px 5px 0px 50px;
   background-color: #F7F7F7;
-  position: ${(props) => props.isMobile ? 'fixed' : 'absolute'};
+  position: fixed;
   right: ${(props) => props.isMobile ? 'unset' : props.right};
   bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
   top: ${(props) => props.isMobile ? 'unset' : '0px'};
@@ -22,7 +22,7 @@ export const DetailWrapper = styled(motion.main, {
   
 
   ${theme.media.mobile} {
-    width: 100dvw;
+    width: 100%;
     height: calc(87dvh - 47px);
     padding: 0px;
     overflow-y: scroll;
@@ -60,7 +60,7 @@ export const StoreDetailCard = styled.article`
 
   ${theme.media.tablet} {
     gap: 0px;
-    padding-top: 34px;
+    padding-top: 38px;
     overflow-y: scroll;
     display: block;
     -ms-overflow-style: none;
@@ -82,7 +82,7 @@ export const StoreDetailSection = styled.section`
 
   ${theme.media.tablet} {
     width: 100%;
-    padding-top: 20px 20px 0 20px;
+    padding-top: 20px;
     overflow-y: unset;
     position: static;
     display: block;
@@ -135,15 +135,16 @@ export const StoreName = styled.h2`
   }
 
   ${theme.media.tablet} {
-    font-size: 2.8em;
-    margin-bottom: 20px;
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 10px;
   }
 `;
 
 export const BookmarkButton = styled.button`
   position: absolute;
-  top: -18px;
-  right: -40px;
+  top: -22px;
+  right: -50px;
   background: none;
   border: none;
   cursor: pointer;
@@ -166,12 +167,12 @@ export const BookmarkButton = styled.button`
   }
 
   ${theme.media.tablet} {
-    right: -33px;
+    right: -43px;
   }
 `;
 
 export const BookmarkIcon = styled.span`
-  font-size: 20px;
+  font-size: 2.3rem;
   color: ${props => props.isBookmarked ? '#ff6b6b' : '#ccc'};
   transition: all 0.2s ease;
   text-shadow: 1px 1px 1px rgba(87, 13, 13, 0.68);
@@ -179,11 +180,15 @@ export const BookmarkIcon = styled.span`
   &:hover {
     color: ${props => props.isBookmarked ? '#ff5252' : '#999'};
   }
+
+  ${theme.media.tablet} {
+    font-size: 2rem;
+  }
 `;
 
 export const StoreAdress = styled.h3`
   font-size: 1.2rem;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
   font-weight: 400;
   cursor: pointer;
   line-height: 1.4;
@@ -205,21 +210,33 @@ export const StoreAdress = styled.h3`
 `
 
 export const InterviewButton = styled.button`
-  margin-top: 0px;
+  // margin-top: 6px;
   padding: 8px 0px;
-  background-color: rgba(0,0,0,0);
-  color: black;
+  background-color: transparent; 
+  color: #888;
   border: none;
   border-radius: 4px;
   font-family: var(--font-gothic);
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-left: auto;
+  // margin-left: auto;
+  position: absolute;
+  top: 110px;
+  left: 38px;
+  transform: rotate(90deg);
+  transform-origin: top left;
 
   &:hover {
-    transform: translateY(-1px);
+    text-decoration: 0.8px underline wavy;
+    text-underline-offset: 5px;
+    color: black;
+
+    &::after {
+      content: ' 보러가기';
+      // padding-left: 8px;
+    }
   }
   
   &:active {
@@ -227,22 +244,25 @@ export const InterviewButton = styled.button`
   }
 
   ${theme.media.tablet} {
-    font-size: 0.9rem;
-    padding: 10px 0px;
+    font-size: 1rem;
+    padding: unset;
     position: absolute;
     z-index: 10;
-    font-size: 1.1rem;
-    left: 17px;
-    bottom: 6px;
+    transform: unset;
+    top: 11px;
+    left: unset;
+    color: #555;
+    right: 8px;
+    
   }
 `
 
 export const StoreTagList = styled.div`
   font-size: 1.24rem;
   font-weight: 700;
-  width: 60%;
+  width: 70%;
   line-height: 1.5;
-  margin: 50px auto 10px;
+  margin: 40px auto 10px;
 
   ${theme.media.tablet} {
     font-size: 1.1rem;
@@ -269,7 +289,7 @@ export const StoreTag = styled.span`
 
 export const StoreCapacity = styled.div`
   font-weight: 700;
-  margin-top: 45px;
+  margin-top: 25px;
   font-size: 1.24rem;
 
   ${theme.media.tablet} {
@@ -278,15 +298,30 @@ export const StoreCapacity = styled.div`
   }
 `
 
+export const StoreIndustry = styled.div`
+  font-weight: 700;
+  margin-top: 30px;
+  font-size: 1.24rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  // margin-right: auto;
+  gap: 5px;
+
+  ${theme.media.tablet} {
+    font-size: 1rem;
+    margin-top: 20px;
+  }
+`
+
 export const StoreContactList = styled.div`
   display: inline-grid;
   grid-template-columns: max-content 1fr;
   gap: 8px 2px;
   width: fit-content;
-  position:absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
+  margin-top: 70px;
+  margin-right: auto;
+  padding-left: 30px;
   align-items: center;
   letter-spacing: 0.1rem;
 
@@ -294,8 +329,7 @@ export const StoreContactList = styled.div`
     margin: 60px auto 0;
     gap: 10px 0px;
     position: static;
-    left: unset;
-    transform: unset;
+    padding-left: 0px;
   }
 `
 export const StoreContact = styled.div`
@@ -359,7 +393,7 @@ export const StoreCardImg = styled.img`
 `
 export const StoreImgList = styled.div`
   width: 100%;
-  margin-top: -30px;
+  margin-top: -40px;
   padding: 0 40px 10px 40px;
   margin-bottom: 40px;
 
@@ -375,13 +409,11 @@ export const StoreImg = styled.img`
   border: 0.6px solid black;
   vertical-align: top;
   position: relative;
-  box-shadow: -1px 1px 3px 6px rgba(255,255,255,1), -2px -1px 20px 0.3px rgba(116, 116, 116, 0.63), 3px 13px 10px 1px rgba(177, 177, 177, 0.36);
   transition: all .4s ;
 
   &:hover{
     z-index: 2;
     transform: scale(1.06);
-    box-shadow: -1px 1px 3px 6px rgba(255,255,255,1), -2px -1px 30px 0.5px rgba(116, 116, 116, 0), 3px 15px 30px 0px rgba(177, 177, 177, 0.36);
   }
 
   ${theme.media.tablet} {
