@@ -14,7 +14,7 @@ export const SearchWrapper = styled.div`
 
   ${theme.media.mobile} {
     position: fixed;
-    top: 10px;
+    top: 14px;
     right: 5px;
     width: 70dvw;
     padding-right: 0;
@@ -50,6 +50,7 @@ export const SearchBox = styled.div`
     width: 100%;
     margin: 0 auto;
     animation: slideInFromRight 0.8s ease-out 1s both;
+    border-radius: 28px 10px 10px 28px;
 
     &:focus-within, &:hover {
       outline: 1px solid ${props => props.focusOutlineColor || '#FFF8B8'};
