@@ -11,7 +11,7 @@ export const NavigationIcon = styled.img`
   left: 20px;
   z-index: 1000;
   transition: all 1s ease-in-out; 
-  animation: ${props => props.isOpen ? 'breathe2 2s ease-in-out' : 'breathe 10s ease-in-out infinite'};
+  animation: ${props => props.isOpen ? 'breathe2 2s ease-in-out' : 'breathe 7s ease-in-out infinite'};
 
   &:hover {
     transform: rotate(360deg);
@@ -20,7 +20,7 @@ export const NavigationIcon = styled.img`
   }
 
   @keyframes breathe {
-    90% {
+    70% {
       transform: rotate(0deg);
     }
     100% {
@@ -48,7 +48,7 @@ export const NavigationIcon = styled.img`
 export const NavigationBg = styled.div`
     display: none;
     backdrop-filter: saturate(180%) blur(5px);
-    background: rgba(202, 202, 202, 0.57);
+    background: rgba(198, 198, 198, 0.67);
 
   ${theme.media.mobile} {
     display: ${props => props.isOpen ? 'block' : 'none'};
@@ -118,4 +118,18 @@ export const NavigationItem = styled.div`
     border-radius: 10px;
     font-size: 1.2rem;
   }
+`;
+
+export const CloseButton = styled.button`
+  position: fixed;
+  font-size: 1.8rem;
+  font-weight: 100;
+  font-family: var(--font-gothic);
+  cursor: pointer;
+  background: none;
+  top: 280px;
+  left: 36px;
+  border: none;
+  color: #222;
+  z-index: 1001;
 `;

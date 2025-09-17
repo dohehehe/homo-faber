@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import useWindowSize from '@/hooks/useWindowSize';
 import * as S from '@/styles/common/navigation.style';
 
 function isActive(pathname, href) {
@@ -20,6 +21,22 @@ export default function Navigation() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  // 클라이언트에서만 실행되도록 설정
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // 클라이언트에서만 useWindowSize 사용
+  const windowSize = useWindowSize();
+  const isMobile = isClient ? windowSize.isMobile : false;
+
+  useEffect(() => {
+    if (isClient) {
+      setIsOpen(!isMobile);
+    }
+  }, [isMobile, isClient]);
 
   const links = [
     { href: '/', label: '홈' },
@@ -58,7 +75,13 @@ export default function Navigation() {
             </Link>
           );
         })}
+        {isClient && isMobile && (
+          <S.CloseButton onClick={handleLinkClick}>
+            ✕
+          </S.CloseButton>
+        )}
       </S.NavigationWrapper>
+
     </>
   );
 }
