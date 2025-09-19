@@ -34,6 +34,22 @@ export default function ConditionalLayout() {
     return null;
   }
 
+  // isReady가 false면 로딩 상태 표시 (하이드레이션 오류 방지)
+  if (!isReady) {
+    return (
+      <>
+        <LandingPage />
+        <Map3DWrapper />
+        <AnimatedPanel baseRoute='store' />
+        <AnimatedPanel baseRoute='interview' />
+        <AnimatedPanel baseRoute='word' />
+        <AnimatedPanel baseRoute='info' />
+        <AnimatedPanel baseRoute='login' />
+        <AnimatedPanel baseRoute='signup' />
+        <AnimatedPanel baseRoute='mypage' />
+      </>
+    );
+  }
 
   return (
     <>
