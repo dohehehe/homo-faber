@@ -1,7 +1,8 @@
 'use client';
 
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import useWindowSize from '@/hooks/useWindowSize';
 import * as S from '@/styles/common/search.style';
 import SearchIcon from './SearchIcon';
 
@@ -13,6 +14,7 @@ const Search = ({
   buttonText = "검색",
   onClear,
   showClear = false,
+  isExiting = false, // AnimatedPanel에서 전달받는 언마운트 상태
   // 색상  props
   backgroundColor = '#322F18',
   textColor = '#FFF8B8',
@@ -21,10 +23,23 @@ const Search = ({
 }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { isMobile } = useWindowSize();
   const [searchKeyword, setSearchKeyword] = useState(
     searchParams.get('keyword') || '',
   );
+  const [isVisible, setIsVisible] = useState(true);
+  const [shouldRender, setShouldRender] = useState(true);
 
+  // isExiting prop이 변경될 때 애니메이션 처리
+  useEffect(() => {
+    if (isExiting) {
+      setIsVisible(false);
+      // 애니메이션 완료 후 완전히 언마운트
+      setTimeout(() => {
+        setShouldRender(false);
+      }, 800); // 애니메이션 duration과 동일
+    }
+  }, [isExiting]);
 
   const handleSearch = (value) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -61,9 +76,27 @@ const Search = ({
     }
   };
 
-  return (
-    <S.SearchWrapper>
+  if (!shouldRender) {
+    return null;
+  }
 
+  return (
+    <S.SearchWrapper
+      isMobile={isMobile}
+      initial={isMobile ? {
+        x: '100%',
+        opacity: 0
+      } : undefined}
+      animate={isMobile ? {
+        x: isVisible ? 0 : '100%',
+        opacity: isVisible ? 1 : 0
+      } : undefined}
+      transition={isMobile ? {
+        duration: 0.8,
+        ease: [0.4, 0, 0.2, 1],
+        delay: isVisible ? 1 : 0
+      } : undefined}
+    >
       <S.SearchBox
         backgroundColor={backgroundColor}
         focusOutlineColor={focusOutlineColor}
@@ -84,12 +117,10 @@ const Search = ({
           inputBackgroundColor={inputBackgroundColor}
         />
 
-
         <S.SearchIcon onClick={handleIconClick}>
           <SearchIcon color={textColor} width={15} height={15} />
         </S.SearchIcon>
       </S.SearchBox>
-
     </S.SearchWrapper>
   );
 };
