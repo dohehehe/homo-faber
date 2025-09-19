@@ -258,8 +258,9 @@ function AnimatedPanel({
   };
 
   return (
-    <AnimatePresence mode="popLayout">
+    <AnimatePresence mode="wait">
       <SidePanelWrapper
+        key={`panel-${baseRoute}`}
         onClick={onWrapperClick}
         initial={getInitialPosition()}
         animate={isMobile ? { bottom: currentBottom } : { right: currentRight }}
