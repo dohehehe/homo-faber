@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import Map3DWrapper from '@/container/Map3DWrapper';
 import AnimatedPanel from '@/components/common/AnimatedPanel';
+import LandingPage from '@/components/common/LandingPage';
 
 export default function ConditionalLayout() {
   const pathname = usePathname();
@@ -17,6 +18,7 @@ export default function ConditionalLayout() {
 
   return (
     <>
+      <LandingPage />
       <Map3DWrapper />
       <AnimatedPanel baseRoute='store' />
       <AnimatedPanel baseRoute='interview' />
