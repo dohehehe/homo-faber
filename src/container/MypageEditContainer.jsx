@@ -3,10 +3,10 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useLayoutEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { usePathname } from 'next/navigation';
 import { updateUserProfile } from '@/utils/api/user-api';
 import useWindowSize from '@/hooks/useWindowSize';
+import { AnimatePresence } from 'motion/react';
 import * as S from '@/styles/user/userContainer.style';
 
 
@@ -77,9 +77,7 @@ function MypageEditContainer({ }) {
   useEffect(() => {
     if (user) {
       setFormData({
-        name: user.user_metadata?.name || '',
-        phone: user.user_metadata?.phone || '',
-        company: user.user_metadata?.company || ''
+        name: user.user_metadata?.name || ''
       });
     }
   }, [user]);
@@ -145,6 +143,7 @@ function MypageEditContainer({ }) {
               <S.Input
                 type="text"
                 id="name"
+                name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="이름을 입력해주세요"

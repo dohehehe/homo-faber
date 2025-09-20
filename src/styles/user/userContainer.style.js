@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { motion } from 'motion/react';
 import theme from '@/styles/Theme';
 
-export const UserWrapper = styled(motion.main)`
+export const UserWrapper = styled.main`
   width: 100%;
   height: 100%;
   padding-left: 60px;
@@ -35,19 +35,18 @@ export const PageName = styled.h1`
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.3rem;
-  position: absolute;
+  position: sticky;
   transform: rotate(90deg);
   transform-origin: top left;
   top: 17px;
-  left: 27px;
-
+  margin-left: -29px;
+  
   ${theme.media.mobile} { 
     transform: rotate(0deg);
     transform-origin: top left;
-    top: 18px;
-    left:10px;
+    top: 15px;
+    margin-left: 13px;
     font-size: 1rem;
-    z-index: 3;
   }
 `;
 
