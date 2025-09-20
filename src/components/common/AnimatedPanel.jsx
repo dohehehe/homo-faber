@@ -14,6 +14,7 @@ const LoginContainer = lazy(() => import('@/container/LoginContainer'));
 const SignupContainer = lazy(() => import('@/container/SignupContainer'));
 const MypageContainer = lazy(() => import('@/container/MypageContainer'));
 const StoreContainer = lazy(() => import('@/container/StoreContainer'));
+const FnqContainer = lazy(() => import('@/container/FnqContainer'));
 
 const SidePanelWrapper = styled(motion.div, {
   shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom',
@@ -142,7 +143,7 @@ function AnimatedPanel({
       const newRight = getDesktopRightPosition(isActiveRoute);
       setRight(newRight);
     }
-  }, [pathname, isMobile, isReady, isActiveRoute, baseRoute]);
+  }, [pathname, isMobile, isReady, isActiveRoute, baseRoute, getDesktopRightPosition, getMobileBottomPosition]);
 
   // 클라이언트 사이드에서만 실행
   useEffect(() => {
@@ -214,6 +215,8 @@ function AnimatedPanel({
           return MypageContainer;
         case 'store':
           return StoreContainer;
+        case 'fnq':
+          return FnqContainer;
         default:
           return null;
       }

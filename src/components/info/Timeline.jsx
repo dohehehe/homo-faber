@@ -78,7 +78,7 @@ function Timeline() {
               </S.InfoTimelineTableTdTitle>
               {timeline.img && (
                 <S.InfoTimelineTableTdImg className='timeline-img'>
-                  <img src={timeline.img} alt={timeline.title} />
+                  <Image src={timeline.img} alt={timeline.title} width={200} height={150} />
                 </S.InfoTimelineTableTdImg >
               )}
             </S.InfoTimelineTableTr>

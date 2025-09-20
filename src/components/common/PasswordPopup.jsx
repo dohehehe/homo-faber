@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import * as S from '@/styles/user/userContainer.style';
+import * as S from '@/styles/common/popup.style';
 import { createClient } from '@/utils/supabase/client';
 
 function PasswordPopup() {
@@ -60,8 +60,8 @@ function PasswordPopup() {
   if (!isVisible) return null;
 
   return (
-    <S.ErrorPopupOverlay onClick={handleClose}>
-      <S.ErrorPopupContainer
+    <S.PopupOverlay onClick={handleClose}>
+      <S.PopupContainer
         onClick={(e) => e.stopPropagation()}
         bgColor={'rgb(156, 156, 156)'}
         borderColor={'rgb(156, 156, 156)'}
@@ -128,17 +128,17 @@ function PasswordPopup() {
           </S.FormGroup>
 
           <div>
-            <S.ErrorPopupCloseButton type="button" onClick={handleClose}>
+            <S.PopupButton type="button" onClick={handleClose}>
               취소
-            </S.ErrorPopupCloseButton>
+            </S.PopupButton>
 
-            <S.ErrorPopupCloseButton type="submit" disabled={isLoading}>
+            <S.PopupButton type="submit" disabled={isLoading}>
               {isLoading ? '처리 중...' : '비밀번호 변경'}
-            </S.ErrorPopupCloseButton>
+            </S.PopupButton>
           </div>
         </form>
-      </S.ErrorPopupContainer>
-    </S.ErrorPopupOverlay>
+      </S.PopupContainer>
+    </S.PopupOverlay>
   );
 }
 

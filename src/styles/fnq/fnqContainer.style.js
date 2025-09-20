@@ -1,37 +1,42 @@
+'use client'
+
 import styled from '@emotion/styled';
 import { motion } from 'motion/react';
 import theme from '@/styles/Theme';
 
-export const UserWrapper = styled.main`
+export const FnqWrapper = styled(motion.main)`
   width: 100%;
   height: 100dvh;
-  padding-left: 60px;
+  padding-left: 70px;
   padding-top: 27px;
   z-index: 3;
-  background:rgb(225, 225, 225);
-  overflow: hidden;
+  background:rgb(255, 255, 255);
+  cursor: ${(props) => (props.pathname && (props.pathname === '/' || props.pathname.startsWith('/interview/'))) ? 'pointer' : 'default'};
+  display: flex;
+  flex-direction: column;
   border-left: solid 3px #DADADA;
   box-shadow: -8px 4px 10px 0 rgba(0,0,0,0.25);
   font-family: var(--font-gothic);
   pointer-events: auto;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: ${props => props.overlayColor || 'linear-gradient(-200deg, rgba(211, 211, 211, 0.3) 19%, rgba(125, 128, 173, 0.2) 42%, rgba(115, 115, 115, 0.4) 95%)'};
+  position: relative;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 
   ${theme.media.mobile} { 
-    padding: 0px 0px 0px 8px;
-    height: 100%;
+    padding: 0px 0px 0px 10px;
+    height: 100dvh;
+    border-left: none;
+    box-shadow: -2px -8px 10px 0 rgba(72, 72, 72, 0.48);
+    border-top: solid 3px #DADADA;
   }
 `;
 
-export const PageName = styled.h1`
+export const FnqPageName = styled.h1`
   font-family: var(--font-gothic);
   font-size: 1rem;
   font-weight: 700;
@@ -40,16 +45,18 @@ export const PageName = styled.h1`
   transform: rotate(90deg);
   transform-origin: top left;
   top: 17px;
-  left: 29px;
+  left: 28px;
   
   ${theme.media.mobile} { 
     transform: rotate(0deg);
     transform-origin: top left;
-    top: 15px;
+    position: sticky;
+    top: 12px;
     left: 10px;
     font-size: 1rem;
+    z-index: 3;
   }
-`;
+`
 
 export const UserForm = styled.form`
   display: flex;
@@ -59,18 +66,16 @@ export const UserForm = styled.form`
   z-index: 1;
   gap: 90px;
   padding-top: 60px;
-  // justify-content: space-between;
-  height: 100%;
-  overflow-y: auto;
+  margin-top: -27px;
+  padding-top: 97px;
   padding-bottom: 100px;
   padding-left: 5px;
 
   ${theme.media.mobile} { 
     gap: 50px;
-    padding-top: 70px;
+    padding-top: 80px;
     padding-left: 0px;
     padding-right: 14px;
-    padding-bottom: 0px;
   }
 `;
 
@@ -78,7 +83,7 @@ export const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-width: 400px;
+  max-width: 530px;
   position: relative;
 
   ${theme.media.mobile} { 
@@ -96,7 +101,7 @@ export const Label = styled.label`
 
   ${theme.media.mobile} { 
     font-size: 1.4rem;
-    margin-left: -1px;
+    margin-left: 1px;
   }
 `;
 
@@ -134,8 +139,56 @@ export const Input = styled.input`
 
   ${theme.media.mobile} { 
     padding: 14px 12px 11px 12px;
+    font-size: 1rem;
+
+    &:focus {
+      padding: 13px 12px 10px 12px;
+    }
+
+    &:invalid {
+      padding: 13px 12px 10px 12px;
+      box-shadow: 0px 0px 3px 1px rgba(255, 0, 0, 0.83), inset 2px 2px 8px 0 rgb(103, 103, 103, 0.48);
+    }
+  }
+`;
+
+export const InputTextarea = styled.textarea`
+  padding: 18px 16px 15px 16px;
+  border: 1px solid #D9D9D9;
+  border-radius: 13px;
+  font-size: 1.2rem;
+  font-family: var(--font-gothic);
+  transition: border-color 0.2s ease;
+  background: #F9F9F9;
+  box-shadow: inset 1px 2px 8px 0 rgba(0, 0, 0, 0.25);
+  font-weight: 600;
+  color: #222;
+  min-height: 500px;
+  line-height: 1.6;
+  
+  &:focus {
+    outline: none;
+    border: 2px solid #D6D6D6;
+    background: #D6D6D6;
+    box-shadow: inset 2px 2px 8px 0 rgb(103, 103, 103, 0.48);
+    padding: 17px 16px 14px 16px;
+  }
+  
+  &::placeholder {
+    color: #999;
+    font-weight: 500;
+  }
+
+  &:invalid {
+    border: 2px solid rgba(214, 214, 214, 0);
+    background: #FFFFFF;
+    box-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.83), inset 2px 2px 8px 0 rgb(103, 103, 103, 0.48);
+    padding: 17px 16px 14px 16px;
+  }
+
+  ${theme.media.mobile} { 
+    padding: 14px 12px 11px 12px;
     font-size: 1.1rem;
-    margin-left: -2px;
 
     &:focus {
       padding: 13px 12px 10px 12px;
@@ -150,7 +203,7 @@ export const Input = styled.input`
 
 export const ErrorMessage = styled.p`
   position: absolute;
-  bottom: -29px;
+  bottom: -26px;
   left: 0;
   color: #dc3545;
   padding: 2px 6px;
@@ -165,11 +218,85 @@ export const ErrorMessage = styled.p`
   }
 `;
 
+export const InputInfo = styled.p`
+  font-size: 1.1rem;
+  font-family: var(--font-gothic);
+  font-weight: 700;
+  color: red;
+  margin-left: 6px;
+  line-height: 1.5;
+
+  ${theme.media.mobile} { 
+    font-size: 1rem;
+    margin-left: 1px;
+    word-break: keep-all;
+  }
+`
+
+export const InputGalleryWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-left: 6px;
+
+  ${theme.media.mobile} { 
+    padding-left:3px;
+    padding-top: 4px;
+  }
+`
+
+export const InputGalleryItem = styled.div`
+  border: 2px dashed #ddd;    
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  position: relative;
+  background-color: #fafafa;
+`
+
+export const InputGalleryItemTitle = styled.div`
+  margin-bottom: 10px;
+  font-weight: 800;
+`
+
+export const InputGalleryItemButton = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: var(--font-gothic);
+  display: flex;  
+  align-items: center;
+  justify-content: center;
+`
+export const InputGalleryItemAddButton = styled.button`
+  background:rgb(22, 171, 22);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 800;
+  margin-left: 8px;
+
+  ${theme.media.mobile} { 
+    margin-left: 4px;
+  }
+`
+
 export const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  // margin-top: auto;
   margin-bottom: 20px;
   margin-right: 40px;
   position: absolute;
@@ -179,8 +306,8 @@ export const ButtonWrapper = styled.div`
   ${theme.media.mobile} { 
     position: static;
     margin-right: 0px;
-    margin-bottom: 10px;
-    margin-top: auto;
+    margin-top: 80px;
+    margin-bottom: 20px;
   }
 `;
 
@@ -312,186 +439,3 @@ export const CheckboxError = styled(ErrorMessage)`
     left: 30px;
   }
 `;
-
-// 약관 팝업 오버레이
-export const TermsPopupOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(90, 90, 90, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1001;
-  animation: fadeIn 0.3s ease-in-out;
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`;
-
-// 약관 팝업
-export const TermsPopupContainer = styled.aside`
-  background: white;
-  border-radius: 12px;
-  margin: 20px;
-  max-width: 600px;
-  width: 100%;
-  max-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  animation: slideIn 0.3s ease-out;
-
-  @keyframes slideIn {
-    from {
-      transform: translateY(-20px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  ${theme.media.mobile} { 
-    margin: 10px;
-    max-height: 90dvh;
-  }
-`;
-
-// 약관 팝업 헤더
-export const TermsPopupHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e9ecef;
-  background: #f8f9fa;
-  border-radius: 12px 12px 0 0;
-`;
-
-// 약관 팝업 제목
-export const TermsPopupTitle = styled.h2`
-  font-family: var(--font-gothic);
-  font-size: 18px;
-  font-weight: 700;
-  color: #333;
-  margin: 0;
-
-  ${theme.media.mobile} { 
-    font-size: 16px;
-  }
-`;
-
-// 약관 팝업 닫기 버튼
-export const TermsPopupCloseButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #666;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background: #e9ecef;
-  }
-`;
-
-// 약관 팝업 내용
-export const TermsPopupContent = styled.div`
-  padding: 24px;
-  overflow-y: auto;
-  flex: 1;
-  line-height: 1.6;
-
-  ${theme.media.mobile} { 
-    padding: 16px;
-  }
-`;
-
-// 약관 팝업 텍스트
-export const TermsPopupText = styled.p`
-  font-family: var(--font-gothic);
-  font-size: 14px;
-  color: #333;
-  margin: 0 0 12px 0;
-  white-space: pre-line;
-
-  ${theme.media.mobile} { 
-    font-size: 13px;
-    margin-bottom: 10px;
-  }
-`;
-
-
-// 약관 팝업 푸터
-export const TermsPopupFooter = styled.div`
-  padding: 16px 24px;
-  border-top: 1px solid #e9ecef;
-  background: #f8f9fa;
-  border-radius: 0 0 12px 12px;
-  display: flex;
-  justify-content: center;
-
-  ${theme.media.mobile} { 
-    padding: 12px 16px;
-  }
-`;
-
-// 약관 팝업 확인 버튼
-export const TermsPopupConfirmButton = styled.button`
-  background: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 24px;
-  font-family: var(--font-gothic);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background: #c82333;
-  }
-
-  ${theme.media.mobile} { 
-    padding: 8px 20px;
-    font-size: 14px;
-  }
-`;
-
-export const EditWrapper = styled(motion.main, {
-  shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom'
-})`
-  width: ${(props) => props.isMobile ? '100dvw' : 'calc(80vw - 50px)'};
-  height: ${(props) => props.isMobile ? 'calc(87dvh - 47px)' : '100dvh'};
-  padding: ${(props) => props.isMobile ? '0px' : '0px 0px 0px 60px'};
-  background-color: #F7F7F7;
-  position: fixed;
-  right: ${(props) => props.isMobile ? 'unset' : props.right};
-  bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
-  top: ${(props) => props.isMobile ? 'unset' : '0px'};
-  z-index: 4;
-  box-shadow: -2px 0 4px 0 rgba(84,84,84,0.57);
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
-  overflow-x: hidden;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  }
-`

@@ -142,9 +142,7 @@ export const Button = styled.button`
 
 
 export const BookmarkSection = styled.div`
-  margin-top: 60px;
   margin-right: -30px;
-  // width: 90%;
 
   ${theme.media.mobile} {
     margin-top: 50px;
@@ -157,7 +155,6 @@ export const BookmarkTitle = styled.h2`
   font-weight: 800;
   transform: scaleX(0.8);
   transform-origin: left center;
-  // text-align: center;
 `;
 
 // 북마크 테이블 스타일 (storeList 스타일 참고)
@@ -186,7 +183,7 @@ export const BookmarkTable = styled.table`
   font-family: var(--font-gothic);
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
-  margin-top: 8px;
+  // margin-top: 8px;
 `;
 
 export const BookmarkTableHeader = styled.thead`
@@ -405,4 +402,40 @@ export const SuccessMessage = styled.div`
   color: #28a745;
   font-size: 12px;
   margin-top: 5px;
+`;
+
+// 탭 스타일
+export const TabContainer = styled.div`
+  display: flex;
+  margin-top: 60px;
+  justify-content: flex-start;
+  gap: 0;
+
+  ${theme.media.mobile} {
+    margin-top: 50px;
+  }
+`;
+
+export const TabButton = styled.button`
+  background: transparent;
+  border: none;
+  padding: 5px 10px 5px 5px;
+  font-size: 1.3rem;
+  font-family: var(--font-gothic);
+  font-weight: 800;
+  cursor: pointer;
+  transform: scaleX(0.8);
+  transform-origin: left center;
+  color: ${props => props.active ? '#333' : '#999'};
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #333;
+    background:var(--yellow);
+  }
+
+  ${theme.media.mobile} {
+    padding: 12px 20px;
+    font-size: 1.1rem;
+  }
 `;

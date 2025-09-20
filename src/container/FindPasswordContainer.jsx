@@ -7,8 +7,9 @@ import useWindowSize from '@/hooks/useWindowSize';
 import { AnimatePresence } from 'motion/react';
 import * as S from '@/styles/user/userContainer.style';
 import { createClient } from '@/utils/supabase/client';
+import Popup from '@/components/common/Popup';
 
-function FindPasswordContainer({}) {
+function FindPasswordContainer({ }) {
   const router = useRouter();
   const pathname = usePathname();
   const { isMobile, isReady } = useWindowSize();
@@ -141,25 +142,21 @@ function FindPasswordContainer({}) {
               />
             </S.FormGroup>
 
-            {showSuccessPopup && (
-              <S.ErrorPopupOverlay onClick={handleSuccessConfirm}>
-                <S.ErrorPopupContainer
-                  onClick={(e) => e.stopPropagation()}
-                  bgColor={'var(--yellow)'}
-                  borderColor={'rgb(255, 234, 44)'}
-                >
-                  <div style={{ color: 'black' }}>
-                    입력하신 이메일 주소로 비밀번호 재설정 링크를
-                    보내드렸습니다.
-                    <br />
-                    이메일을 확인하여 비밀번호를 재설정해주세요.
-                  </div>
-                  <S.ErrorPopupCloseButton onClick={handleSuccessConfirm}>
-                    확인
-                  </S.ErrorPopupCloseButton>
-                </S.ErrorPopupContainer>
-              </S.ErrorPopupOverlay>
-            )}
+            <Popup
+              isVisible={showSuccessPopup}
+              onClose={handleSuccessConfirm}
+              type="success"
+              bgColor={'var(--yellow)'}
+              borderColor={'rgb(255, 234, 44)'}
+              title="비밀번호 재설정 이메일 전송 완료"
+              subtitle={
+                <>
+                  입력하신 이메일 주소로 비밀번호 재설정 링크를 보내드렸습니다.
+                  <br />
+                  이메일을 확인하여 비밀번호를 재설정해주세요.
+                </>
+              }
+            />
 
             <S.ButtonWrapper>
               <S.SubmitButton

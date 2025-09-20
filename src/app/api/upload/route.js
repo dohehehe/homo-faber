@@ -29,8 +29,11 @@ export async function POST(request) {
       );
     }
 
-    // 파일 타입 검증
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    // 파일 타입 검증 (이미지와 일반 파일 모두 허용)
+    const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedDocumentTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+    const allowedTypes = [...allowedImageTypes, ...allowedDocumentTypes];
+
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
         { error: '지원하지 않는 파일 형식입니다.' },
@@ -47,8 +50,11 @@ export async function POST(request) {
       );
     }
 
-    // 이미지 압축 (서버에서 처리)
-    const compressedFile = await checkAndCompressImage(file, maxSizeInMB);
+    // 이미지 압축 (이미지 파일만)
+    let processedFile = file;
+    if (allowedImageTypes.includes(file.type)) {
+      processedFile = await checkAndCompressImage(file, maxSizeInMB);
+    }
 
     // 파일명 생성
     const fileExt = file.name.split('.').pop();
@@ -56,14 +62,21 @@ export async function POST(request) {
     const filePath = `${fileName}`;
 
     // Supabase Storage에 업로드
+    console.log('Supabase 업로드 시작:', { bucket, filePath, fileSize: processedFile.size, fileType: processedFile.type });
+
     const { error: uploadError, data } = await supabase.storage
       .from(bucket)
-      .upload(filePath, compressedFile);
+      .upload(filePath, processedFile);
 
     if (uploadError) {
       console.error('Storage upload error:', uploadError);
+      console.error('Upload error details:', {
+        message: uploadError.message,
+        statusCode: uploadError.statusCode,
+        error: uploadError.error
+      });
       return NextResponse.json(
-        { error: '이미지 업로드 중 오류가 발생했습니다.' },
+        { error: `파일 업로드 중 오류가 발생했습니다: ${uploadError.message}` },
         { status: 500 }
       );
     }
@@ -80,8 +93,8 @@ export async function POST(request) {
       data: {
         url: publicUrl,
         path: filePath,
-        name: compressedFile.name,
-        size: compressedFile.size,
+        name: processedFile.name,
+        size: processedFile.size,
         originalSize: file.size
       }
     };

@@ -44,6 +44,7 @@ export default function Navigation() {
     { href: '/interview', label: '인터뷰' },
     { href: '/word', label: '용어' },
     { href: '/info', label: '소개' },
+    { href: '/fnq', label: '견적' },
     { href: user ? '/mypage' : '/login', label: user ? '내정보' : '로그인' },
   ];
 
