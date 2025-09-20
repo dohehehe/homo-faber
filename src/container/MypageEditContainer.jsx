@@ -8,6 +8,7 @@ import { updateUserProfile } from '@/utils/api/user-api';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AnimatePresence } from 'motion/react';
 import * as S from '@/styles/user/userContainer.style';
+import DeleteAccountButton from '@/components/mypage/DeleteAccountButton';
 
 function MypageEditContainer({}) {
   const { user, loading, refreshUser } = useAuth();
@@ -16,7 +17,6 @@ function MypageEditContainer({}) {
   const { isMobile, isReady } = useWindowSize();
   const [right, setRight] = useState('-100dvw');
   const [bottom, setBottom] = useState('-100dvh');
-
   const [formData, setFormData] = useState({
     name: '',
     password: '',
@@ -151,7 +151,6 @@ function MypageEditContainer({}) {
           onClick={handleEditWrapperClick}
         >
           <S.PageName>프로필 수정</S.PageName>
-
           <S.UserForm
             onSubmit={handleSave}
             onClick={(e) => e.stopPropagation()}
@@ -168,7 +167,6 @@ function MypageEditContainer({}) {
                 disabled={isLoading}
               />
             </S.FormGroup>
-
             <S.FormGroup>
               <S.Label htmlFor="password">새 비밀번호</S.Label>
               <S.Input
@@ -181,7 +179,6 @@ function MypageEditContainer({}) {
                 disabled={isLoading}
               />
             </S.FormGroup>
-
             <S.FormGroup>
               <S.Label htmlFor="confirmPassword">새 비밀번호 확인</S.Label>
               <S.Input
@@ -205,7 +202,6 @@ function MypageEditContainer({}) {
                 </S.ErrorPopupContainer>
               </S.ErrorPopupOverlay>
             )}
-
             {success && (
               <S.ErrorPopupOverlay onClick={() => setSuccess('')}>
                 <S.ErrorPopupContainer onClick={(e) => e.stopPropagation()}>
@@ -216,7 +212,6 @@ function MypageEditContainer({}) {
                 </S.ErrorPopupContainer>
               </S.ErrorPopupOverlay>
             )}
-
             <S.ButtonWrapper>
               <S.SubmitButton
                 type="button"
@@ -231,6 +226,7 @@ function MypageEditContainer({}) {
               </S.SubmitButton>
             </S.ButtonWrapper>
           </S.UserForm>
+          <DeleteAccountButton user={user} />
         </S.EditWrapper>
       )}
     </AnimatePresence>
