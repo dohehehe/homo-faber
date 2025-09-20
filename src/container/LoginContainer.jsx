@@ -128,6 +128,9 @@ function LoginContainer({ onLoadComplete }) {
         )}
 
         <S.ButtonWrapper>
+          <S.SubmitButton type="button" onClick={() => router.push('/login/find-password')}>
+            비밀번호 찾기
+          </S.SubmitButton>
           <S.SubmitButton
             type="submit"
             disabled={isLoading}
