@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useCallback, useEffect } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import Image from 'next/image';
+import Popup from '@/components/common/Popup';
 
 function FnqContainer() {
   const { user } = useAuth();
@@ -23,7 +24,6 @@ function FnqContainer() {
   // 파일 업로드 관련 상태
   const [filePreviews, setFilePreviews] = useState({});
   const [localFiles, setLocalFiles] = useState({});
-  const [draggedIndex, setDraggedIndex] = useState(null);
 
   // 파일 업로드 훅 (gallery 버킷, 5MB 제한) - 임시로 gallery 버킷 사용
   const { processImageForPreview, uploadImageToServer } = useImageUpload({
@@ -297,7 +297,6 @@ function FnqContainer() {
       // API에 맞는 데이터 구조로 변환
       const apiData = {
         title: formData.title,
-        material: formData.material || null,
         detail: formData.detail,
         count: formData.count ? parseInt(formData.count) : null,
         due_date: formData.due_date || null,
@@ -358,28 +357,19 @@ function FnqContainer() {
 
         <S.UserForm onSubmit={handleSubmit(onSubmit)}>
           <S.FormGroup>
-            <S.Label><span style={{ color: 'red' }}>*</span>프로젝트명 </S.Label>
+            <S.Label><span style={{ color: 'red' }}>*</span> 프로젝트 이름</S.Label>
             <S.Input
               type="text"
-              placeholder="프로젝트명을 입력해주세요"
+              placeholder="프로젝트 이름을 입력해주세요 (예 스툴 제작)"
               {...register('title', {
-                required: '프로젝트명을 입력해주세요',
+                required: '프로젝트 이름을 입력해주세요',
                 minLength: {
                   value: 1,
-                  message: '프로젝트명은 1자 이상 입력해주세요'
+                  message: '프로젝트 이름을 1자 이상 입력해주세요'
                 }
               })}
             />
             {errors.title && <S.ErrorMessage>{errors.title.message}</S.ErrorMessage>}
-          </S.FormGroup>
-
-          <S.FormGroup>
-            <S.Label>요청 서비스</S.Label>
-            <S.Input
-              type="text"
-              placeholder="요청하실 서비스를 입력해주세요 (선택)"
-              {...register('material')}
-            />
           </S.FormGroup>
 
           <S.FormGroup>
@@ -407,7 +397,7 @@ function FnqContainer() {
           </S.FormGroup>
 
           <S.FormGroup>
-            <S.Label>마감일</S.Label>
+            <S.Label>납기일</S.Label>
             <S.Input
               type="date"
               {...register('due_date')}
@@ -415,10 +405,11 @@ function FnqContainer() {
           </S.FormGroup>
 
           <S.FormGroup>
-            <S.Label><span style={{ color: 'red' }}>*</span>상세내용</S.Label>
-            <S.Input
-              type="text"
-              placeholder="견적 요청에 대한 상세한 내용을 입력해주세요"
+            <S.Label><span style={{ color: 'red' }}>*</span> 상세내용</S.Label>
+            <S.InputInfo style={{ color: '#444' }}>제작 목적 및 동작 시나리오를 설명해주세요. <br />상세하게 작성할수록 기술자가 프로젝트를 이해하는데 도움이 됩니다</S.InputInfo>
+            <S.InputTextarea
+              type="textarea"
+              placeholder="프로젝트에 대한 상세한 내용을 입력해주세요"
               {...register('detail', {
                 required: '상세내용을 입력해주세요',
                 minLength: {
@@ -426,6 +417,7 @@ function FnqContainer() {
                   message: '상세내용은 10자 이상 입력해주세요'
                 }
               })}
+
             />
             {errors.detail && <S.ErrorMessage>{errors.detail.message}</S.ErrorMessage>}
           </S.FormGroup>
@@ -433,8 +425,9 @@ function FnqContainer() {
           {/* 파일 업로드 갤러리 */}
           <S.FormGroup>
             <S.Label>첨부파일</S.Label>
+            <S.InputInfo style={{ color: '#444' }}>프로젝트를 이해하는데 도움이 되는 도면 또는 스케치를 전달해주세요</S.InputInfo>
             <S.InputInfo>
-              *5MB 이상의 파일은 아래의 이메일로 전달해주세요.<br />
+              *5MB 이상의 파일은 아래의 이메일로 '프로젝트 이름'과 함께 전달해주세요.<br />
               <a href="mailto:listentothecity.org@gmail.com" style={{ fontWeight: '600' }}>(listentothecity.org@gmail.com)</a>
             </S.InputInfo>
 
@@ -535,7 +528,7 @@ function FnqContainer() {
               ))}
             </S.InputGalleryWrapper>
 
-            <button
+            <S.InputGalleryItemAddButton
               type="button"
               onClick={() => {
                 const newIndex = fileFields.length;
@@ -549,18 +542,9 @@ function FnqContainer() {
                   [newIndex]: null,
                 }));
               }}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
             >
               + 파일 추가
-            </button>
+            </S.InputGalleryItemAddButton>
           </S.FormGroup>
 
 
@@ -571,59 +555,30 @@ function FnqContainer() {
           </S.ButtonWrapper>
         </S.UserForm>
 
-        {showErrorPopup && (
-          <S.ErrorPopupOverlay onClick={closeErrorPopup}>
-            <S.ErrorPopupContainer onClick={(e) => e.stopPropagation()}>
-              <div>{error}</div>
-              <S.ErrorPopupCloseButton onClick={closeErrorPopup}>
-                확인
-              </S.ErrorPopupCloseButton>
-            </S.ErrorPopupContainer>
-          </S.ErrorPopupOverlay>
-        )}
+        <Popup
+          isVisible={showErrorPopup}
+          message={error}
+          onClose={closeErrorPopup}
+          type="error"
+        />
 
-        {showLoginRequiredPopup && (
-          <S.ErrorPopupOverlay onClick={closeLoginRequiredPopup}>
-            <S.ErrorPopupContainer
-              onClick={(e) => e.stopPropagation()}
-              bgColor="rgba(33, 150, 243, 0.9)"
-              borderColor="#2196F3"
-            >
-              <div style={{ fontSize: '18px', fontWeight: '600', marginBottom: '10px' }}>
-                로그인이 필요합니다
-              </div>
-              <div style={{ fontSize: '14px', lineHeight: '1.5', marginBottom: '20px' }}>
-                견적 요청을 하시려면 로그인 또는 회원가입이 필요합니다.<br />
-                <span style={{ color: '#4CAF50', fontWeight: '600' }}>
-                  입력하신 데이터는 임시 저장되었습니다.
-                </span>
-              </div>
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                <S.ErrorPopupCloseButton
-                  onClick={closeLoginRequiredPopup}
-                  style={{
-                    backgroundColor: '#f5f5f5',
-                    color: '#666',
-                    marginTop: '0'
-                  }}
-                >
-                  취소
-                </S.ErrorPopupCloseButton>
-                <S.ErrorPopupCloseButton
-                  onClick={handleLoginRedirect}
-                  style={{
-                    backgroundColor: '#2196F3',
-                    color: 'white',
-                    marginTop: '0'
-                  }}
-                >
-                  로그인하기
-                </S.ErrorPopupCloseButton>
-              </div>
-            </S.ErrorPopupContainer>
-          </S.ErrorPopupOverlay>
-        )}
-      </S.FnqWrapper>
+        <Popup
+          isVisible={showLoginRequiredPopup}
+          onClose={closeLoginRequiredPopup}
+          type="info"
+          title="로그인이 필요합니다"
+          subtitle={
+            <>
+              견적 요청을 하시려면 로그인 또는 회원가입이 필요합니다.<br />
+              (입력하신 데이터는 잠시간 임시 저장됩니다)
+            </>
+          }
+          buttons={[
+            { text: '취소', onClick: closeLoginRequiredPopup, variant: 'info' },
+            { text: '로그인하기', onClick: handleLoginRedirect, variant: 'primary' }
+          ]}
+        />
+      </S.FnqWrapper >
     </>
   );
 }

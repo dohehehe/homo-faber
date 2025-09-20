@@ -21,7 +21,7 @@ export async function GET(request) {
 
     // 검색 키워드가 있는 경우
     if (searchKeyword && searchKeyword.trim() !== '') {
-      query = query.or(`title.ilike.%${searchKeyword}%,material.ilike.%${searchKeyword}%,detail.ilike.%${searchKeyword}%`);
+      query = query.or(`title.ilike.%${searchKeyword}%,detail.ilike.%${searchKeyword}%`);
     }
 
     const { data, error } = await query;
@@ -63,7 +63,6 @@ export async function POST(request) {
 
     const {
       title,
-      material,
       img,
       detail,
       count,
@@ -84,7 +83,6 @@ export async function POST(request) {
       .from('fnq')
       .insert({
         title,
-        material: material || null,
         img: img || null,
         detail,
         count: count || null,
