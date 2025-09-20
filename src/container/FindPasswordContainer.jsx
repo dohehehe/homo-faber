@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AnimatePresence } from 'motion/react';
 import * as S from '@/styles/user/userContainer.style';
+import { createClient } from '@/utils/supabase/client';
 
-
-function FindPasswordContainer({ }) {
+function FindPasswordContainer({}) {
   const router = useRouter();
   const pathname = usePathname();
   const { isMobile, isReady } = useWindowSize();
@@ -20,6 +20,8 @@ function FindPasswordContainer({ }) {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+
+  const supabase = createClient();
 
   // 모바일에서 사용할 bottom 위치를 계산하는 함수
   const getMobileBottomPosition = (pathname) => {
@@ -63,9 +65,9 @@ function FindPasswordContainer({ }) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -75,11 +77,26 @@ function FindPasswordContainer({ }) {
       return;
     }
     setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        formData.email,
+        {
+          redirectTo: `${window.location.origin}/reset-password`,
+        },
+      );
 
-    // 비밀번호 재설정 이메일 전송 로직 (실제 구현 필요)
-
-    setShowSuccessPopup(true);
-    setIsLoading(false);
+      if (error) {
+        console.error('비밀번호 재설정 이메일 전송 실패:', error.message);
+        setShowErrorPopup(true);
+        setErrorMessage(error.message);
+      } else {
+        setShowSuccessPopup(true);
+      }
+    } catch (error) {
+      console.error('예상치 못한 오류:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSuccessConfirm = () => {
@@ -107,7 +124,10 @@ function FindPasswordContainer({ }) {
         >
           <S.PageName>비밀번호 찾기</S.PageName>
 
-          <S.UserForm onSubmit={handleFindPassword} onClick={(e) => e.stopPropagation()}>
+          <S.UserForm
+            onSubmit={handleFindPassword}
+            onClick={(e) => e.stopPropagation()}
+          >
             <S.FormGroup>
               <S.Label htmlFor="email">이메일</S.Label>
               <S.Input
@@ -123,10 +143,15 @@ function FindPasswordContainer({ }) {
 
             {showSuccessPopup && (
               <S.ErrorPopupOverlay onClick={handleSuccessConfirm}>
-                <S.ErrorPopupContainer onClick={(e) => e.stopPropagation()} bgColor={'var(--yellow)'} borderColor={'rgb(255, 234, 44)'}>
+                <S.ErrorPopupContainer
+                  onClick={(e) => e.stopPropagation()}
+                  bgColor={'var(--yellow)'}
+                  borderColor={'rgb(255, 234, 44)'}
+                >
                   <div style={{ color: 'black' }}>
-                    비밀번호 재설정 이메일이 전송되었습니다 <br />
-                    입력하신 이메일 주소로 비밀번호 재설정 링크를 보내드렸습니다.<br />
+                    입력하신 이메일 주소로 비밀번호 재설정 링크를
+                    보내드렸습니다.
+                    <br />
                     이메일을 확인하여 비밀번호를 재설정해주세요.
                   </div>
                   <S.ErrorPopupCloseButton onClick={handleSuccessConfirm}>
@@ -145,10 +170,7 @@ function FindPasswordContainer({ }) {
                 취소
               </S.SubmitButton>
 
-              <S.SubmitButton
-                type="submit"
-                disabled={isLoading}
-              >
+              <S.SubmitButton type="submit" disabled={isLoading}>
                 비밀번호 찾기
               </S.SubmitButton>
             </S.ButtonWrapper>
