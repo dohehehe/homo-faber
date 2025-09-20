@@ -9,8 +9,7 @@ import useWindowSize from '@/hooks/useWindowSize';
 import { AnimatePresence } from 'motion/react';
 import * as S from '@/styles/user/userContainer.style';
 
-
-function MypageEditContainer({ }) {
+function MypageEditContainer({}) {
   const { user, loading, refreshUser } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -20,6 +19,8 @@ function MypageEditContainer({ }) {
 
   const [formData, setFormData] = useState({
     name: '',
+    password: '',
+    confirmPassword: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -66,7 +67,6 @@ function MypageEditContainer({ }) {
     }
   };
 
-
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
@@ -77,16 +77,18 @@ function MypageEditContainer({ }) {
   useEffect(() => {
     if (user) {
       setFormData({
-        name: user.user_metadata?.name || ''
+        name: user.user_metadata?.name || '',
+        password: '',
+        confirmPassword: '',
       });
     }
   }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // 에러 메시지 초기화
     if (error) setError('');
@@ -96,6 +98,19 @@ function MypageEditContainer({ }) {
   const handleSave = async (e) => {
     e.preventDefault();
     if (!user) return;
+
+    // 비밀번호를 입력했을 때만 검증
+    if (formData.password || formData.confirmPassword) {
+      if (formData.password !== formData.confirmPassword) {
+        setError('새 비밀번호가 일치하지 않습니다.');
+        return;
+      }
+
+      if (formData.password.length < 6) {
+        setError('비밀번호는 최소 6자 이상이어야 합니다.');
+        return;
+      }
+    }
 
     setIsLoading(true);
     setError('');
@@ -137,7 +152,10 @@ function MypageEditContainer({ }) {
         >
           <S.PageName>프로필 수정</S.PageName>
 
-          <S.UserForm onSubmit={handleSave} onClick={(e) => e.stopPropagation()}>
+          <S.UserForm
+            onSubmit={handleSave}
+            onClick={(e) => e.stopPropagation()}
+          >
             <S.FormGroup>
               <S.Label htmlFor="name">이름</S.Label>
               <S.Input
@@ -147,6 +165,32 @@ function MypageEditContainer({ }) {
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="이름을 입력해주세요"
+                disabled={isLoading}
+              />
+            </S.FormGroup>
+
+            <S.FormGroup>
+              <S.Label htmlFor="password">새 비밀번호</S.Label>
+              <S.Input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="변경할 비밀번호를 입력해주세요"
+                disabled={isLoading}
+              />
+            </S.FormGroup>
+
+            <S.FormGroup>
+              <S.Label htmlFor="confirmPassword">새 비밀번호 확인</S.Label>
+              <S.Input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                placeholder="비밀번호를 다시 입력해주세요"
                 disabled={isLoading}
               />
             </S.FormGroup>
@@ -182,10 +226,7 @@ function MypageEditContainer({ }) {
                 취소
               </S.SubmitButton>
 
-              <S.SubmitButton
-                type="submit"
-                disabled={isLoading}
-              >
+              <S.SubmitButton type="submit" disabled={isLoading}>
                 {isLoading ? '저장 중...' : '저장'}
               </S.SubmitButton>
             </S.ButtonWrapper>
