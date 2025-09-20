@@ -4,7 +4,7 @@ import theme from '@/styles/Theme';
 
 export const UserWrapper = styled.main`
   width: 100%;
-  height: 100%;
+  height: 100dvh;
   padding-left: 60px;
   padding-top: 27px;
   z-index: 3;
@@ -35,11 +35,11 @@ export const PageName = styled.h1`
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.3rem;
-  position: sticky;
+  position: absolute;
   transform: rotate(90deg);
   transform-origin: top left;
   top: 17px;
-  margin-left: -29px;
+  left: 29px;
   
   ${theme.media.mobile} { 
     transform: rotate(0deg);
@@ -169,14 +169,14 @@ export const ButtonWrapper = styled.div`
   // margin-top: auto;
   margin-bottom: 20px;
   margin-right: 40px;
-  position: fixed;
+  position: absolute;
   bottom: 0;
-  right: 0;
-
+  right: 0px;
   
   ${theme.media.mobile} { 
     // position: static;
     // margin-top: auto;
+    position: fixed;
     margin-right: 10px;
     margin-bottom: 0px;
   }
@@ -231,8 +231,8 @@ export const ErrorPopupOverlay = styled.div`
 `;
 
 export const ErrorPopupContainer = styled.div`
-  background: rgba(222, 69, 85, 0.9);
-  border: 3px solid #dc3545;
+  background: ${props => props.bgColor || 'rgba(222, 69, 85, 0.9)'};
+  border: 3px solid ${props => props.borderColor || '#dc3545'};
   border-radius: 12px;
   padding: 24px 32px;
   margin: 20px;
@@ -546,7 +546,7 @@ export const EditWrapper = styled(motion.main, {
 })`
   width: ${(props) => props.isMobile ? '100dvw' : 'calc(80vw - 50px)'};
   height: ${(props) => props.isMobile ? 'calc(87dvh - 47px)' : '100dvh'};
-  padding: ${(props) => props.isMobile ? '0px' : '0px 10dvw 0px 60px'};
+  padding: ${(props) => props.isMobile ? '0px' : '0px 0px 0px 60px'};
   background-color: #F7F7F7;
   position: fixed;
   right: ${(props) => props.isMobile ? 'unset' : props.right};

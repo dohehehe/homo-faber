@@ -1,5 +1,3 @@
-import AnimatedPanel from '@/components/common/AnimatedPanel';
-
-export default function MyPageEdit() {
+function MyPageEdit() {
   return <></>
 }
