@@ -65,7 +65,7 @@ export const NavigationWrapper = styled.nav`
   position: fixed;
   top: 103px;
   left: 18px;
-  z-index: 1000;
+  z-index: 20;
   background: rgba(227, 227, 227, 0.7);
   border: 1px solid rgba(109, 109, 109, 0.1);
   border-radius: 12px;

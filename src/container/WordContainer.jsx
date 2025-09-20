@@ -19,7 +19,15 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
   const [cursorPositionPercent, setCursorPositionPercent] = useState({ x: 50, y: 50 });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWordIds, setSelectedWordIds] = useState(initialSelectedWordId ? [initialSelectedWordId] : []);
+  const [isExiting, setIsExiting] = useState(false);
   const { words, loading, error, searchWordsByName, fetchWords } = useWords();
+
+  // pathname 변경 시 언마운트 상태 설정
+  useEffect(() => {
+    if (!pathname.startsWith('/word')) {
+      setIsExiting(true);
+    }
+  }, [pathname]);
   const { isMobile } = useWindowSize();
   const { containerRef, scrollState, scrollToRatio } = useCustomScrollbar();
 
@@ -119,6 +127,7 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
           showClear={true}
           onSearch={handleSearch}
           onClear={handleClearSearch}
+          isExiting={isExiting}
           backgroundColor="rgba(253, 253, 253, 0.82)"
           textColor="#2E5BBA"
           inputBackgroundColor="rgba(255, 255, 255, 0)"

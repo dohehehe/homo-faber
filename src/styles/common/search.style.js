@@ -1,9 +1,12 @@
 'use client';
 
 import styled from '@emotion/styled';
+import { motion } from 'motion/react';
 import theme from '@/styles/Theme';
 
-export const SearchWrapper = styled.div`
+export const SearchWrapper = styled(motion.div, {
+  shouldForwardProp: (prop) => prop !== 'isMobile',
+})`
   width: 100%;
   padding-right: 20px;
   position: relative;
@@ -35,21 +38,9 @@ export const SearchBox = styled.div`
     outline: 2px solid ${props => props.focusOutlineColor || '#FFF8B8'};
   }
 
-  @keyframes slideInFromRight {
-    0% {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-
   ${theme.media.mobile} {
     width: 100%;
     margin: 0 auto;
-    animation: slideInFromRight 0.8s ease-out 1s both;
     border-radius: 28px 10px 10px 28px;
 
     &:focus-within, &:hover {

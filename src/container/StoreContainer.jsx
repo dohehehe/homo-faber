@@ -1,59 +1,27 @@
 'use client';
 
-import { useEffect, useState, useLayoutEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Search from '@/components/common/Search';
 import StoreFilters from '@/components/store/StoreFilters';
 import StoreList from '@/components/store/StoreList';
 import { useStores, useStoreFilters, extractAllTags } from '@/hooks/useStores';
-import useWindowSize from '@/hooks/useWindowSize';
 import * as S from '@/styles/store/storeContainer.style';
 
 function StoreContainer() {
   const pathname = usePathname();
   const router = useRouter();
   const { stores, isLoading, error } = useStores();
-  const { isMobile, isReady } = useWindowSize();
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [right, setRight] = useState('calc(-80dvw + 120px)');
-  const [bottom, setBottom] = useState('calc(-80dvh + 20px)');
+  const [isExiting, setIsExiting] = useState(false);
 
-  // 초기 상태 설정 및 pathname/isMobile 변경 시 업데이트
-  // useLayoutEffect(() => {
-  //   // isReady가 false면 아직 초기값이 설정되지 않았으므로 실행하지 않음
-  //   if (!isReady) return;
-
-  //   if (isMobile) {
-  //     const newBottom = getMobileBottomPosition(pathname);
-  //     setBottom(newBottom);
-  //   } else {
-  //     const newRight = getDesktopRightPosition(pathname);
-  //     setRight(newRight);
-  //   }
-  // }, [pathname, isMobile, isReady]);
-
-  // // 모바일에서 사용할 bottom 위치를 계산하는 함수
-  // const getMobileBottomPosition = (pathname) => {
-  //   if (pathname === '/') {
-  //     return 'calc(-80dvh + 20px)';
-  //   } else if (pathname.startsWith('/store')) {
-  //     return '0px';
-  //   } else {
-  //     return 'calc(-80dvh + 20px)';
-  //   }
-  // };
-
-  // // 데스크톱에서 사용할 right 위치를 계산하는 함수
-  // const getDesktopRightPosition = (pathname) => {
-  //   if (pathname === '/') {
-  //     return 'calc(-80dvw + 120px)';
-  //   } else if (pathname.startsWith('/store')) {
-  //     return '0px';
-  //   } else {
-  //     return 'calc(-80dvw + 120px)';
-  //   }
-  // };
-
+  // pathname 변경 시 언마운트 상태 설정
+  useEffect(() => {
+    // 홈(/)이나 /store가 아닌 다른 페이지로 이동할 때만 애니메이션 실행
+    if (pathname !== '/' && !pathname.startsWith('/store')) {
+      setIsExiting(true);
+    }
+  }, [pathname]);
 
   // 태그 필터링을 위한 상태
   const [selectedTags, setSelectedTags] = useState({
@@ -149,7 +117,7 @@ function StoreContainer() {
       pathname={pathname}
     >
       <S.StorePageName>업체 목록</S.StorePageName>
-      <Search onSearch={handleSearch} showClear={true} />
+      <Search onSearch={handleSearch} showClear={true} isExiting={isExiting} />
 
       <S.StoreFilterWrapper isFilterOpen={isFilterOpen}>
         <S.StoreFilterBtn onClick={handleFilterToggle}>

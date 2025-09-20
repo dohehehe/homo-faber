@@ -9,11 +9,12 @@ export const StoreWrapper = styled.main`
   position: relative;
   z-index: 2;
   background-color: var(--yellow);
-  cursor: ${(props) => (props.pathname && (props.pathname !== '/' || props.pathname.startsWith('/store/'))) ? 'pointer' : 'default'};
+  cursor: ${(props) => (props.pathname && (props.pathname == '/')) ? 'pointer' : 'default'};
   display: flex;
   flex-direction: column;
   box-shadow: -2px 4px 10px 0 rgba(0,0,0,0.25);
   overflow: hidden;
+  transition: transform 0.3s ease;
 
   &::before {
     content: '';
@@ -31,8 +32,16 @@ export const StoreWrapper = styled.main`
     }
   }
 
+  &:hover {
+    transform: ${(props) => (props.pathname && (props.pathname == '/')) ? 'translateX(-40px)' : 'default'};
+  }
+
   ${theme.media.mobile} {
     padding-left: 0;
+
+    &:hover{
+      transform: unset;
+    }
   }
 `;
 
