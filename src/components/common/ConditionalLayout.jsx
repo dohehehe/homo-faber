@@ -47,6 +47,7 @@ export default function ConditionalLayout() {
         <AnimatedPanel baseRoute='login' />
         <AnimatedPanel baseRoute='signup' />
         <AnimatedPanel baseRoute='mypage' />
+        <AnimatedPanel baseRoute='fnq' />
       </>
     );
   }
@@ -76,6 +77,7 @@ export default function ConditionalLayout() {
       <AnimatedPanel baseRoute='login' />
       <AnimatedPanel baseRoute='signup' />
       <AnimatedPanel baseRoute='mypage' />
+      <AnimatedPanel baseRoute='fnq' />
     </>
   );
 }

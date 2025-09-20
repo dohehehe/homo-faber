@@ -9,7 +9,7 @@ import useWindowSize from '@/hooks/useWindowSize';
 import { AnimatePresence } from 'motion/react';
 import * as S from '@/styles/user/userContainer.style';
 
-function MypageEditContainer({}) {
+function MypageEditContainer({ }) {
   const { user, loading, refreshUser } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -59,13 +59,13 @@ function MypageEditContainer({}) {
   }, [pathname, isMobile, isReady]);
 
   // 마이페이지 편집 패널 클릭 시 홈으로 이동
-  const handleEditWrapperClick = () => {
-    if (pathname === '/') {
-      router.push('/mypage/edit');
-    } else if (pathname.startsWith('/mypage/edit')) {
-      router.push('/mypage/edit');
-    }
-  };
+  // const handleEditWrapperClick = () => {
+  //   if (pathname === '/') {
+  //     router.push('/mypage/edit');
+  //   } else if (pathname.startsWith('/mypage/edit')) {
+  //     router.push('/mypage/edit');
+  //   }
+  // };
 
   useEffect(() => {
     if (!loading && !user) {
@@ -148,7 +148,7 @@ function MypageEditContainer({}) {
           animate={isMobile ? { bottom: bottom } : { right: right }}
           exit={isMobile ? { bottom: '-100dvh' } : { right: '-100dvw' }}
           transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
-          onClick={handleEditWrapperClick}
+        // onClick={handleEditWrapperClick}
         >
           <S.PageName>프로필 수정</S.PageName>
 

@@ -2,21 +2,18 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useBookmarks } from '@/hooks/useBookmarks';
-import { convertIndustryNameToKorean } from '@/utils/converters';
 import Loader from '@/components/common/Loader';
-import useWindowSize from '@/hooks/useWindowSize';
 import * as S from '@/styles/user/mypageContainer.style';
-import Link from 'next/link';
+import UserBookmarkList from '@/components/mypage/UserBookmarkList';
+import UserFnqList from '@/components/mypage/UserFnqList';
 
 function MypageContainer({ onLoadComplete }) {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const { bookmarks, loading: bookmarksLoading } = useBookmarks();
-  const { isMobile, isReady } = useWindowSize();
+  const [activeTab, setActiveTab] = useState('bookmarks');
 
 
   // 마이페이지 패널 클릭 시 홈으로 이동
@@ -49,9 +46,6 @@ function MypageContainer({ onLoadComplete }) {
     }
   };
 
-  const handleBookmarkClick = (storeId) => {
-    router.push(`/store/${storeId}`);
-  };
 
   if (loading) {
     return (
@@ -95,83 +89,28 @@ function MypageContainer({ onLoadComplete }) {
         </S.ButtonWrapper>
       </S.ProfileCard>
 
-      {/* 북마크된 가게 리스트 */}
-      <S.BookmarkSection>
-        <S.BookmarkTitle>북마크 목록</S.BookmarkTitle>
-        <S.BookmarkTableWrapper>
-          <S.BookmarkTable>
-            <S.BookmarkTableHeader>
-              <tr style={{ display: 'flex' }}>
-                <S.BookmarkTableHeaderCell style={{ width: isReady && isMobile ? '120px' : '200px' }}>이름</S.BookmarkTableHeaderCell>
-                <S.BookmarkTableHeaderCell style={{ width: isReady && isMobile ? '300px' : '572px' }}>취급 품목</S.BookmarkTableHeaderCell>
-                {isReady && !isMobile && (
-                  <>
-                    <S.BookmarkTableHeaderCell style={{ width: '148px' }}>연락처</S.BookmarkTableHeaderCell>
-                    <S.BookmarkTableHeaderCell>주소</S.BookmarkTableHeaderCell>
-                  </>
-                )}
-              </tr>
-            </S.BookmarkTableHeader>
+      {/* 탭 버튼 */}
+      <S.TabContainer>
+        <S.TabButton
+          active={activeTab === 'bookmarks'}
+          onClick={() => setActiveTab('bookmarks')}
+        >
+          북마크 목록
+        </S.TabButton>
 
-            <S.BookmarkTableBody>
-              {bookmarksLoading ? (
-                <tr>
-                  <td colSpan={isReady && isMobile ? 2 : 4}>
-                    <Loader baseColor="rgb(255, 255, 255)" style={{ marginTop: '5px' }} />
-                  </td>
-                </tr>
-              ) : bookmarks.length > 0 ? (
-                bookmarks.map((bookmark) => {
-                  const store = bookmark.stores;
-                  if (!store) return null;
+        <S.TabButton style={{ marginLeft: '-23px', pointerEvents: 'none' }}>|</S.TabButton>
 
-                  return (
-                    <S.BookmarkTableRow key={bookmark.id} onClick={() => handleBookmarkClick(store.id)}>
-                      <S.BookmarkTitleCell>
-                        <S.BookmarkName>{store.name}</S.BookmarkName>
-                        {isReady && !isMobile && (
-                          store.store_industry?.length > 0 && (
-                            <S.BookmarkIndustry>
-                              {store.store_industry
-                                .map(item => item.industry_types?.name)
-                                .filter(Boolean)
-                                .map(convertIndustryNameToKorean)
-                                .join(' • ')}
-                            </S.BookmarkIndustry>
-                          )
-                        )}
-                        <S.BookmarkLine></S.BookmarkLine>
-                      </S.BookmarkTitleCell>
+        <S.TabButton
+          style={{ marginLeft: '-5px' }}
+          active={activeTab === 'fnqs'}
+          onClick={() => setActiveTab('fnqs')}
+        >
+          견적 목록
+        </S.TabButton>
+      </S.TabContainer>
 
-                      <S.BookmarkKeywordCell>
-                        {Array.isArray(store.keyword) && store.keyword.length > 0
-                          ? <>{store.keyword.join(', ')}<S.BookmarkLine></S.BookmarkLine></>
-                          : <S.BookmarkLine style={{ marginLeft: '-9px' }}></S.BookmarkLine>}
-                      </S.BookmarkKeywordCell>
-
-                      {isReady && !isMobile && (
-                        <>
-                          <S.BookmarkContactCell>
-                            {store.store_contacts?.[0]?.phone || <S.BookmarkLine style={{ marginLeft: '-14px', marginRight: '-4px' }}></S.BookmarkLine>}
-                          </S.BookmarkContactCell>
-
-                          <S.BookmarkTableCell style={{ paddingLeft: '19px' }}>{store.address}</S.BookmarkTableCell>
-                        </>
-                      )}
-                    </S.BookmarkTableRow>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan={isReady && isMobile ? 2 : 4}>
-                    <S.NoBookmarks>북마크한 가게가 없습니다<br /><Link href="/store" style={{ paddingTop: '15px', display: 'block', fontWeight: '800' }}>- 나에게 맞는 기술자 찾으러 가기 -</Link></S.NoBookmarks>
-                  </td>
-                </tr>
-              )}
-            </S.BookmarkTableBody>
-          </S.BookmarkTable>
-        </S.BookmarkTableWrapper>
-      </S.BookmarkSection>
+      {activeTab === 'bookmarks' && <UserBookmarkList />}
+      {activeTab === 'fnqs' && <UserFnqList />}
 
     </S.MyPageWrapper>
   );

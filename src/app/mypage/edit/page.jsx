@@ -1,3 +1,3 @@
-function MyPageEdit() {
+export default function MyPageEdit() {
   return <></>
 }
