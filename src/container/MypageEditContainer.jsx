@@ -9,6 +9,7 @@ import useWindowSize from '@/hooks/useWindowSize';
 import { AnimatePresence } from 'motion/react';
 import * as S from '@/styles/user/userContainer.style';
 import DeleteAccountButton from '@/components/mypage/DeleteAccountButton';
+import Popup from '@/components/common/Popup';
 
 function MypageEditContainer({ }) {
   const { user, loading, refreshUser } = useAuth();
@@ -57,15 +58,6 @@ function MypageEditContainer({ }) {
       setRight(newRight);
     }
   }, [pathname, isMobile, isReady]);
-
-  // 마이페이지 편집 패널 클릭 시 홈으로 이동
-  // const handleEditWrapperClick = () => {
-  //   if (pathname === '/') {
-  //     router.push('/mypage/edit');
-  //   } else if (pathname.startsWith('/mypage/edit')) {
-  //     router.push('/mypage/edit');
-  //   }
-  // };
 
   useEffect(() => {
     if (!loading && !user) {
@@ -192,26 +184,19 @@ function MypageEditContainer({ }) {
               />
             </S.FormGroup>
 
-            {error && (
-              <S.ErrorPopupOverlay onClick={() => setError('')}>
-                <S.ErrorPopupContainer onClick={(e) => e.stopPropagation()}>
-                  {error}
-                  <S.ErrorPopupCloseButton onClick={() => setError('')}>
-                    확인
-                  </S.ErrorPopupCloseButton>
-                </S.ErrorPopupContainer>
-              </S.ErrorPopupOverlay>
-            )}
-            {success && (
-              <S.ErrorPopupOverlay onClick={() => setSuccess('')}>
-                <S.ErrorPopupContainer onClick={(e) => e.stopPropagation()}>
-                  {success}
-                  <S.ErrorPopupCloseButton onClick={() => setSuccess('')}>
-                    확인
-                  </S.ErrorPopupCloseButton>
-                </S.ErrorPopupContainer>
-              </S.ErrorPopupOverlay>
-            )}
+            <Popup
+              isVisible={!!error}
+              message={error}
+              onClose={() => setError('')}
+              type="error"
+            />
+            <Popup
+              isVisible={!!success}
+              message={success}
+              onClose={() => setSuccess('')}
+              type="success"
+            />
+
             <S.ButtonWrapper>
               <S.SubmitButton
                 type="button"

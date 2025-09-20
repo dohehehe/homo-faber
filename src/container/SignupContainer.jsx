@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import TermsPopup from '@/components/common/TermsPopup';
 import termsData from '@/data/terms.json';
+import Popup from '@/components/common/Popup';
 
 
 function SignupContainer({ onLoadComplete }) {
@@ -196,16 +197,12 @@ function SignupContainer({ onLoadComplete }) {
           {errors.agreement && <S.CheckboxError>{errors.agreement.message}</S.CheckboxError>}
         </S.FormGroup>
 
-        {error && (
-          <S.ErrorPopupOverlay onClick={() => setError('')}>
-            <S.ErrorPopupContainer onClick={(e) => e.stopPropagation()}>
-              {error}
-              <S.ErrorPopupCloseButton onClick={() => setError('')}>
-                확인
-              </S.ErrorPopupCloseButton>
-            </S.ErrorPopupContainer>
-          </S.ErrorPopupOverlay>
-        )}
+        <Popup
+          isVisible={!!error}
+          message={error}
+          onClose={() => setError('')}
+          type="error"
+        />
 
         <S.ButtonWrapper>
           <S.SubmitButton

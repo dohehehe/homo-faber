@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as S from '@/styles/user/userContainer.style';
 import { useAuth } from '@/contexts/AuthContext';
+import Popup from '@/components/common/Popup';
 
 export default function DeleteAccountButton({ user }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -74,48 +75,25 @@ export default function DeleteAccountButton({ user }) {
       </S.ButtonWrapper>
 
       {/* 탈퇴 확인 모달 */}
-      {showDeleteConfirm && (
-        <S.ErrorPopupOverlay onClick={() => setShowDeleteConfirm(false)}>
-          <S.ErrorPopupContainer onClick={(e) => e.stopPropagation()}>
-            <div>정말로 계정을 탈퇴하시겠습니까?</div>
-            <div style={{ fontSize: '14px', color: '#666', marginTop: '8px' }}>
-              확인을 누르면 모든 데이터가 삭제됩니다.
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                gap: '10px',
-                marginTop: '20px',
-                justifyContent: 'center',
-              }}
-            >
-              <S.ErrorPopupCloseButton
-                onClick={() => setShowDeleteConfirm(false)}
-              >
-                취소
-              </S.ErrorPopupCloseButton>
-              <S.ErrorPopupCloseButton
-                onClick={handleDeleteAccount}
-                style={{ backgroundColor: '#dc3545', color: 'white' }}
-              >
-                탈퇴하기
-              </S.ErrorPopupCloseButton>
-            </div>
-          </S.ErrorPopupContainer>
-        </S.ErrorPopupOverlay>
-      )}
+      <Popup
+        isVisible={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        type="warning"
+        title="정말로 계정을 탈퇴하시겠습니까?"
+        subtitle="확인을 누르면 모든 데이터가 삭제됩니다."
+        buttons={[
+          { text: '취소', onClick: () => setShowDeleteConfirm(false), variant: 'primary' },
+          { text: '탈퇴하기', onClick: handleDeleteAccount, variant: 'danger' }
+        ]}
+      />
 
       {/* 에러 메시지 */}
-      {error && (
-        <S.ErrorPopupOverlay onClick={() => setError('')}>
-          <S.ErrorPopupContainer onClick={(e) => e.stopPropagation()}>
-            {error}
-            <S.ErrorPopupCloseButton onClick={() => setError('')}>
-              확인
-            </S.ErrorPopupCloseButton>
-          </S.ErrorPopupContainer>
-        </S.ErrorPopupOverlay>
-      )}
+      <Popup
+        isVisible={!!error}
+        message={error}
+        onClose={() => setError('')}
+        type="error"
+      />
     </>
   );
 }

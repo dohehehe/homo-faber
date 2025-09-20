@@ -27,6 +27,7 @@ export const UserWrapper = styled.main`
 
   ${theme.media.mobile} { 
     padding: 0px 0px 0px 8px;
+    height: 100%;
   }
 `;
 
@@ -45,7 +46,7 @@ export const PageName = styled.h1`
     transform: rotate(0deg);
     transform-origin: top left;
     top: 15px;
-    margin-left: 13px;
+    left: 10px;
     font-size: 1rem;
   }
 `;
@@ -66,9 +67,10 @@ export const UserForm = styled.form`
 
   ${theme.media.mobile} { 
     gap: 50px;
-    padding-top: 50px;
+    padding-top: 70px;
     padding-left: 0px;
-    padding-right: 18px;
+    padding-right: 14px;
+    padding-bottom: 0px;
   }
 `;
 
@@ -133,6 +135,7 @@ export const Input = styled.input`
   ${theme.media.mobile} { 
     padding: 14px 12px 11px 12px;
     font-size: 1.1rem;
+    margin-left: -2px;
 
     &:focus {
       padding: 13px 12px 10px 12px;
@@ -174,11 +177,10 @@ export const ButtonWrapper = styled.div`
   right: 0px;
   
   ${theme.media.mobile} { 
-    // position: static;
-    // margin-top: auto;
-    position: fixed;
-    margin-right: 10px;
-    margin-bottom: 0px;
+    position: static;
+    margin-right: 0px;
+    margin-bottom: 10px;
+    margin-top: auto;
   }
 `;
 
@@ -207,77 +209,6 @@ export const SubmitButton = styled.button`
   }
 `;
 
-export const ErrorPopupOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(90, 90, 90, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease-in-out;
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`;
-
-export const ErrorPopupContainer = styled.div`
-  background: ${props => props.bgColor || 'rgba(222, 69, 85, 0.9)'};
-  border: 3px solid ${props => props.borderColor || '#dc3545'};
-  border-radius: 12px;
-  padding: 24px 32px;
-  margin: 20px;
-  color: white;
-  font-size: 16px;
-  font-family: var(--font-gothic);
-  font-weight: 500;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  line-height: 1.5;
-  gap: 2px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 10px 0 rgba(69, 69, 69, 0.5);
-  animation: slideIn 0.3s ease-out;
-
-  @keyframes slideIn {
-    from {
-      transform: translateY(-20px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-`;
-
-export const ErrorPopupCloseButton = styled.button`
-  background:rgb(243, 236, 236);
-  color: black;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  margin-top: 16px;
-  font-family: var(--font-gothic);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
 
 // 에러 컴포넌트 스타일 (SignupContainer에서 사용)
 export const Error = styled.div`
@@ -538,8 +469,6 @@ export const TermsPopupConfirmButton = styled.button`
     font-size: 14px;
   }
 `;
-
-
 
 export const EditWrapper = styled(motion.main, {
   shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom'
