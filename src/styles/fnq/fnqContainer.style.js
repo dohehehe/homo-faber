@@ -53,8 +53,8 @@ export const UserForm = styled.form`
   z-index: 1;
   gap: 90px;
   padding-top: 60px;
-  // justify-content: space-between;
-  height: 100%;
+  margin-top: -27px;
+  padding-top: 97px;
   overflow-y: auto;
   padding-bottom: 100px;
   padding-left: 5px;
@@ -142,7 +142,7 @@ export const Input = styled.input`
 
 export const ErrorMessage = styled.p`
   position: absolute;
-  bottom: -29px;
+  bottom: -26px;
   left: 0;
   color: #dc3545;
   padding: 2px 6px;
