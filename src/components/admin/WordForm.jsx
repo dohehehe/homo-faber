@@ -93,7 +93,7 @@ const WordForm = ({
     };
 
     loadData();
-  }, [formMode, formWordId, setValue]);
+  }, [formMode, formWordId, setValue, trigger]);
 
   const handleBack = () => {
     router.push('/admin/word');

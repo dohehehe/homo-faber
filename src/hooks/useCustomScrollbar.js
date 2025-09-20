@@ -132,7 +132,7 @@ export const useCustomScrollbar = () => {
         img.removeEventListener('error', onLoad);
       });
     };
-  }, [updateScrollState, containerRef.current]);
+  }, [updateScrollState]);
 
   return {
     containerRef,

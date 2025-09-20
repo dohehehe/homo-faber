@@ -143,7 +143,7 @@ function AnimatedPanel({
       const newRight = getDesktopRightPosition(isActiveRoute);
       setRight(newRight);
     }
-  }, [pathname, isMobile, isReady, isActiveRoute, baseRoute]);
+  }, [pathname, isMobile, isReady, isActiveRoute, baseRoute, getDesktopRightPosition, getMobileBottomPosition]);
 
   // 클라이언트 사이드에서만 실행
   useEffect(() => {

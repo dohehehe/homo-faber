@@ -249,7 +249,7 @@ const StoreForm = ({
     };
 
     loadData();
-  }, [formMode, formStoreId, setValue]);
+  }, [formMode, formStoreId, setValue, trigger]);
 
   const handleBack = () => {
     router.push('/admin/store');
@@ -439,7 +439,7 @@ const StoreForm = ({
     } finally {
       setIsSaving(false);
     }
-  }, [formMode, formStoreId, selectedIndustryTypes, selectedCapacityTypes, selectedMaterialTypes, localImages, cardImgPreview, thumbnailImgPreview, watch, router]);
+  }, [formMode, formStoreId, selectedIndustryTypes, selectedCapacityTypes, selectedMaterialTypes, localImages, cardImgPreview, thumbnailImgPreview, watch, router, uploadImageToServer]);
 
   if (isDataLoading) {
     return (

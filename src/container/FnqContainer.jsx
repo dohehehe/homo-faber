@@ -220,7 +220,7 @@ function FnqContainer() {
     };
 
     restoreData();
-  }, [user, isDataRestored, setValue, removeFile, appendFile]);
+  }, [user, isDataRestored, setValue, removeFile, appendFile, restoreTempData]);
 
   // 파일 미리보기 처리
   const handleFilePreview = async (file, index) => {
@@ -427,7 +427,7 @@ function FnqContainer() {
             <S.Label>첨부파일</S.Label>
             <S.InputInfo style={{ color: '#444' }}>프로젝트를 이해하는데 도움이 되는 도면 또는 스케치를 전달해주세요</S.InputInfo>
             <S.InputInfo>
-              *5MB 이상의 파일은 아래의 이메일로 '프로젝트 이름'과 함께 전달해주세요.<br />
+              *5MB 이상의 파일은 아래의 이메일로 &apos;프로젝트 이름&apos;과 함께 전달해주세요.<br />
               <a href="mailto:listentothecity.org@gmail.com" style={{ fontWeight: '600' }}>(listentothecity.org@gmail.com)</a>
             </S.InputInfo>
 

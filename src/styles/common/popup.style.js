@@ -175,3 +175,50 @@ export const PopupButton = styled.button`
     font-size: 1.1rem;
   }
 `;
+
+export const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  width: 100%;
+`;
+
+export const Label = styled.label`
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: white;
+  text-align: left;
+`;
+
+export const Input = styled.input`
+  padding: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-family: var(--font-gothic);
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+export const ErrorMessage = styled.div`
+  color: #ff6b6b;
+  font-size: 12px;
+  margin-top: 4px;
+  text-align: left;
+`;
