@@ -46,8 +46,8 @@ export const MyPageName = styled.h1`
   ${theme.media.mobile} { 
     transform: rotate(0deg);
     transform-origin: top left;
-    top: 18px;
-    left:10px;
+    top: 13px;
+    left:9px;
     font-size: 1rem;
     z-index: 3;
   }
@@ -64,12 +64,13 @@ export const ProfileCard = styled.div`
   padding-top: 20px;
 
   ${theme.media.mobile} {
-    margin-top: 40px;
+    margin-top: 60px;
     padding-top: 10px;
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
     gap: 10px;
+    margin-left: 2px;
   }
 `;
 
@@ -100,6 +101,7 @@ export const UserEmail = styled.p`
   }
 `;
 
+// 마이페이지 버튼 
 export const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -109,14 +111,12 @@ export const ButtonWrapper = styled.div`
   margin-bottom: 2px;
 
   ${theme.media.mobile} {
-    align-items: flex-end;
     margin-bottom: 0;
     gap: 5px;
-    position: fixed;
-    bottom: 4px;
-    right: 10px;
-    // top: 5px;
-    // right: 0;
+    margin-top: -126px;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
   }
 `;
 
@@ -136,29 +136,57 @@ export const Button = styled.button`
 
   ${theme.media.mobile} {
     font-size: 1rem;
-      color: #777;
+    color: #777;
+  }
+`;
+
+// 탭 스타일
+export const TabContainer = styled.div`
+  display: flex;
+  margin-top: 60px;
+  justify-content: flex-start;
+  gap: 0;
+
+  ${theme.media.mobile} {
+    margin-top: 100px;
+  }
+`;
+
+export const TabButton = styled.button`
+  background: transparent;
+  border: none;
+  padding: 5px 10px 5px 5px;
+  font-size: 1.3rem;
+  font-family: var(--font-gothic);
+  font-weight: 900;
+  cursor: pointer;
+  transform: scaleX(0.8);
+  transform-origin: left center;
+  color: ${props => props.active ? '#222' : '#999'};
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #333;
+  }
+
+  ${theme.media.mobile} {
+    padding: 6px 10px 4px 4px;
+    font-size: 1.2rem;
   }
 `;
 
 
-export const BookmarkSection = styled.div`
+// 테이블 스타일
+export const TableSection = styled.div`
   margin-right: -30px;
 
   ${theme.media.mobile} {
-    margin-top: 50px;
+    margin-right: -12px;
+    margin-left: -8px;
   }
 `;
 
-export const BookmarkTitle = styled.h2`
-  font-size: 1.3rem; 
-  font-family: var(--font-gothic);
-  font-weight: 800;
-  transform: scaleX(0.8);
-  transform-origin: left center;
-`;
-
-// 북마크 테이블 스타일 (storeList 스타일 참고)
-export const BookmarkTableWrapper = styled.article`
+export const TableWrapper = styled.article`
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
@@ -174,19 +202,19 @@ export const BookmarkTableWrapper = styled.article`
   ${theme.media.mobile} {
     padding-left: 0px;
     margin-left: 0;
+    margin-top: 3px;
   }
 `;
 
-export const BookmarkTable = styled.table`
+export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   font-family: var(--font-gothic);
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
-  // margin-top: 8px;
 `;
 
-export const BookmarkTableHeader = styled.thead`
+export const TableHeader = styled.thead`
   background-color: #A9A9A9;
   position: sticky;
   top: 0;
@@ -194,136 +222,6 @@ export const BookmarkTableHeader = styled.thead`
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
   border-top: 2px solid #333;
-`;
-
-export const BookmarkTableHeaderCell = styled.th`
-  padding: 14px 15px 13px 15px;
-  text-align: left;
-  font-size: 1.2rem;
-  font-weight: 800;
-  transform: scaleX(0.8);
-  transform-origin: left;
-  -webkit-transform: scaleX(0.8) translateZ(0);
-  transform: scaleX(0.8) translateZ(0);
-
-  ${theme.media.mobile} {
-    padding: 13px 14px 12px 14px;
-    font-size: 1rem;
-  }
-`;
-
-export const BookmarkTableBody = styled.tbody`
-  overflow-y: auto;
-  letter-spacing: 0.1rem;
-  -webkit-overflow-scrolling: touch;
-`;
-
-export const BookmarkTableRow = styled.tr`
-  padding-left: 1px;
-  display: flex;
-  align-items: center;
-  
-  &:hover {
-    background-color: #f9f9f9;
-    cursor: pointer;
-  }
-`;
-
-export const BookmarkTableCell = styled.td`
-  padding: 11px 0px 9px 0px;
-  vertical-align: middle;
-  font-size: 1.1rem;
-
-  ${theme.media.mobile} {
-    padding: 11px 0px 9px 0px;
-  }
-`;
-
-export const BookmarkTitleCell = styled(BookmarkTableCell)`
-  display: flex;
-  align-items: center;
-  padding-left: 10px;
-  letter-spacing: 0.18rem;
-  width: 201.8px;
-  overflow-x: auto;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-      display: none;
-  }
-
-  ${theme.media.mobile} {
-    width: 120px;
-    overflow-x: auto;
-    padding-left: 7px;
-  }
-`;
-
-export const BookmarkName = styled.div`
-  font-weight: 700;
-  margin-right: 12px;
-
-  ${theme.media.mobile} {
-    margin-right: 10px;
-  }
-`;
-
-export const BookmarkIndustry = styled.div`
-  margin-right: 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
-`;
-
-export const BookmarkLine = styled.div`
-  border-bottom: 1.6px dotted; 
-  flex: 1;
-`;
-
-export const BookmarkKeywordCell = styled(BookmarkTableCell)`
-  width: 570px;
-  display: block;
-  padding-left: 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  ${theme.media.mobile} {
-    width: calc(100dvw - 132px);
-    padding-left: 10px;
-    overflow-x: scroll;
-    text-overflow: unset;
-    white-space: unset;
-    -ms-overflow-style: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-`;
-
-export const BookmarkContactCell = styled(BookmarkTableCell)`
-  padding-left: 15px;
-  font-family: var(--font-abeezee);
-  letter-spacing: 0.05rem;
-  font-size: 1.14rem;
-  text-align: right;
-  padding-right: 7px;
-  width: 140px;
-
-  ${theme.media.mobile} {
-    width: 27px;
-    margin-left: -22px;
-    padding: unset;
-  }
-`;
-
-export const NoBookmarks = styled.div`
-  width: 100dvw;
-  text-align: center;
-  color: #666;
-  font-size: 14px;
-  padding: 20px;
 `;
 
 export const ProfileEditSection = styled.div`
@@ -404,38 +302,3 @@ export const SuccessMessage = styled.div`
   margin-top: 5px;
 `;
 
-// 탭 스타일
-export const TabContainer = styled.div`
-  display: flex;
-  margin-top: 60px;
-  justify-content: flex-start;
-  gap: 0;
-
-  ${theme.media.mobile} {
-    margin-top: 50px;
-  }
-`;
-
-export const TabButton = styled.button`
-  background: transparent;
-  border: none;
-  padding: 5px 10px 5px 5px;
-  font-size: 1.3rem;
-  font-family: var(--font-gothic);
-  font-weight: 800;
-  cursor: pointer;
-  transform: scaleX(0.8);
-  transform-origin: left center;
-  color: ${props => props.active ? '#333' : '#999'};
-  transition: all 0.2s ease;
-
-  &:hover {
-    color: #333;
-    background:var(--yellow);
-  }
-
-  ${theme.media.mobile} {
-    padding: 12px 20px;
-    font-size: 1.1rem;
-  }
-`;

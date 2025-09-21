@@ -5,6 +5,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback, useEffect } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import { useFnqStatuses } from '@/hooks/useFnq';
 import Image from 'next/image';
 import Popup from '@/components/common/Popup';
 
@@ -16,6 +17,9 @@ function FnqContainer() {
   const [showLoginRequiredPopup, setShowLoginRequiredPopup] = useState(false);
   const [isDataRestored, setIsDataRestored] = useState(false);
   const router = useRouter();
+
+  // fnq_status 데이터 가져오기
+  const { statuses, loading: statusesLoading, error: statusesError } = useFnqStatuses();
 
   // localStorage 키
   const TEMP_FNQ_DATA_KEY = 'temp_fnq_data';
@@ -85,7 +89,8 @@ function FnqContainer() {
         count: formData.count || '',
         budget: formData.budget || '',
         due_date: formData.due_date || '',
-        detail: formData.detail || ''
+        detail: formData.detail || '',
+        status_id: formData.status_id || null
       };
 
       // 파일 데이터 저장
@@ -301,6 +306,7 @@ function FnqContainer() {
         count: formData.count ? parseInt(formData.count) : null,
         due_date: formData.due_date || null,
         budget: formData.budget || null,
+        status_id: formData.status_id || null,
         img: uploadedFiles // 업로드된 모든 파일의 URL 배열
       };
 
@@ -394,6 +400,21 @@ function FnqContainer() {
               placeholder="예산을 입력해주세요 (선택)"
               {...register('budget')}
             />
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label>상태</S.Label>
+            <S.Input
+              as="select"
+              {...register('status_id')}
+            >
+              <option value="">상태를 선택해주세요 (선택)</option>
+              {statuses.map((status) => (
+                <option key={status.id} value={status.id}>
+                  {status.name || status.status}
+                </option>
+              ))}
+            </S.Input>
           </S.FormGroup>
 
           <S.FormGroup>

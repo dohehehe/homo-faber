@@ -4,7 +4,8 @@ import { useBookmarks } from '@/hooks/useBookmarks';
 import { convertIndustryNameToKorean } from '@/utils/converters';
 import useWindowSize from '@/hooks/useWindowSize';
 import Loader from '@/components/common/Loader';
-import * as S from '@/styles/user/mypageContainer.style';
+import * as S2 from '@/styles/user/mypageContainer.style';
+import * as S from '@/styles/user/userBookmarkList.style';
 import Link from 'next/link';
 
 function UserBookmarkList() {
@@ -17,10 +18,10 @@ function UserBookmarkList() {
   };
 
   return (
-    <S.BookmarkSection>
-      <S.BookmarkTableWrapper>
-        <S.BookmarkTable>
-          <S.BookmarkTableHeader>
+    <S2.TableSection>
+      <S2.TableWrapper>
+        <S2.Table>
+          <S2.TableHeader>
             <tr style={{ display: 'flex' }}>
               <S.BookmarkTableHeaderCell style={{ width: isReady && isMobile ? '120px' : '200px' }}>이름</S.BookmarkTableHeaderCell>
               <S.BookmarkTableHeaderCell style={{ width: isReady && isMobile ? '300px' : '572px' }}>취급 품목</S.BookmarkTableHeaderCell>
@@ -31,7 +32,7 @@ function UserBookmarkList() {
                 </>
               )}
             </tr>
-          </S.BookmarkTableHeader>
+          </S2.TableHeader>
 
           <S.BookmarkTableBody>
             {bookmarksLoading ? (
@@ -94,9 +95,9 @@ function UserBookmarkList() {
               </tr>
             )}
           </S.BookmarkTableBody>
-        </S.BookmarkTable>
-      </S.BookmarkTableWrapper>
-    </S.BookmarkSection>
+        </S2.Table>
+      </S2.TableWrapper>
+    </S2.TableSection>
   );
 }
 

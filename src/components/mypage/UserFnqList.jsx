@@ -4,7 +4,8 @@ import { useFnqs } from '@/hooks/useFnq';
 import { useAuth } from '@/contexts/AuthContext';
 import useWindowSize from '@/hooks/useWindowSize';
 import Loader from '@/components/common/Loader';
-import * as S from '@/styles/user/mypageContainer.style';
+import * as S2 from '@/styles/user/mypageContainer.style';
+import * as S from '@/styles/user/userFnqList.style';
 import Link from 'next/link';
 
 function UserFnqList() {
@@ -27,20 +28,18 @@ function UserFnqList() {
   };
 
   return (
-    <S.BookmarkSection>
-      <S.BookmarkTableWrapper>
-        <S.BookmarkTable>
-          <S.BookmarkTableHeader>
+    <S2.TableSection>
+      <S2.TableWrapper>
+        <S2.Table>
+          <S2.TableHeader>
             <tr style={{ display: 'flex' }}>
-              <S.BookmarkTableHeaderCell style={{ width: isReady && isMobile ? '120px' : '200px' }}>제목</S.BookmarkTableHeaderCell>
-              <S.BookmarkTableHeaderCell style={{ width: isReady && isMobile ? '300px' : '572px' }}>내용</S.BookmarkTableHeaderCell>
-              {isReady && !isMobile && (
-                <S.BookmarkTableHeaderCell style={{ width: '148px' }}>등록일</S.BookmarkTableHeaderCell>
-              )}
+              <S.FnqTableHeaderCell style={{ width: isReady && isMobile ? '87px' : '108px' }}>진행 상태</S.FnqTableHeaderCell>
+              <S.FnqTableHeaderCell style={{ width: isReady && isMobile ? 'unset' : '475px' }}>프로젝트 이름</S.FnqTableHeaderCell>
+              <S.FnqTableHeaderCell style={{ marginLeft: isReady && isMobile ? 'auto' : 'unset', marginRight: isReady && isMobile ? '38px' : 'usnet' }}>등록일</S.FnqTableHeaderCell>
             </tr>
-          </S.BookmarkTableHeader>
+          </S2.TableHeader>
 
-          <S.BookmarkTableBody>
+          <S.FnqTableBody>
             {fnqsLoading ? (
               <tr>
                 <td colSpan={isReady && isMobile ? 2 : 3}>
@@ -49,49 +48,40 @@ function UserFnqList() {
               </tr>
             ) : fnqs.length > 0 ? (
               fnqs.map((fnq) => (
-                <S.BookmarkTableRow key={fnq.id} onClick={() => handleFnqClick(fnq.id)}>
-                  <S.BookmarkTitleCell>
-                    <S.BookmarkName>{fnq.title}</S.BookmarkName>
-                    <S.BookmarkLine></S.BookmarkLine>
-                  </S.BookmarkTitleCell>
+                <S.FnqTableRow key={fnq.id} status={fnq.fnq_status?.name || fnq.fnq_status?.status || null} onClick={() => handleFnqClick(fnq.id)} >
+                  <S.FnqTitleCell>
+                    <S.FnqStatus status={fnq.fnq_status?.name || fnq.fnq_status?.status || '확인중'}>
+                      {fnq.fnq_status?.name || fnq.fnq_status?.status || '확인중'}
+                    </S.FnqStatus>
+                    <S.FnqLine></S.FnqLine>
+                  </S.FnqTitleCell>
 
-                  <S.BookmarkKeywordCell>
-                    {fnq.detail ? (
-                      <>
-                        {fnq.detail.length > 50
-                          ? `${fnq.detail.substring(0, 50)}...`
-                          : fnq.detail
-                        }
-                        <S.BookmarkLine></S.BookmarkLine>
-                      </>
-                    ) : (
-                      <S.BookmarkLine style={{ marginLeft: '-9px' }}></S.BookmarkLine>
-                    )}
-                  </S.BookmarkKeywordCell>
+                  <S.FnqKeywordCell>
+                    {fnq?.detail}
+                    <S.FnqLine />
+                  </S.FnqKeywordCell>
 
-                  {isReady && !isMobile && (
-                    <S.BookmarkContactCell>
-                      {fnq.created_at ? formatDate(fnq.created_at) : <S.BookmarkLine style={{ marginLeft: '-14px', marginRight: '-4px' }}></S.BookmarkLine>}
-                    </S.BookmarkContactCell>
-                  )}
-                </S.BookmarkTableRow>
+                  <S.FnqContactCell>
+                    {fnq.created_at ? formatDate(fnq.created_at) : <S.FnqLine style={{ marginLeft: '-14px', marginRight: '-4px' }}></S.FnqLine>}
+                  </S.FnqContactCell>
+                </S.FnqTableRow>
               ))
             ) : (
               <tr>
-                <td colSpan={isReady && isMobile ? 2 : 3}>
-                  <S.NoBookmarks>
-                    등록한 문의가 없습니다<br />
+                <td colSpan={3}>
+                  <S.NoFnqs>
+                    아직 문의한 프로젝트가 없습니다<br />
                     <Link href="/fnq" style={{ paddingTop: '15px', display: 'block', fontWeight: '800' }}>
-                      - 문의 등록하러 가기 -
+                      - 프로젝트 자문 구하기 -
                     </Link>
-                  </S.NoBookmarks>
+                  </S.NoFnqs>
                 </td>
               </tr>
             )}
-          </S.BookmarkTableBody>
-        </S.BookmarkTable>
-      </S.BookmarkTableWrapper>
-    </S.BookmarkSection>
+          </S.FnqTableBody>
+        </S2.Table>
+      </S2.TableWrapper>
+    </S2.TableSection >
   );
 }
 
