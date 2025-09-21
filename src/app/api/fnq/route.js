@@ -11,7 +11,14 @@ export async function GET(request) {
 
     let query = supabase
       .from('fnq')
-      .select('*')
+      .select(`
+        *,
+        fnq_status:status_id (
+          id,
+          status,
+          name
+        )
+      `)
       .order('created_at', { ascending: false });
 
     // 사용자별 필터링
@@ -67,7 +74,8 @@ export async function POST(request) {
       detail,
       count,
       due_date,
-      budget
+      budget,
+      status_id
     } = body;
 
     // 입력 검증
@@ -88,8 +96,16 @@ export async function POST(request) {
         count: count || null,
         due_date: due_date || null,
         budget: budget || null,
+        status_id: status_id || null,
       })
-      .select()
+      .select(`
+        *,
+        fnq_status:status_id (
+          id,
+          status,
+          name
+        )
+      `)
       .single();
 
     if (fnqError) {
