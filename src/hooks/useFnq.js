@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getFnqs, getFnqById, createFnq, updateFnq, deleteFnq } from '@/utils/api/fnq-api';
+import { getFnqs, getFnqById, createFnq, updateFnq, deleteFnq, getFnqStatuses } from '@/utils/api/fnq-api';
 
 export function useFnqs(searchKeyword = '', userId = null) {
   const [fnqs, setFnqs] = useState([]);
@@ -128,5 +128,40 @@ export function useFnqActions() {
     deleteFnq: deleteFnqAction,
     loading,
     error
+  };
+}
+
+export function useFnqStatuses() {
+  const [statuses, setStatuses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchStatuses = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await getFnqStatuses();
+      setStatuses(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchStatuses();
+  }, [fetchStatuses]);
+
+  const refetch = useCallback(() => {
+    fetchStatuses();
+  }, [fetchStatuses]);
+
+  return {
+    statuses,
+    loading,
+    error,
+    refetch
   };
 }

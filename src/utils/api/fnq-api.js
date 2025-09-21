@@ -165,3 +165,31 @@ export async function deleteFnq(fnqId) {
     throw error;
   }
 }
+
+/**
+ * 모든 fnq_status를 가져옵니다.
+ * @returns {Promise<Array>} fnq_status 목록
+ */
+export async function getFnqStatuses() {
+  try {
+    const response = await fetch('/api/fnq-status', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'fnq_status 목록을 불러오는 중 오류가 발생했습니다.');
+    }
+
+    const result = await response.json();
+    return result.data || [];
+  } catch (error) {
+    console.error('API Error (getFnqStatuses):', error);
+    throw error;
+  }
+}
+

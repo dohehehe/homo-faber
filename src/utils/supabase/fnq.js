@@ -5,7 +5,14 @@ export async function getFnqs(userId = null) {
 
   let query = supabase
     .from('fnq')
-    .select('*')
+    .select(`
+      *,
+      fnq_status:status_id (
+        id,
+        status,
+        name
+      )
+    `)
     .order('created_at', { ascending: false });
 
   // 사용자별 필터링
@@ -24,7 +31,14 @@ export async function getFnqById(id) {
 
   const { data, error } = await supabase
     .from('fnq')
-    .select('*')
+    .select(`
+      *,
+      fnq_status:status_id (
+        id,
+        status,
+        name
+      )
+    `)
     .eq('id', id)
     .single();
 
@@ -46,8 +60,16 @@ export async function createFnq(fnqData) {
         count: fnqData.count || null,
         due_date: fnqData.due_date || null,
         budget: fnqData.budget || null,
+        status_id: fnqData.status_id || null,
       })
-      .select()
+      .select(`
+        *,
+        fnq_status:status_id (
+          id,
+          status,
+          name
+        )
+      `)
       .single();
 
     if (fnqError) throw fnqError;
@@ -73,9 +95,17 @@ export async function updateFnq(fnqId, fnqData) {
         count: fnqData.count || null,
         due_date: fnqData.due_date || null,
         budget: fnqData.budget || null,
+        status_id: fnqData.status_id || null,
       })
       .eq('id', fnqId)
-      .select()
+      .select(`
+        *,
+        fnq_status:status_id (
+          id,
+          status,
+          name
+        )
+      `)
       .single();
 
     if (fnqError) throw fnqError;
@@ -110,7 +140,14 @@ export async function searchFnqs(searchKeyword, userId = null) {
 
   let query = supabase
     .from('fnq')
-    .select('*')
+    .select(`
+      *,
+      fnq_status:status_id (
+        id,
+        status,
+        name
+      )
+    `)
     .or(`title.ilike.%${searchKeyword}%,material.ilike.%${searchKeyword}%,detail.ilike.%${searchKeyword}%`)
     .order('created_at', { ascending: false });
 
