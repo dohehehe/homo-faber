@@ -3,10 +3,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import * as S from '@/styles/fnq/fnqContainer.style';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
-import { useFnqStatuses } from '@/hooks/useFnq';
-import Image from 'next/image';
+import Editor from '@/components/interview/Editor';
 import Popup from '@/components/common/Popup';
 
 function FnqContainer() {
@@ -18,9 +17,6 @@ function FnqContainer() {
   const [isDataRestored, setIsDataRestored] = useState(false);
   const router = useRouter();
 
-  // fnq_status 데이터 가져오기
-  const { statuses, loading: statusesLoading, error: statusesError } = useFnqStatuses();
-
   // localStorage 키
   const TEMP_FNQ_DATA_KEY = 'temp_fnq_data';
   const TEMP_FNQ_FILES_KEY = 'temp_fnq_files';
@@ -28,6 +24,10 @@ function FnqContainer() {
   // 파일 업로드 관련 상태
   const [filePreviews, setFilePreviews] = useState({});
   const [localFiles, setLocalFiles] = useState({});
+
+  // 에디터 관련 상태
+  const editorRef = useRef(null);
+  const [editorData, setEditorData] = useState({ blocks: [] });
 
   // 파일 업로드 훅 (gallery 버킷, 5MB 제한) - 임시로 gallery 버킷 사용
   const { processImageForPreview, uploadImageToServer } = useImageUpload({
@@ -89,8 +89,8 @@ function FnqContainer() {
         count: formData.count || '',
         budget: formData.budget || '',
         due_date: formData.due_date || '',
-        detail: formData.detail || '',
-        status_id: formData.status_id || null
+        status_id: formData.status_id || null,
+        editorData: editorData.blocks || editorData
       };
 
       // 파일 데이터 저장
@@ -129,10 +129,20 @@ function FnqContainer() {
       if (savedData) {
         const data = JSON.parse(savedData);
         Object.keys(data).forEach(key => {
-          if (data[key]) {
+          if (data[key] && key !== 'editorData') {
             setValue(key, data[key]);
           }
         });
+
+        // 에디터 데이터 복원
+        if (data.editorData) {
+          // blocks 배열이면 그대로 사용, 전체 객체면 blocks 추출
+          const editorBlocks = Array.isArray(data.editorData)
+            ? data.editorData
+            : data.editorData.blocks || [];
+          setEditorData({ blocks: editorBlocks });
+        }
+
         console.log('임시 데이터 복원됨:', data);
         hasData = true;
       }
@@ -202,16 +212,13 @@ function FnqContainer() {
     }
   };
 
-  // 컴포넌트 언마운트 시 로컬 URL 정리
+  // 컴포넌트 언마운트 시 로컬 URL 정리 (이제 blob URL을 사용하지 않으므로 불필요)
   useEffect(() => {
     return () => {
-      Object.values(filePreviews).forEach(url => {
-        if (url && url.startsWith('blob:')) {
-          URL.revokeObjectURL(url);
-        }
-      });
+      // 파일 미리보기가 객체 형태로 변경되어 blob URL 정리가 불필요
+      // 필요시 다른 정리 작업 수행
     };
-  }, [filePreviews]);
+  }, []);
 
   // 사용자 로그인 상태 변경 시 데이터 복원
   useEffect(() => {
@@ -227,30 +234,30 @@ function FnqContainer() {
     restoreData();
   }, [user, isDataRestored, setValue, removeFile, appendFile, restoreTempData]);
 
-  // 파일 미리보기 처리
+  // 파일 미리보기 처리 (파일명과 확장자만 저장)
   const handleFilePreview = async (file, index) => {
     try {
-      const result = await processImageForPreview(file);
-      if (result.success) {
-        const fileUrl = result.file.url;
-        const originalFile = result.file.originalFile;
+      // 파일명과 확장자 추출
+      const fileName = file.name;
+      const fileExtension = fileName.split('.').pop()?.toUpperCase() || 'FILE';
 
-        // 로컬 파일 저장
-        setLocalFiles(prev => ({
-          ...prev,
-          [index]: originalFile,
-        }));
+      // 로컬 파일 저장
+      setLocalFiles(prev => ({
+        ...prev,
+        [index]: file,
+      }));
 
-        // 미리보기 설정
-        setFilePreviews(prev => ({
-          ...prev,
-          [index]: fileUrl,
-        }));
-      } else {
-        alert('파일 처리에 실패했습니다: ' + result.error);
-      }
+      // 파일명과 확장자만 저장 (이미지 미리보기 대신)
+      setFilePreviews(prev => ({
+        ...prev,
+        [index]: {
+          name: fileName,
+          extension: fileExtension,
+          size: file.size
+        },
+      }));
     } catch (error) {
-      console.error('파일 처리 오류:', error);
+      console.error('파일 처리 중 오류:', error);
       alert('파일 처리 중 오류가 발생했습니다.');
     }
   };
@@ -282,13 +289,26 @@ function FnqContainer() {
     setError('');
 
     try {
-      // 업로드된 파일들 처리
+      // 에디터 데이터 가져오기
+      let outputData = editorData;
+      if (editorRef.current?.isReady()) {
+        const editorSaveData = await editorRef.current.save();
+        // blocks 배열만 추출
+        outputData = editorSaveData.blocks || [];
+      }
+
+      // 업로드된 파일들 처리 (URL과 파일명을 함께 저장)
       const uploadedFiles = [];
-      const filePromises = Object.values(localFiles).map(async (file) => {
+      const filePromises = Object.entries(localFiles).map(async ([index, file]) => {
         if (file) {
           const result = await uploadImageToServer(file);
           if (result.success) {
-            return result.file.url;
+            return {
+              url: result.file.url,
+              name: file.name,
+              extension: file.name.split('.').pop()?.toUpperCase() || 'FILE',
+              size: file.size
+            };
           } else {
             throw new Error('파일 업로드 실패: ' + result.error);
           }
@@ -296,18 +316,18 @@ function FnqContainer() {
         return null;
       });
 
-      const fileUrls = await Promise.all(filePromises);
-      uploadedFiles.push(...fileUrls.filter(url => url));
+      const fileData = await Promise.all(filePromises);
+      uploadedFiles.push(...fileData.filter(file => file));
 
       // API에 맞는 데이터 구조로 변환
       const apiData = {
         title: formData.title,
-        detail: formData.detail,
+        detail: outputData, // 에디터 데이터로 변경
         count: formData.count ? parseInt(formData.count) : null,
         due_date: formData.due_date || null,
         budget: formData.budget || null,
-        status_id: formData.status_id || null,
-        img: uploadedFiles // 업로드된 모든 파일의 URL 배열
+        status_id: '8d1235ef-80c3-4a9f-981c-d8ddcbab6f5d', // 기본값: 확인중 상태
+        img: uploadedFiles // 업로드된 파일 정보 배열 (url, name, extension, size 포함)
       };
 
       const response = await fetch('/api/fnq', {
@@ -403,21 +423,6 @@ function FnqContainer() {
           </S.FormGroup>
 
           <S.FormGroup>
-            <S.Label>상태</S.Label>
-            <S.Input
-              as="select"
-              {...register('status_id')}
-            >
-              <option value="">상태를 선택해주세요 (선택)</option>
-              {statuses.map((status) => (
-                <option key={status.id} value={status.id}>
-                  {status.name || status.status}
-                </option>
-              ))}
-            </S.Input>
-          </S.FormGroup>
-
-          <S.FormGroup>
             <S.Label>납기일</S.Label>
             <S.Input
               type="date"
@@ -428,19 +433,7 @@ function FnqContainer() {
           <S.FormGroup>
             <S.Label><span style={{ color: 'red' }}>*</span> 상세내용</S.Label>
             <S.InputInfo style={{ color: '#444' }}>제작 목적 및 동작 시나리오를 설명해주세요. <br />상세하게 작성할수록 기술자가 프로젝트를 이해하는데 도움이 됩니다</S.InputInfo>
-            <S.InputTextarea
-              type="textarea"
-              placeholder="프로젝트에 대한 상세한 내용을 입력해주세요"
-              {...register('detail', {
-                required: '상세내용을 입력해주세요',
-                minLength: {
-                  value: 10,
-                  message: '상세내용은 10자 이상 입력해주세요'
-                }
-              })}
-
-            />
-            {errors.detail && <S.ErrorMessage>{errors.detail.message}</S.ErrorMessage>}
+            <Editor ref={editorRef} data={editorData} />
           </S.FormGroup>
 
           {/* 파일 업로드 갤러리 */}
@@ -455,96 +448,42 @@ function FnqContainer() {
             <S.InputGalleryWrapper>
               {fileFields.map((field, index) => (
                 <S.InputGalleryItem key={field.id}>
-                  <S.InputGalleryItemTitle>파일 {index + 1}</S.InputGalleryItemTitle>
-                  <S.InputGalleryItemButton
-                    type="button"
-                    onClick={() => {
-                      removeFile(index);
-                      // 미리보기도 함께 삭제하고 인덱스 재정렬
-                      setFilePreviews(prev => {
-                        const newPreviews = {};
-                        Object.entries(prev).forEach(([key, value]) => {
-                          const currentIndex = parseInt(key);
-                          if (currentIndex < index) {
-                            newPreviews[currentIndex] = value;
-                          } else if (currentIndex > index) {
-                            newPreviews[currentIndex - 1] = value;
-                          }
-                        });
-                        return newPreviews;
-                      });
-                      // 로컬 파일도 함께 삭제하고 인덱스 재정렬
-                      setLocalFiles(prev => {
-                        const newLocalFiles = {};
-                        Object.entries(prev).forEach(([key, value]) => {
-                          const currentIndex = parseInt(key);
-                          if (currentIndex < index) {
-                            newLocalFiles[currentIndex] = value;
-                          } else if (currentIndex > index) {
-                            newLocalFiles[currentIndex - 1] = value;
-                          }
-                        });
-                        return newLocalFiles;
-                      });
-                    }}
-                  >
-                    x
-                  </S.InputGalleryItemButton>
-
-                  <div>
-                    <input
-                      id={`file.${index}`}
-                      type="file"
-                      accept="*/*"
-                      onChange={(e) => handleFileSelect(e, index)}
-                      style={{ display: 'none' }}
-                    />
-
-                    {!filePreviews[index] ? (
-                      <div
-                        onClick={() => document.getElementById(`file.${index}`).click()}
-                        style={{
-                          padding: '20px',
-                          border: '2px dashed #ccc',
-                          borderRadius: '8px',
-                          cursor: 'pointer',
-                          backgroundColor: '#f9f9f9',
-                          transition: 'all 0.2s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = '#f0f0f0';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = '#f9f9f9';
+                  <input
+                    id={`file.${index}`}
+                    type="file"
+                    accept="*/*"
+                    onChange={(e) => handleFileSelect(e, index)}
+                    style={{ display: 'none' }}
+                  />
+                  {!filePreviews[index] ? (
+                    <></>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                      <S.InputGalleryItemTitle>
+                        📄 {filePreviews[index].name}
+                      </S.InputGalleryItemTitle>
+                      <S.InputGalleryItemButton
+                        type="button"
+                        onClick={() => {
+                          // 파일 제거
+                          setFilePreviews(prev => {
+                            const newPreviews = { ...prev };
+                            delete newPreviews[index];
+                            return newPreviews;
+                          });
+                          setLocalFiles(prev => {
+                            const newFiles = { ...prev };
+                            delete newFiles[index];
+                            return newFiles;
+                          });
+                          // 파일 필드에서도 제거
+                          removeFile(index);
                         }}
                       >
-                        <div style={{ fontSize: '24px', marginBottom: '8px' }}>+</div>
-                        <div style={{ fontSize: '12px', color: '#666' }}>파일 선택</div>
-                      </div>
-                    ) : (
-                      <div style={{ position: 'relative' }}>
-                        {filePreviews[index].startsWith('blob:') ? (
-                          <Image
-                            src={filePreviews[index]}
-                            alt={`파일 ${index + 1}`}
-                            width={150}
-                            height={100}
-                            style={{ objectFit: 'cover', borderRadius: '4px' }}
-                          />
-                        ) : (
-                          <div style={{
-                            padding: '20px',
-                            backgroundColor: '#e8f4fd',
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            color: '#0066cc'
-                          }}>
-                            파일 업로드됨
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                        ×
+                      </S.InputGalleryItemButton>
+                    </div>
+                  )}
                 </S.InputGalleryItem>
               ))}
             </S.InputGalleryWrapper>
@@ -562,6 +501,14 @@ function FnqContainer() {
                   ...prev,
                   [newIndex]: null,
                 }));
+
+                // 파일 선택 다이얼로그 바로 열기
+                setTimeout(() => {
+                  const fileInput = document.getElementById(`file.${newIndex}`);
+                  if (fileInput) {
+                    fileInput.click();
+                  }
+                }, 100);
               }}
             >
               + 파일 추가

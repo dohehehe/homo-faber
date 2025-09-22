@@ -236,7 +236,7 @@ export const InputInfo = styled.p`
 export const InputGalleryWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 0px;
   padding-left: 6px;
 
   ${theme.media.mobile} { 
@@ -246,36 +246,31 @@ export const InputGalleryWrapper = styled.div`
 `
 
 export const InputGalleryItem = styled.div`
-  border: 2px dashed #ddd;    
-  border-radius: 8px;
-  padding: 15px;
-  text-align: center;
-  position: relative;
-  background-color: #fafafa;
+  // border: 2px dashed #ddd;    
+  // border-radius: 8px;
+  // padding: 15px;
+  // margin-bottom: 10px;
 `
 
 export const InputGalleryItemTitle = styled.div`
+  font-weight: 500;
+  font-size: 1.2rem;
   margin-bottom: 10px;
-  font-weight: 800;
 `
 
 export const InputGalleryItemButton = styled.button`
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #ff4444;
-  color: white;
+  background: none;
   border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  color: #dc3545;
+  font-size: 1.8rem;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: 800;
-  font-family: var(--font-gothic);
-  display: flex;  
+  padding: 0 5px;
+  margin-left: 2px;
+  display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 800;
+  font-family: var(--font-gothic);
 `
 export const InputGalleryItemAddButton = styled.button`
   background:rgb(22, 171, 22);
