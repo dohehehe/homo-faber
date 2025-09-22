@@ -7,11 +7,13 @@ import Loader from '@/components/common/Loader';
 import * as S2 from '@/styles/user/mypageContainer.style';
 import * as S from '@/styles/user/userFnqList.style';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 function UserFnqList() {
   const { user } = useAuth();
   const { isMobile, isReady } = useWindowSize();
   const { fnqs, loading: fnqsLoading } = useFnqs('', user?.id);
+  const router = useRouter();
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -23,8 +25,7 @@ function UserFnqList() {
   };
 
   const handleFnqClick = (fnqId) => {
-    // fnq 상세 페이지로 이동 (필요시 구현)
-    console.log('fnq clicked:', fnqId);
+    router.push(`/mypage/fnq/${fnqId}`);
   };
 
   return (
@@ -57,7 +58,7 @@ function UserFnqList() {
                   </S.FnqTitleCell>
 
                   <S.FnqKeywordCell>
-                    {fnq?.detail}
+                    {fnq?.title}
                     <S.FnqLine />
                   </S.FnqKeywordCell>
 

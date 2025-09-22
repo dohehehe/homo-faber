@@ -29,6 +29,21 @@ function FnqContainer() {
   const editorRef = useRef(null);
   const [editorData, setEditorData] = useState({ blocks: [] });
 
+  // 예산 포맷팅 함수
+  const formatNumber = (value) => {
+    if (!value) return '';
+    // 숫자가 아닌 문자 제거
+    const numericValue = value.replace(/[^0-9]/g, '');
+    // 천 단위 구분자 추가
+    return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  // 예산 입력 핸들러
+  const handleBudgetChange = (e) => {
+    const formattedValue = formatNumber(e.target.value);
+    setValue('budget', formattedValue);
+  };
+
   // 파일 업로드 훅 (gallery 버킷, 5MB 제한) - 임시로 gallery 버킷 사용
   const { processImageForPreview, uploadImageToServer } = useImageUpload({
     bucket: 'gallery',
@@ -130,7 +145,12 @@ function FnqContainer() {
         const data = JSON.parse(savedData);
         Object.keys(data).forEach(key => {
           if (data[key] && key !== 'editorData') {
-            setValue(key, data[key]);
+            // 예산 필드는 포맷팅 적용
+            if (key === 'budget' && typeof data[key] === 'number') {
+              setValue(key, formatNumber(data[key].toString()));
+            } else {
+              setValue(key, data[key]);
+            }
           }
         });
 
@@ -325,7 +345,7 @@ function FnqContainer() {
         detail: outputData, // 에디터 데이터로 변경
         count: formData.count ? parseInt(formData.count) : null,
         due_date: formData.due_date || null,
-        budget: formData.budget || null,
+        budget: formData.budget ? parseInt(formData.budget.replace(/,/g, '')) : null, // 쉼표 제거 후 숫자로 변환
         status_id: '8d1235ef-80c3-4a9f-981c-d8ddcbab6f5d', // 기본값: 확인중 상태
         img: uploadedFiles // 업로드된 파일 정보 배열 (url, name, extension, size 포함)
       };
@@ -419,6 +439,7 @@ function FnqContainer() {
               type="text"
               placeholder="예산을 입력해주세요 (선택)"
               {...register('budget')}
+              onChange={handleBudgetChange}
             />
           </S.FormGroup>
 
