@@ -8,7 +8,7 @@ export const MyPageWrapper = styled(motion.main)`
   padding-left: 60px;
   padding-top: 27px;
   z-index: 3;
-  background: rgb(255, 255, 255);
+  background: rgb(244, 244, 244);
   overflow: hidden;
   border-left: solid 3px #DADADA;
   box-shadow: -8px 4px 10px 0 rgba(0,0,0,0.25);

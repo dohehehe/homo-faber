@@ -64,13 +64,13 @@ export const NavigationBg = styled.div`
 export const NavigationWrapper = styled.nav`
   position: fixed;
   top: 103px;
-  left: 18px;
+  left: 16px;
   z-index: 20;
   background: rgba(227, 227, 227, 0.7);
   border: 1px solid rgba(109, 109, 109, 0.1);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-  padding: 8px 2px;
+  padding: 8px 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -103,7 +103,7 @@ export const NavigationWrapper = styled.nav`
 
 export const NavigationItem = styled.div`
   display: inline-block;
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: ${props => props.active ? 600 : 400};

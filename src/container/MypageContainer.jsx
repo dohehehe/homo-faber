@@ -15,7 +15,6 @@ function MypageContainer({ onLoadComplete }) {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState('bookmarks');
 
-
   // 마이페이지 패널 클릭 시 홈으로 이동
   const handleMypageWrapperClick = () => {
     if (pathname === '/') {
@@ -105,7 +104,7 @@ function MypageContainer({ onLoadComplete }) {
           active={activeTab === 'fnqs'}
           onClick={() => setActiveTab('fnqs')}
         >
-          견적 목록
+          문의 목록
         </S.TabButton>
       </S.TabContainer>
 

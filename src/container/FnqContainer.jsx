@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import Editor from '@/components/interview/Editor';
 import Popup from '@/components/common/Popup';
+import Link from 'next/link';
 
 function FnqContainer() {
   const { user } = useAuth();
@@ -232,14 +233,6 @@ function FnqContainer() {
     }
   };
 
-  // 컴포넌트 언마운트 시 로컬 URL 정리 (이제 blob URL을 사용하지 않으므로 불필요)
-  useEffect(() => {
-    return () => {
-      // 파일 미리보기가 객체 형태로 변경되어 blob URL 정리가 불필요
-      // 필요시 다른 정리 작업 수행
-    };
-  }, []);
-
   // 사용자 로그인 상태 변경 시 데이터 복원
   useEffect(() => {
     const restoreData = async () => {
@@ -399,9 +392,37 @@ function FnqContainer() {
   return (
     <>
       <S.FnqWrapper>
-        <S.FnqPageName>견적 요청</S.FnqPageName>
+        <S.FnqPageName>프로젝트 문의</S.FnqPageName>
 
-        <S.UserForm onSubmit={handleSubmit(onSubmit)}>
+
+        <S.FnqUserForm onSubmit={handleSubmit(onSubmit)}>
+          <S.ButtonWrapper>
+            <S.SubmitButton type="submit" disabled={isLoading}>
+              {isLoading ? '전송 중...' : '문의 하기'}
+            </S.SubmitButton>
+          </S.ButtonWrapper>
+
+          <S.FnqContext>
+            Q. 프로젝트를 어떻게 의뢰하나요?
+            <S.FnqContextItem>A. 진행 예정인 프로젝트 내용을 플랫폼에 문의해 주시면 저희가 세부 사항을 확인한 뒤 적합한 기술자를 찾아 연결해 드립니다. 복잡한 과정을 직접 거치실 필요 없이 필요한 기술자를 편리하게 만나보세요.</S.FnqContextItem>
+
+            Q. 기술자는 어떤 방식으로 연결되나요?
+            <S.FnqContextItem>A. 접수된 문의를 검토한 후 프로젝트의 성격과 필요 조건에 맞는 기술자를 선별해 안내해 드립니다. 프로젝트 특성에 따라 가장 적합한 분을 추천해 드리니 안심하고 맡겨주세요.</S.FnqContextItem>
+
+            Q. 프로젝트를 어떻게 의뢰하나요?
+            <S.FnqContextItem>A. 프로젝트 문의가 접수되면 내용을 확인한 뒤, 답변까지 보통 영업일 기준 3일~5일 정도 소요됩니다.</S.FnqContextItem>
+
+            Q. 문의 후 답변까지 얼마나 걸리나요?
+            <S.FnqContextItem>A. 진행 예정인 프로젝트 내용을 플랫폼에 문의해 주시면 저희가 세부 사항을 확인한 뒤 적합한 기술자를 찾아 연결해 드립니다. 복잡한 과정을 직접 거치실 필요 없이 필요한 기술자를 편리하게 만나보세요.</S.FnqContextItem>
+
+            Q. 문의 진행은 어떤 순서로 이뤄지나요?
+            <S.FnqContextItem>A. 프로젝트 문의는 확인중 → 중개중 → 답변완료 순서로 진행됩니다.<br /><span style={{ fontWeight: '600', color: 'red' }}>(주의) 중개중 단계에 들어가면 문의 수정이나 삭제가 불가능합니다.</span></S.FnqContextItem>
+
+            Q. 문의 내용을 변경하고 싶을 때는 어떻게 하나요?
+            <S.FnqContextItem>A. 확인중 단계라면 <Link href="/mypage" style={{ fontWeight: '600', textDecoration: 'underline', textUnderlineOffset: '5px' }}>내정보</Link> 페이지에서 직접 문의 수정이 가능합니다. 관련 요청 사항이 있으실 경우 플랫폼으로 직접 연락해주세요.</S.FnqContextItem>
+
+          </S.FnqContext>
+
           <S.FormGroup>
             <S.Label><span style={{ color: 'red' }}>*</span> 프로젝트 이름</S.Label>
             <S.Input
@@ -537,12 +558,8 @@ function FnqContainer() {
           </S.FormGroup>
 
 
-          <S.ButtonWrapper>
-            <S.SubmitButton type="submit" disabled={isLoading}>
-              {isLoading ? '전송 중...' : '견적 요청'}
-            </S.SubmitButton>
-          </S.ButtonWrapper>
-        </S.UserForm>
+
+        </S.FnqUserForm>
 
         <Popup
           isVisible={showErrorPopup}

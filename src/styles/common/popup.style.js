@@ -33,10 +33,10 @@ const getTypeStyles = (type) => {
       bgColor: 'rgba(40, 167, 69, 0.9)',
     },
     warning: {
-      bgColor: 'rgba(255, 193, 7, 0.9)',
+      bgColor: 'rgba(255, 234, 48, 0.9)',
     },
     info: {
-      bgColor: 'rgba(33, 150, 243, 0.9)',
+      bgColor: 'rgba(109, 184, 246, 0.9)',
     }
   };
   return typeStyles[type] || typeStyles.error;
@@ -56,7 +56,11 @@ export const PopupContainer = styled.div`
   border-radius: 12px;
   padding: 32px 38px;
   margin: 20px;
-  color: white;
+  color: ${props => {
+    if (props.bgColor) return 'white';
+    if (props.type === 'warning') return 'black';
+    const typeStyles = getTypeStyles(props.type);
+  }};
   font-size: 16px;
   font-family: var(--font-gothic);
   font-weight: 500;
@@ -111,6 +115,7 @@ export const PopupMessage = styled.div`
   font-size: 1.2rem;
   line-height: 1.5;
   word-break: keep-all;
+  margin-bottom: 20px;
 `
 
 export const PopupButtonContainer = styled.div`
