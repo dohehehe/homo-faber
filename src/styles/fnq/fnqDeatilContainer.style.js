@@ -8,8 +8,8 @@ export const DetailWrapper = styled(motion.main, {
 })`
   width: ${(props) => props.isMobile ? '100dvw' : 'calc(80vw - 50px)'};
   height: ${(props) => props.isMobile ? 'calc(87dvh - 47px)' : '100dvh'};
-  padding: ${(props) => props.isMobile ? '0px' : '0px 20px 0px 60px'};
-  background-color: #F7F7F7;
+  padding: ${(props) => props.isMobile ? '0px 9px' : '0px 20px 0px 60px'};
+  background-color:rgb(255, 255, 255);
   position: fixed;
   right: ${(props) => props.isMobile ? 'unset' : props.right};
   bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
@@ -38,12 +38,13 @@ export const DetailPageName = styled.h1`
   transform-origin: top left;
   top: 17px;
   margin-left: -30px;
+  z-index: 3;
   
   ${theme.media.mobile} { 
     transform: rotate(0deg);
     transform-origin: top left;
-    top: 15px;
-    margin-left: 13px;
+    top: 13px;
+    margin-left: 1px;
     font-size: 1rem;
   }
 `
@@ -53,6 +54,10 @@ export const Header = styled.header`
   display: flex;
   gap: 10px;
   align-items: flex-start;
+
+  ${theme.media.mobile} { 
+    margin-top: 35px;
+  }
 `
 
 export const HeaderTitle = styled.div`
@@ -62,12 +67,17 @@ export const HeaderTitle = styled.div`
   flex-grow: 1;
   margin-left: 5px;
   margin-top: 4px;
+  word-break: keep-all;
 `
 
 export const Title = styled.h2`
   font-size: 3.6rem;
   font-weight: 700;
   margin-left: -3px;
+
+  ${theme.media.mobile} { 
+    font-size: 2.4rem;
+  }
 `
 
 export const CreatedAt = styled.p`
@@ -75,6 +85,10 @@ export const CreatedAt = styled.p`
   font-weight: 400;
   font-family: var(--font-abeezee);
   color: #444;
+
+  ${theme.media.mobile} { 
+    font-size: 1.2rem;
+  }
 `
 
 export const StatusWrapper = styled.div`
@@ -83,6 +97,14 @@ export const StatusWrapper = styled.div`
   margin-left: 7px;
   margin-top: 30px;
   max-width: 500px;
+
+  ${theme.media.mobile} { 
+    max-width: unset;
+    width: 80%;
+    padding-right: 30px;
+    margin-left: 1px;
+    margin-top: 17px;
+  }
 `
 
 export const InfoWrapper = styled.div`
@@ -92,6 +114,17 @@ export const InfoWrapper = styled.div`
   margin-top: 40px;
   max-width: 500px;
   margin-bottom: 20px;
+
+  ${theme.media.mobile} { 
+    display: grid;
+    grid-template-columns: max-content max-content;
+    gap: 15px 25px;
+    max-width: unset;
+    align-items: center;
+    margin-top: 17px;
+    margin-left: 2px;
+    margin-bottom: 16px;
+  }
 `
 
 export const InfoTitle = styled.div`
@@ -99,6 +132,10 @@ export const InfoTitle = styled.div`
   font-weight: 700;
   font-family: var(--font-gothic);
   color: #333;
+
+  ${theme.media.mobile} { 
+    font-size: 1.1rem;
+  }
 `
 
 export const InfoValue = styled.div`
@@ -107,6 +144,12 @@ export const InfoValue = styled.div`
   font-family: var(--font-gothic);
   color: #444;
   margin-right: 30px;
+
+  ${theme.media.mobile} { 
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding-bottom: 1px;
+  }
 `
 
 export const ButtonWrapper = styled.div`
@@ -114,6 +157,14 @@ export const ButtonWrapper = styled.div`
   justify-content: flex-end;
   margin-left: auto;
   margin-top: -7px;
+
+  ${theme.media.mobile} { 
+    margin-top: 0px;
+    position: absolute;
+    top: 3px;
+    right: 0;
+    gap: 22px;
+  }
 `
 
 export const Button = styled.button`
@@ -130,6 +181,12 @@ export const Button = styled.button`
   &:hover {
     background-color: #DADADA;
   }
+
+  ${theme.media.mobile} { 
+    font-size: 1rem;
+    padding: 5px 10px;
+    font-weight: 800;
+  }
 `
 
 export const FileWrapper = styled.div`
@@ -139,6 +196,12 @@ export const FileWrapper = styled.div`
   border: solid 1px #DADADA;
   padding: 18px 20px 15px 16px;
   border-radius: 10px;
+
+  ${theme.media.mobile} { 
+    margin-left: 4px;
+    padding: 14px 15px 14px 12px;
+    margin-right: 7px;
+  }
 `
 
 export const FileList = styled.div`
@@ -162,15 +225,8 @@ export const File = styled.a`
     text-decoration: underline 1px;
     text-underline-offset: 4px;
   }
-`
 
-export const Detail = styled.div`
-  font-size: 1.3rem;
-  font-weight: 500;
-  font-family: var(--font-gothic);
-  color: #444;
-  line-height: 1.7;
-  margin-left: 6px;
-  max-width: 600px;
-  word-break: keep-all;
+  ${theme.media.mobile} { 
+    font-size: 1rem;
+  }
 `

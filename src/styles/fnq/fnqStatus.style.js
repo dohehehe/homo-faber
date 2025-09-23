@@ -13,6 +13,12 @@ export const ProgressLine = styled.div`
   z-index: 1;
   border-radius: 10px;
   padding-right: 30%;
+
+  ${theme.media.mobile} { 
+    padding-right: 0;
+    margin-right: -47%;
+    height: 1.2px;
+  }
 `;
 
 export const LineSegment = styled.div`
@@ -33,6 +39,10 @@ export const ProgressBar = styled.div`
   align-items: center;
   position: relative;
   margin-top: -12px;
+
+  ${theme.media.mobile} { 
+    margin-right: -47%;
+  }
 `;
 
 export const StatusStep = styled.div`
@@ -42,6 +52,16 @@ export const StatusStep = styled.div`
   flex: 1;
   position: relative;
   z-index: 2;
+
+  ${theme.media.mobile} { 
+    align-items: space-between;
+
+    &:last-child {
+      .label {
+        padding-right: 40px;
+      }
+    }
+  }
 `;
 
 export const StatusCircle = styled.div`
@@ -58,7 +78,7 @@ export const StatusCircle = styled.div`
   position: relative;
   
   ${props => props.isCurrent && `
-    box-shadow: 0 0 0 8px ${props.color}20;
+    box-shadow: 0 0 0 4px ${props.color}20;
     animation: pulse 2s infinite;
   `}
   
@@ -85,6 +105,15 @@ export const StatusLabel = styled.div`
   transition: all 0.3s ease;
   // margin-left: -50%;
   transform: translateX(-20%);
+
+  ${theme.media.mobile} { 
+    font-size: 0.9rem;
+    transform: translateX(-12%);
+
+    &:last-type {
+      transform: translateX(0%);
+    }
+  }
 `;
 
 export const StatusDescription = styled.div`

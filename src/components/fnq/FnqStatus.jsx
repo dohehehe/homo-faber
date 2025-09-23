@@ -51,7 +51,7 @@ function FnqStatus({ currentStatus, allStatuses = [] }) {
               >
               </S.StatusCircle>
 
-              <S.StatusLabel isCurrent={isCurrent}>
+              <S.StatusLabel isCurrent={isCurrent} className={'label'}>
                 {statusInfo.name}
               </S.StatusLabel>
 

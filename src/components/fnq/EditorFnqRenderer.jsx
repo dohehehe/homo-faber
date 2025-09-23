@@ -7,15 +7,18 @@ import theme from '@/styles/Theme';
 const EditorArticle = styled.article`
   display: flex;
   flex-direction: column;
-  margin-left: 18px;  
+  // margin-left: 18px;  
   max-width: 700px;
   justify-content: flex-start;
   padding-bottom: 100px;
-  margin-top: 70px;
+  margin-top: 30px;
+  border-top: dotted 2px rgb(209, 209, 209);
+  padding: 30px 5px;
 
   ${theme.media.mobile} {
-    margin: 0 14px;
+    margin: 30px 5px;
     margin-bottom: 100px;
+    padding: 30px 5px;
   }
 `
 const EditorPara = styled.p`
@@ -29,7 +32,7 @@ const EditorPara = styled.p`
   margin-bottom: 10px;
 
   ${theme.media.mobile} {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     line-height: 2;
   }
 
