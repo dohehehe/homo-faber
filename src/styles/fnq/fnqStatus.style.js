@@ -8,7 +8,7 @@ export const StatusContainer = styled.div`
 //진행 상태바
 export const ProgressLine = styled.div`
   width: 100%;
-  height: 2.2px;
+  height: 1.4px;
   display: flex;
   z-index: 1;
   border-radius: 10px;
@@ -24,7 +24,7 @@ export const ProgressLine = styled.div`
 export const LineSegment = styled.div`
   flex: 1;
   height: 100%;
-  background-color: ${props => props.isCompleted ? '#999' : '#E0E0E0'};
+  background-color: ${props => props.isCompleted ? 'rgb(168, 168, 168)' : '#E0E0E0'};
   transition: all 0.3s ease;
   
   &:not(:last-child) {
@@ -55,10 +55,14 @@ export const StatusStep = styled.div`
 
   ${theme.media.mobile} { 
     align-items: space-between;
-
+    &:first-child {
+      .label {
+        padding-left: 10px;
+      }
+}
     &:last-child {
       .label {
-        padding-right: 40px;
+        padding-right: 130px;
       }
     }
   }

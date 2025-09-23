@@ -54,6 +54,7 @@ export const Header = styled.header`
   display: flex;
   gap: 10px;
   align-items: flex-start;
+  margin-top: -30px;
 
   ${theme.media.mobile} { 
     margin-top: 35px;
@@ -74,9 +75,11 @@ export const Title = styled.h2`
   font-size: 3.6rem;
   font-weight: 700;
   margin-left: -3px;
+  margin-right: 130px;
 
   ${theme.media.mobile} { 
     font-size: 2.4rem;
+    margin-right: 0px;
   }
 `
 
@@ -95,24 +98,23 @@ export const StatusWrapper = styled.div`
   font-size: 1rem;
   font-weight: 400;
   margin-left: 7px;
-  margin-top: 30px;
-  max-width: 500px;
+  margin-top: 40px;
+  max-width: 650px;
 
   ${theme.media.mobile} { 
     max-width: unset;
-    width: 80%;
-    padding-right: 30px;
-    margin-left: 1px;
-    margin-top: 17px;
+    width: 100%;
+    padding-right: 12px;
+    margin-left:-2px;
+    margin-top: 25px;
   }
 `
 
 export const InfoWrapper = styled.div`
   display: flex;
   gap: 10px;
-  margin-left: 7px;
-  margin-top: 40px;
-  max-width: 500px;
+  margin-left: 4px;
+  margin-top: 30px;
   margin-bottom: 20px;
 
   ${theme.media.mobile} { 
@@ -155,14 +157,20 @@ export const InfoValue = styled.div`
 export const ButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-left: auto;
-  margin-top: -7px;
+    position: sticky;
+  top: 10px;
+right: 10px;
+      margin-top: -10px;
+  z-index: 5;
+  gap: 10px;
 
   ${theme.media.mobile} { 
     margin-top: 0px;
-    position: absolute;
-    top: 3px;
+    position: sticky;
+    top: 4px;
     right: 0;
+    margin-right: -6px;
+    margin-top: -13px;
     gap: 22px;
   }
 `
@@ -171,7 +179,7 @@ export const Button = styled.button`
   padding: 7px 10px;
   background-color: transparent;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 900;
   font-family: var(--font-gothic);
   cursor: pointer;
@@ -192,7 +200,7 @@ export const Button = styled.button`
 export const FileWrapper = styled.div`
   margin-left: 2px;
   align-items: flex-start;
-  max-width: 700px;
+  max-width: 900px;
   border: solid 1px #DADADA;
   padding: 18px 20px 15px 16px;
   border-radius: 10px;
@@ -206,9 +214,15 @@ export const FileWrapper = styled.div`
 
 export const FileList = styled.div`
   display: flex;
-  gap: 28px;
+  flex-direction: column;
+  gap: 10px;
   flex-wrap: wrap;
   justify-content: flex-start;
+
+  ${theme.media.mobile} { 
+    gap: 6px;
+    align-items: flex-start;
+  }
 `
 
 export const File = styled.a`
@@ -219,6 +233,8 @@ export const File = styled.a`
   text-decoration: none;
   display: block;
   transition: color 0.2s ease;
+  line-height: 1.4;
+  word-break: break-all;
   
   &:hover {
     color:black;

@@ -78,7 +78,6 @@ export async function PUT(request, { params }) {
 
     const {
       title,
-      material,
       img,
       detail,
       count,
@@ -126,7 +125,6 @@ export async function PUT(request, { params }) {
       .from('fnq')
       .update({
         title,
-        material: material || null,
         img: img || null,
         detail,
         count: count || null,

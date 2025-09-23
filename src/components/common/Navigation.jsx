@@ -44,7 +44,7 @@ export default function Navigation() {
     { href: '/interview', label: '인터뷰' },
     { href: '/word', label: '용어' },
     { href: '/info', label: '소개' },
-    { href: '/fnq', label: '견적' },
+    { href: '/fnq', label: '문의' },
     { href: user ? '/mypage' : '/login', label: user ? '내정보' : '로그인' },
   ];
 
@@ -65,11 +65,11 @@ export default function Navigation() {
         isOpen={isOpen}
       />
       <S.NavigationBg isOpen={isOpen} />
-      <S.NavigationWrapper isOpen={isOpen}>
+      <S.NavigationWrapper isOpen={isOpen} onClick={isMobile ? handleLinkClick : undefined}>
         {links.map(({ href, label }) => {
           const active = isActive(pathname, href);
           return (
-            <Link key={href} href={href} style={{ textDecoration: 'none' }} onClick={handleLinkClick}>
+            <Link key={href} href={href} style={{ textDecoration: 'none' }}>
               <S.NavigationItem active={active}>
                 {label}
               </S.NavigationItem>

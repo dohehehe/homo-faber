@@ -142,21 +142,24 @@ function FindPasswordContainer({ }) {
               />
             </S.FormGroup>
 
-            <Popup
-              isVisible={showSuccessPopup}
-              onClose={handleSuccessConfirm}
-              type="success"
-              bgColor={'var(--yellow)'}
-              borderColor={'rgb(255, 234, 44)'}
-              title="비밀번호 재설정 이메일 전송 완료"
-              subtitle={
-                <>
-                  입력하신 이메일 주소로 비밀번호 재설정 링크를 보내드렸습니다.
-                  <br />
-                  이메일을 확인하여 비밀번호를 재설정해주세요.
-                </>
-              }
-            />
+            {showSuccessPopup && (
+              <Popup
+                key="find-password-success-popup"
+                isVisible={showSuccessPopup}
+                onClose={handleSuccessConfirm}
+                type="success"
+                bgColor={'var(--yellow)'}
+                borderColor={'rgb(255, 234, 44)'}
+                title="비밀번호 재설정 이메일 전송 완료"
+                subtitle={
+                  <>
+                    입력하신 이메일 주소로 비밀번호 재설정 링크를 보내드렸습니다.
+                    <br />
+                    이메일을 확인하여 비밀번호를 재설정해주세요.
+                  </>
+                }
+              />
+            )}
 
             <S.ButtonWrapper>
               <S.SubmitButton

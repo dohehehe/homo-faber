@@ -8,7 +8,7 @@ export const FnqWrapper = styled(motion.main)`
   width: 100%;
   height: 100dvh;
   padding-left: 70px;
-  padding-top: 27px;
+  // padding-top: 27px;
   z-index: 3;
   background:rgb(255, 255, 255);
   cursor: ${(props) => (props.pathname && (props.pathname === '/' || props.pathname.startsWith('/interview/'))) ? 'pointer' : 'default'};
@@ -19,7 +19,7 @@ export const FnqWrapper = styled(motion.main)`
   font-family: var(--font-gothic);
   pointer-events: auto;
   position: relative;
-  overflow-y: scroll;
+  overflow-y: hidden;
   overflow-x: hidden;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -30,6 +30,7 @@ export const FnqWrapper = styled(motion.main)`
   ${theme.media.mobile} { 
     padding: 0px 0px 0px 10px;
     height: 100dvh;
+    overflow-y: hidden;
     border-left: none;
     box-shadow: -2px -8px 10px 0 rgba(72, 72, 72, 0.48);
     border-top: solid 3px #DADADA;
@@ -58,6 +59,38 @@ export const FnqPageName = styled.h1`
   }
 `
 
+export const FnqContext = styled.div`
+  font-size: 1.3rem;
+  font-family: var(--font-gothic);
+  font-weight: 700;
+  color: #333;
+  line-height: 1.8;
+  word-break: keep-all;
+  max-width: 600px;
+
+
+  ${theme.media.mobile} { 
+    font-size: 1.1rem;
+    padding-left: 0px;
+    margin-top: -20px;
+    padding-right: 10px;
+  }
+`
+
+export const FnqContextItem = styled.p`
+  font-weight: 500;
+  margin-top: 15px;
+  margin-bottom: 40px;
+  padding-left: 24px;
+  text-indent: -22px;
+
+  ${theme.media.mobile} { 
+    padding-left: 20px;
+    text-indent: -18px;
+    margin-top: 10px;
+  }
+`
+
 export const UserForm = styled.form`
   display: flex;
   flex-direction: column;
@@ -65,19 +98,93 @@ export const UserForm = styled.form`
   position: relative;
   z-index: 1;
   gap: 90px;
-  padding-top: 60px;
-  margin-top: -27px;
-  padding-top: 97px;
-  padding-bottom: 100px;
+  padding-bottom: 10px;
   padding-left: 5px;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  margin-top: -13px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
 
   ${theme.media.mobile} { 
     gap: 50px;
-    padding-top: 80px;
+    padding-top: 0px;
     padding-left: 0px;
-    padding-right: 14px;
+    padding-right: 4px;
+    // width: 100%;
   }
 `;
+
+export const FnqUserForm = styled(UserForm)`
+  margin-top: 0px;
+  padding-bottom: 120px;
+
+  ${theme.media.mobile} { 
+    margin-top: -13px;
+    padding-bottom: 200px;
+    overflow-x: hidden;
+    // width: 100dvw;
+  }
+`;
+
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  position: sticky;
+  top: 10px;
+  margin-right: 10px;
+  right: 10px;
+  margin-top: -10px;
+  z-index: 5;
+  gap: 20px;
+
+  ${theme.media.mobile} { 
+    margin-top: 0px;
+    position: sticky;
+    top: 4px;
+    margin-right: -30px;
+    right: -8px;
+    gap: 22px;
+    flex-direction: row;
+    margin-left: auto;
+  }
+`;
+
+export const FnqEditButtonWrapper = styled(ButtonWrapper)`
+  top: 10px;
+  margin-top: -20px;
+
+  ${theme.media.mobile} { 
+    right: -10px;
+  }
+`;
+
+export const SubmitButton = styled.button`
+  padding: 7px 10px;
+  background-color: transparent;
+  border: none;
+  font-size: 1.8rem;
+  font-weight: 900;
+  font-family: var(--font-gothic);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #444;
+
+  &:hover {
+    background-color: #DADADA;
+  }
+
+  ${theme.media.mobile} { 
+    font-size: 1rem;
+    padding: 5px 10px;
+    font-weight: 800;
+  }
+`;
+
 
 export const FormGroup = styled.div`
   display: flex;
@@ -88,6 +195,7 @@ export const FormGroup = styled.div`
 
   ${theme.media.mobile} { 
     gap: 8px;
+    max-width: unset;
   }
 `;
 
@@ -287,49 +395,6 @@ export const InputGalleryItemAddButton = styled.button`
     margin-left: 4px;
   }
 `
-
-export const ButtonWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-bottom: 20px;
-  margin-right: 40px;
-  position: absolute;
-  bottom: 0;
-  right: 0px;
-  
-  ${theme.media.mobile} { 
-    position: static;
-    margin-right: 0px;
-    margin-top: 80px;
-    margin-bottom: 20px;
-  }
-`;
-
-export const SubmitButton = styled.button`
-  padding: 8px 5px;
-  border: none;
-  background: none;
-  font-size: 3.5rem;
-  font-weight: 800;
-  font-family: var(--font-gothic);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #222;
-  
-  &:hover {
-    text-shadow: 3px 2px 8px rgba(255, 255, 255, 0.48);
-  }
-
-  &:active {
-    background: none;
-  }
-
-  ${theme.media.mobile} { 
-    font-size: 2.5rem;
-    padding: 6px 5px;
-  }
-`;
 
 
 // 에러 컴포넌트 스타일 (SignupContainer에서 사용)

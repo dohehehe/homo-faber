@@ -184,18 +184,24 @@ function MypageEditContainer({ }) {
               />
             </S.FormGroup>
 
-            <Popup
-              isVisible={!!error}
-              message={error}
-              onClose={() => setError('')}
-              type="error"
-            />
-            <Popup
-              isVisible={!!success}
-              message={success}
-              onClose={() => setSuccess('')}
-              type="success"
-            />
+            {error && (
+              <Popup
+                key="edit-error-popup"
+                isVisible={!!error}
+                message={error}
+                onClose={() => setError('')}
+                type="error"
+              />
+            )}
+            {success && (
+              <Popup
+                key="edit-success-popup"
+                isVisible={!!success}
+                message={success}
+                onClose={() => setSuccess('')}
+                type="success"
+              />
+            )}
 
             <S.ButtonWrapper>
               <S.SubmitButton
