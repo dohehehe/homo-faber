@@ -6,9 +6,8 @@ export const InfoWrapper = styled(motion.main, {
   shouldForwardProp: (prop) => prop !== 'gradientCss' && prop !== 'pathname',
 })`
   width: 100%;
-  height: 100%;
+  height: 100dvh;
   padding-left: 70px;
-  padding-right: 70px;
   padding-top: 57px;
   z-index: 3;
   background:rgb(255, 255, 255);
@@ -24,11 +23,12 @@ export const InfoWrapper = styled(motion.main, {
   pointer-events: auto;
   position: relative;
   color: #333;
-  overflow-y: scroll;
+  overflow-y: hidden;
 
   ${theme.media.mobile} { 
-    padding: 50px 10px 20px 10px;
+    padding: 0px 10px 20px 10px;
     overflow-x: hidden;
+    position: relative;
   }
 `;
 
@@ -37,22 +37,46 @@ export const InfoPageName = styled.div`
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.3rem;
-  position: fixed;
+  position: absolute;
   transform: rotate(90deg);
   transform-origin: top left;
   top: 17px;
-  right: calc(80dvw - 62px);
+  left: 25px;
 
   ${theme.media.mobile} { 
     transform: rotate(0deg);
     transform-origin: top left;
-    bottom: calc(87dvh - 32px);
-    left:10px;
-    top: unset;
-    right: unset;
+    position: sticky;
+    top: 10px;
+    left: 10px;
     font-size: 1rem;
+    margin-bottom: 50px;
+    z-index: 3;
   }
 `
+
+export const InfoPageContent = styled.div`
+  height: 100dvh; 
+  overflow-y: scroll;
+  padding-right: 70px;
+  margin-top: -65px;
+  padding-top: 65px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  ${theme.media.mobile} {
+    height: 100%;
+    // margin-top: 0px;
+    // padding-top: 0px;
+    padding-bottom: 100px;
+    padding-right: 0px;
+  }
+`
+
+
 export const Infoh1 = styled.h1`
   font-size: 3.3rem;
   font-weight: 800;
@@ -238,15 +262,17 @@ export const InfoTimelineTableTr = styled.tr`
       // width: 24dvw;
       height: auto;
       z-index: 2;
-
-      img {
-        padding-left: 3dvw;
-      }
     }
   }
 
   ${theme.media.mobile} {
     width: calc(100dvw - 30px);
+
+    .timeline-img {
+      img {
+        padding-left: 0px;
+      }
+    }
   }
 `
 
@@ -354,10 +380,35 @@ export const InfoTimelineTableTdImg = styled.td`
   }
 
   ${theme.media.mobile} {
-    width: 30dvw;
-    display: none;
-    position: relative;
+    width: 100%;
+    display: block;
+    position: static;
+    right: unset;
+    top: unset;
+    height: auto;
+    padding-left: 12px;
+    margin-bottom: 15px;
+
+    img {
+      padding-left: 0px;
+      border-top: none;
+      width: 100%;
+      height: auto;
+    }
+
+    &:hover {
+      padding-left: 0px;
+      width: 100%;
+      height: auto;
+      right: 0;
+    }
   }
+`
+
+export const InfoTimelineMobile = styled.div`
+  display: flex; 
+  flex-direction: column;
+  gap: 5px;
 `
 
 /*-------------------------------- Credits --------------------------------*/

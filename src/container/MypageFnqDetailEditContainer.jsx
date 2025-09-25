@@ -192,7 +192,7 @@ function MypageFnqDetailEditContainer() {
         console.log('파일 필드 초기화 완료');
       }, 50);
     }
-  }, [fnq, isInitialized, appendFile, removeFile]);
+  }, [fnq, isInitialized, appendFile, removeFile, fileFields.length]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -538,7 +538,7 @@ function MypageFnqDetailEditContainer() {
                     프로젝트를 이해하는데 도움이 되는 도면 또는 스케치를 전달해주세요
                   </S.InputInfo>
                   <S.InputInfo>
-                    *5MB 이상의 파일은 아래의 이메일로 '프로젝트 이름'과 함께 전달해주세요.<br />
+                    *5MB 이상의 파일은 아래의 이메일로 &apos;프로젝트 이름&apos;과 함께 전달해주세요.<br />
                     <a href="mailto:listentothecity.org@gmail.com" style={{ fontWeight: '600' }}>(listentothecity.org@gmail.com)</a>
                   </S.InputInfo>
 

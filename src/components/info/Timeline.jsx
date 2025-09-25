@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react';
 import { getTimelines } from '@/utils/api/timeline-api';
 import * as S from '@/styles/info/infoContainer.sytle';
 import Image from 'next/image';
+import useWindowSize from '@/hooks/useWindowSize';
 
 function Timeline() {
   const [timelines, setTimelines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { isMobile, isReady } = useWindowSize();
+
 
   useEffect(() => {
     const fetchTimelines = async () => {
@@ -68,19 +71,40 @@ function Timeline() {
               </S.InfoTimelineTableTdMonth>
 
 
-              <S.InfoTimelineTableTdTitle isFirstOfYear={isFirstOfYear}>
-                <span>{timeline.title}</span>
-                {timeline.info && (
-                  <S.InfoTimelineInfo >
-                    {timeline.info}
-                  </S.InfoTimelineInfo>
+              {!isMobile ? (
+                <>
+                  <S.InfoTimelineTableTdTitle isFirstOfYear={isFirstOfYear}>
+                    <span>{timeline.title}</span>
+                    {timeline.info && (
+                      <S.InfoTimelineInfo >
+                        {timeline.info}
+                      </S.InfoTimelineInfo>
+                    )}
+                  </S.InfoTimelineTableTdTitle>
+                  {timeline.img && (
+                    <S.InfoTimelineTableTdImg className='timeline-img'>
+                      <Image src={timeline.img} alt={timeline.title} width={200} height={150} />
+                    </S.InfoTimelineTableTdImg >
+                  )}
+                </>
+              ) : (<S.InfoTimelineMobile>
+                <S.InfoTimelineTableTdTitle isFirstOfYear={isFirstOfYear}>
+                  <span>{timeline.title}</span>
+                  {timeline.info && (
+                    <S.InfoTimelineInfo >
+                      {timeline.info}
+                    </S.InfoTimelineInfo>
+                  )}
+                </S.InfoTimelineTableTdTitle>
+                {timeline.img && (
+                  <S.InfoTimelineTableTdImg className='timeline-img'>
+                    <Image src={timeline.img} alt={timeline.title} width={200} height={150} />
+                  </S.InfoTimelineTableTdImg >
                 )}
-              </S.InfoTimelineTableTdTitle>
-              {timeline.img && (
-                <S.InfoTimelineTableTdImg className='timeline-img'>
-                  <Image src={timeline.img} alt={timeline.title} width={200} height={150} />
-                </S.InfoTimelineTableTdImg >
-              )}
+              </S.InfoTimelineMobile>)}
+
+
+
             </S.InfoTimelineTableTr>
           );
         })}
