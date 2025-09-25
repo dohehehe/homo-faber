@@ -79,6 +79,7 @@ export const StoreDetailSection = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-left: 20px;
 
   ${theme.media.tablet} {
     width: 100%;
@@ -86,6 +87,7 @@ export const StoreDetailSection = styled.section`
     overflow-y: unset;
     position: static;
     display: block;
+    padding-left: 0px;
   }
 `
 
@@ -260,14 +262,19 @@ export const InterviewButton = styled.button`
 export const StoreTagList = styled.div`
   font-size: 1.24rem;
   font-weight: 700;
-  width: 70%;
+  width: 100%;
+  text-align: left;
   line-height: 1.5;
-  margin: 40px auto 10px;
+  margin: 40px 0px 10px 0px;
+  padding-left: 0px;
+  padding-right: 20px;
 
   ${theme.media.tablet} {
     font-size: 1.1rem;
     width: 90%;
     margin: 30px auto 15px;
+    text-align: center;
+    padding-right: 0px;
   }
 `
 
@@ -317,11 +324,12 @@ export const StoreIndustry = styled.div`
 export const StoreContactList = styled.div`
   display: inline-grid;
   grid-template-columns: max-content 1fr;
-  gap: 8px 2px;
+  gap: 12px 2px;
   width: fit-content;
-  margin-top: 70px;
-  margin-right: auto;
-  padding-left: 30px;
+  margin-top: 40px;
+  // margin-right: auto;
+  width: 100%;
+  padding-left: 3px;
   align-items: center;
   letter-spacing: 0.1rem;
 
@@ -330,6 +338,7 @@ export const StoreContactList = styled.div`
     gap: 10px 0px;
     position: static;
     padding-left: 0px;
+    width: unset;
   }
 `
 export const StoreContact = styled.div`
@@ -346,7 +355,7 @@ export const StoreContactTxt = styled.div`
   white-space: nowrap;
   text-align: right;
   padding-right: 5px;
-  margin-left: 20px;
+  // margin-left: 20px;
 `
 
 export const StoreContactContent = styled.div`
@@ -379,11 +388,11 @@ export const StoreDescription = styled.div`
 
 export const StoreCardImg = styled.img`
   width: 100%;
-  transform: rotate(-5deg);
-  margin-top: -20px;
+  transform: rotate(-2deg);
+  margin-top: -30px;
   transition: .3s all;
   &:hover{
-    transform: rotate(5deg);
+    transform: rotate(2deg);
   }
 
   ${theme.media.tablet} {
@@ -405,11 +414,12 @@ export const StoreImgList = styled.div`
 `
 export const StoreImg = styled.img`
   width: 100%;
-  border-radius: 50%;
-  border: 0.6px solid black;
+  // border-radius: 50%;
+  border: 1px dotted black;
   vertical-align: top;
   position: relative;
   transition: all .4s ;
+  margin-bottom: 10px;
 
   &:hover{
     z-index: 2;
@@ -420,7 +430,7 @@ export const StoreImg = styled.img`
       width: 95%;
       height: 100%;
       box-shadow: none;
-      margin-bottom: 1px;
+      margin-bottom: 10px;
 
       &:hover{
         transform: unset;
