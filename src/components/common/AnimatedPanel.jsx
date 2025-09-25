@@ -27,7 +27,7 @@ const SidePanelWrapper = styled(motion.div, {
   top: ${(props) => props.isMobile ? 'unset' : '0px'};
   z-index: 2;
   // overflow: hidden;
-  background: orange;
+  // background: orange;
   box-shadow: -8px 4px 10px 0 rgba(0,0,0,0.25);
 `;
 
