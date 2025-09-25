@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import * as S from '@/styles/fnq/fnqContainer.style';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import Editor from '@/components/interview/Editor';
 import Popup from '@/components/common/Popup';
@@ -134,7 +134,7 @@ function FnqContainer() {
   };
 
   // 데이터 복원 함수 (파일 포함)
-  const restoreTempData = async () => {
+  const restoreTempData = useCallback(async () => {
     try {
       const savedData = localStorage.getItem(TEMP_FNQ_DATA_KEY);
       const savedFiles = localStorage.getItem(TEMP_FNQ_FILES_KEY);
@@ -220,7 +220,7 @@ function FnqContainer() {
       console.error('데이터 복원 실패:', error);
     }
     return false;
-  };
+  }, [setValue, removeFile, appendFile, fileFields.length]);
 
   // 임시 데이터 삭제 함수
   const clearTempData = () => {
@@ -245,7 +245,7 @@ function FnqContainer() {
     };
 
     restoreData();
-  }, [user, isDataRestored, setValue, removeFile, appendFile, restoreTempData]);
+  }, [user, isDataRestored, restoreTempData]);
 
   // 파일 미리보기 처리 (파일명과 확장자만 저장)
   const handleFilePreview = async (file, index) => {

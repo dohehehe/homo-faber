@@ -95,46 +95,45 @@ function AnimatedPanel({
   }, [baseRoute, pathname]);
 
 
-  const getMobileBottomPosition = (isActive) => {
-    if (baseRoute === 'store') {
-      if (pathname === '/') {
-        return 'calc(-80dvh + 20px)';
-      } else if (pathname.startsWith('/store')) {
-        return '0px';
-      } else {
-        return 'calc(-80dvh + 20px)';
-      }
-    }
-
-    if (isActive) {
-      return '0px';
-    } else {
-      return '-100dvh';
-    }
-  };
-
-
-  const getDesktopRightPosition = (isActive) => {
-    if (baseRoute === 'store') {
-      if (pathname === '/') {
-        return 'calc(-80dvw + 190px)';
-      } else if (pathname.startsWith('/store')) {
-        return '0px';
-      } else {
-        return 'calc(-80dvw + 120px)';
-      }
-    }
-
-    if (isActive) {
-      return '0';
-    } else {
-      return '-81dvw';
-    }
-  };
-
   // 초기 상태 설정 및 pathname/isMobile 변경 시 업데이트
   useLayoutEffect(() => {
     if (!isReady) return;
+
+    const getMobileBottomPosition = (isActive) => {
+      if (baseRoute === 'store') {
+        if (pathname === '/') {
+          return 'calc(-80dvh + 20px)';
+        } else if (pathname.startsWith('/store')) {
+          return '0px';
+        } else {
+          return 'calc(-80dvh + 20px)';
+        }
+      }
+
+      if (isActive) {
+        return '0px';
+      } else {
+        return '-100dvh';
+      }
+    };
+
+    const getDesktopRightPosition = (isActive) => {
+      if (baseRoute === 'store') {
+        if (pathname === '/') {
+          return 'calc(-80dvw + 190px)';
+        } else if (pathname.startsWith('/store')) {
+          return '0px';
+        } else {
+          return 'calc(-80dvw + 120px)';
+        }
+      }
+
+      if (isActive) {
+        return '0';
+      } else {
+        return '-81dvw';
+      }
+    };
 
     if (isMobile) {
       const newBottom = getMobileBottomPosition(isActiveRoute);
@@ -143,7 +142,7 @@ function AnimatedPanel({
       const newRight = getDesktopRightPosition(isActiveRoute);
       setRight(newRight);
     }
-  }, [pathname, isMobile, isReady, isActiveRoute, baseRoute, getDesktopRightPosition, getMobileBottomPosition]);
+  }, [pathname, isMobile, isReady, isActiveRoute, baseRoute]);
 
   // 클라이언트 사이드에서만 실행
   useEffect(() => {
