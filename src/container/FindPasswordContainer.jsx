@@ -147,9 +147,7 @@ function FindPasswordContainer({ }) {
                 key="find-password-success-popup"
                 isVisible={showSuccessPopup}
                 onClose={handleSuccessConfirm}
-                type="success"
-                bgColor={'var(--yellow)'}
-                borderColor={'rgb(255, 234, 44)'}
+                type="info"
                 title="비밀번호 재설정 이메일 전송 완료"
                 subtitle={
                   <>
