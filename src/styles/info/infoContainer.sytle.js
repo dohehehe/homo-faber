@@ -231,7 +231,7 @@ export const InfoTimelineTableHead = styled.thead`
 export const InfoTimelineTableBody = styled.tbody`
   width: calc(100% - 23dvw);  
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     width: 100%;
   }
 `
@@ -263,7 +263,7 @@ export const InfoTimelineTableTr = styled.tr`
     }
   }
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     width: 100%;
 
     &:hover {
@@ -281,7 +281,7 @@ export const InfoTimelineTableTd = styled.td`
   font-size: 1.1rem;
   border-top: ${(props) => props.isFirstOfYear ? 'none' : '1px dotted rgb(167, 167, 167)'};
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     padding: 6px 10px 10px 10px;
   }
 `
@@ -297,7 +297,7 @@ export const InfoTimelineTableTdYear = styled(InfoTimelineTableTd)`
   background-color: rgb(248, 248, 248);
   padding-right: 2px;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     min-width: 55px;
     padding-top: 8px;
   }
@@ -314,7 +314,7 @@ export const InfoTimelineTableTdMonth = styled(InfoTimelineTableTd)`
   padding-right: 13px;
   padding-left: 5px;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     min-width: 65px;
     word-break: keep-all;
     width:65px;
@@ -342,7 +342,7 @@ export const InfoTimelineTableTdTitle = styled(InfoTimelineTableTd)`
   word-break: keep-all;
   padding-left: 18px;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     padding-left: 10px;
     flex-grow: unset;
     flex-shrink: 1;
@@ -359,7 +359,7 @@ export const InfoTimelineInfo = styled.div`
   font-weight: 400;
   word-break: keep-all;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     margin-left: 0;
     font-size: 1rem;
   }
@@ -389,7 +389,7 @@ export const InfoTimelineTableTdImg = styled.td`
     z-index: 2;
   }
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     width: 100%;
     display: block;
     position: static;
