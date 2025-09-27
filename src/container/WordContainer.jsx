@@ -163,7 +163,7 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
 
         {selectedWordIds.length > 0 && (
           <S.WordMeaningsContainer ref={containerRef}>
-            {selectedWordIds.map((wordId, index) => {
+            {selectedWordIds.slice().reverse().map((wordId, index) => {
               const selectedWord = words.find(word => word.id === wordId);
               return selectedWord ? (
                 <S.WordMeaning
@@ -172,7 +172,9 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
                   <S.WordMeaningTitle>
                     {selectedWord.name}
                   </S.WordMeaningTitle>
-
+                  <S.WordMeaningContent>
+                    {selectedWord.meaning}
+                  </S.WordMeaningContent>
                   <S.WordMeaningCloseButton
                     onClick={(e) => {
                       e.stopPropagation();
@@ -181,9 +183,7 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
                     ✕
                   </S.WordMeaningCloseButton>
 
-                  <S.WordMeaningContent>
-                    {selectedWord.meaning}
-                  </S.WordMeaningContent>
+
 
                   {selectedWord.img && (
                     <S.WordMeaningImage src={selectedWord.img} alt={selectedWord.name} />
@@ -191,12 +191,6 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
                 </S.WordMeaning>
               ) : null;
             })}
-            {!isMobile && (
-              <CustomScrollbar
-                scrollState={scrollState}
-                onScrollToRatio={scrollToRatio}
-              />
-            )}
 
           </S.WordMeaningsContainer>
         )}

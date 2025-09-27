@@ -31,7 +31,10 @@ export const WordWrapper = styled.main`
   }
 
   ${theme.media.mobile} {
-    padding: 30px 10px;
+    padding: 30px 0px;
+    border-left: 0;
+    border-top: solid 1px rgba(149, 178, 241, 0.51);
+    box-shadow: 0px -4px 10px 0 rgba(9, 11, 54, 0.69);
   }
 `;
 
@@ -49,7 +52,7 @@ export const WordPageName = styled.h1`
   ${theme.media.mobile} { 
     transform: rotate(0deg);
     transform-origin: top left;
-    top: 18px;
+    top: 12px;
     left:10px;
     font-size: 1rem;
   }
@@ -68,11 +71,12 @@ export const WordSearchWrapper = styled.div`
 
 export const WordItemWrapper = styled.section`
   display:flex;
-  gap: 100px;
+  gap: 5%;
   // overflow-y: visible;
 
   ${theme.media.mobile} {
-    gap: 20px;
+    gap: 0px;
+    padding-left: 10px;
   }
 `;
 
@@ -81,9 +85,10 @@ export const WordList = styled.ul`
   margin-top: -65px;
   padding-top: 110px;
   z-index: 2;
-  flex-shrink: 0;
   overflow-y: auto;
   height: 100dvh;
+  min-width: 300px;
+
 
   &::-webkit-scrollbar {
     display: none;
@@ -94,6 +99,7 @@ export const WordList = styled.ul`
   ${theme.media.mobile} {
     margin-top: -30px;
     padding-top: 50px;
+    min-width: 175px;
   }
 `;
 
@@ -107,6 +113,8 @@ export const WordItem = styled.li`
   cursor: pointer;
   transition: 0.3s ease-in-out;
   position: relative;
+  word-break: keep-all;
+  line-height: 1.1;
   
   &:hover {
     color: white;
@@ -123,7 +131,7 @@ export const WordItem = styled.li`
 
 export const WordTitle = styled.h2`
   font-weight: 800;
-  font-size: 4.5rem;
+  font-size: 4rem;
 
   ${theme.media.mobile} {
     font-size: 2.3rem;
@@ -135,13 +143,15 @@ export const WordMeaningsContainer = styled.section`
   flex-direction: column;
   overflow-y: auto;
   flex-grow: 1;
-  margin-right: 80px;
+  margin-right: 13px;
   overflow-x: hidden;
   height: 100dvh;
   margin-top: -65px;
   padding-top: 96px;
   overflow-y: auto;
   padding-bottom: 20px;
+  max-width: 500px;
+  margin-left: auto;
 
   &::-webkit-scrollbar {
     display: none;
@@ -160,10 +170,11 @@ export const WordMeaningsContainer = styled.section`
 export const WordMeaning = styled.div`
   font-family: var(--font-gothic);
   background: rgba(255, 255, 255, 0.95);
-  padding: 20px 60px 18px 23px;
+  padding: 20px 30px 18px 23px;
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 20px;
+  gap: 10px;
   border-radius: 15px;
   font-weight: 600;
   font-size: 1.3rem;
@@ -189,7 +200,7 @@ export const WordMeaning = styled.div`
   ${theme.media.mobile} {
     font-size: 1rem;
     flex-direction: column;
-    padding: 15px 20px 10px 10px;
+    padding: 15px 15px 10px 10px;
     gap: 10px;
   }
 `;
@@ -199,8 +210,6 @@ export const WordMeaningTitle = styled.h3`
   font-weight: 800;
   color: #2E5BBA;
   position: relative;
-  width: 70px;
-  flex-shrink: 0;
 
   ${theme.media.mobile} {
     font-size: 1.2rem;
@@ -212,7 +221,6 @@ export const WordMeaningContent = styled.p`
   font-size: 1.2rem;
   font-weight: 600;
   color: #2E5BBA;
-  padding-top: 1px;
 
   ${theme.media.mobile} {
     font-size: 1rem;
@@ -220,12 +228,13 @@ export const WordMeaningContent = styled.p`
 `;
 
 export const WordMeaningImage = styled.img`
-  width: auto;
-  max-width: 50%;
-  height: 200px;
+  width: 100%;
   object-fit: cover;
   border-radius: 4px;
   display: block;
+  margin-top: 10px;
+  margin-left: 3px;
+  // margin-right: 15px;
 
   ${theme.media.mobile} {
     width: 100%;
@@ -241,9 +250,9 @@ export const WordMeaningCloseButton = styled.button`
   color: #666;
   cursor: pointer;
   position: absolute;
-  top: 15px;
+  top: 9px;
   font-weight: 700;
-  right: 24px;
+  right: 15px;
   color: #2E5BBA;
 
   ${theme.media.mobile} {
