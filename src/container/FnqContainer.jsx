@@ -393,15 +393,7 @@ function FnqContainer() {
     <>
       <S.FnqWrapper>
         <S.FnqPageName>프로젝트 문의</S.FnqPageName>
-
-
         <S.FnqUserForm onSubmit={handleSubmit(onSubmit)}>
-          <S.ButtonWrapper>
-            <S.SubmitButton type="submit" disabled={isLoading}>
-              {isLoading ? '전송 중...' : '문의 하기'}
-            </S.SubmitButton>
-          </S.ButtonWrapper>
-
           <S.FnqContext>
             Q. 프로젝트를 어떻게 의뢰하나요?
             <S.FnqContextItem>A. 진행 예정인 프로젝트 내용을 플랫폼에 문의해 주시면 저희가 세부 사항을 확인한 뒤 적합한 기술자를 찾아 연결해 드립니다. 복잡한 과정을 직접 거치실 필요 없이 필요한 기술자를 편리하게 만나보세요.</S.FnqContextItem>
@@ -557,7 +549,9 @@ function FnqContainer() {
             </S.InputGalleryItemAddButton>
           </S.FormGroup>
 
-
+          <S.SubmitButton type="submit" disabled={isLoading}>
+            {isLoading ? '전송 중...' : '문의 하기'}
+          </S.SubmitButton>
 
         </S.FnqUserForm>
 

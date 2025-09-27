@@ -7,7 +7,7 @@ export const DetailWrapper = styled(motion.main, {
   shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom'
 })`
   width: ${(props) => props.isMobile ? '100dvw' : 'calc(80vw - 50px)'};
-  height: ${(props) => props.isMobile ? 'calc(87dvh - 47px)' : '100dvh'};
+  height: ${(props) => props.isMobile ? 'calc(87dvh - 37px)' : '100dvh'};
   padding: ${(props) => props.isMobile ? '0px 9px' : '0px 20px 0px 60px'};
   background-color:rgb(255, 255, 255);
   position: fixed;

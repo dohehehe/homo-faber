@@ -28,12 +28,12 @@ export const FnqWrapper = styled(motion.main)`
   }
 
   ${theme.media.mobile} { 
-    padding: 0px 0px 0px 10px;
+    padding: 0px 12px 0px 10px;
     height: 100dvh;
     overflow-y: hidden;
     border-left: none;
-    box-shadow: -2px -8px 10px 0 rgba(72, 72, 72, 0.48);
-    border-top: solid 3px #DADADA;
+    box-shadow: 0px -8px 10px 0 rgba(62, 62, 62, 0.76);
+    border-top: solid 1px #DADADA;
   }
 `;
 
@@ -67,13 +67,14 @@ export const FnqContext = styled.div`
   line-height: 1.8;
   word-break: keep-all;
   max-width: 600px;
-
+  padding-top: 120px;
 
   ${theme.media.mobile} { 
     font-size: 1.1rem;
     padding-left: 0px;
     margin-top: -20px;
     padding-right: 10px;
+    padding-top: 70px;
   }
 `
 
@@ -120,7 +121,6 @@ export const UserForm = styled.form`
 
 export const FnqUserForm = styled(UserForm)`
   margin-top: 0px;
-  padding-bottom: 120px;
 
   ${theme.media.mobile} { 
     margin-top: -13px;
@@ -167,21 +167,32 @@ export const SubmitButton = styled.button`
   padding: 7px 10px;
   background-color: transparent;
   border: none;
-  font-size: 1.8rem;
+  font-size: 3.7rem;
   font-weight: 900;
   font-family: var(--font-gothic);
   cursor: pointer;
   transition: all 0.2s ease;
   color: #444;
+  margin-left: auto;
+  margin-top: 70px;
+  border-radius: 20px;
+  padding-top: 14px;
+  position: sticky;
+  bottom: 0px;
+  right: 15px;
 
   &:hover {
     background-color: #DADADA;
   }
 
   ${theme.media.mobile} { 
-    font-size: 1rem;
+    position: relative;
+    right: unset;
+    margin: 0 auto;
     padding: 5px 10px;
     font-weight: 800;
+    margin-top: 50px;
+    bottom: unset;
   }
 `;
 
