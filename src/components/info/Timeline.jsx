@@ -70,24 +70,7 @@ function Timeline() {
                 <span>{timeline.month}</span>
               </S.InfoTimelineTableTdMonth>
 
-
-              {!isMobile ? (
-                <>
-                  <S.InfoTimelineTableTdTitle isFirstOfYear={isFirstOfYear}>
-                    <span>{timeline.title}</span>
-                    {timeline.info && (
-                      <S.InfoTimelineInfo >
-                        {timeline.info}
-                      </S.InfoTimelineInfo>
-                    )}
-                  </S.InfoTimelineTableTdTitle>
-                  {timeline.img && (
-                    <S.InfoTimelineTableTdImg className='timeline-img'>
-                      <Image src={timeline.img} alt={timeline.title} width={200} height={150} />
-                    </S.InfoTimelineTableTdImg >
-                  )}
-                </>
-              ) : (<S.InfoTimelineMobile>
+              <S.InfoTimelineMobile>
                 <S.InfoTimelineTableTdTitle isFirstOfYear={isFirstOfYear}>
                   <span>{timeline.title}</span>
                   {timeline.info && (
@@ -101,9 +84,7 @@ function Timeline() {
                     <Image src={timeline.img} alt={timeline.title} width={200} height={150} />
                   </S.InfoTimelineTableTdImg >
                 )}
-              </S.InfoTimelineMobile>)}
-
-
+              </S.InfoTimelineMobile>
 
             </S.InfoTimelineTableTr>
           );

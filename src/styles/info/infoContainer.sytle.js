@@ -26,9 +26,14 @@ export const InfoWrapper = styled(motion.main, {
   overflow-y: hidden;
 
   ${theme.media.mobile} { 
-    padding: 0px 10px 20px 10px;
+    padding: 0px 15px 20px 15px;
     overflow-x: hidden;
     position: relative;
+    border-top: solid 2px #DADADA;
+    box-shadow: 0px -4px 10px 3px rgba(0,0,0,0.3);
+    border-left: none;
+    width: 100dvw;
+    word-break: keep-all;
   }
 `;
 
@@ -50,7 +55,7 @@ export const InfoPageName = styled.div`
     top: 10px;
     left: 10px;
     font-size: 1rem;
-    margin-bottom: 50px;
+    margin-bottom: 40px;
     z-index: 3;
   }
 `
@@ -69,10 +74,9 @@ export const InfoPageContent = styled.div`
 
   ${theme.media.mobile} {
     height: 100%;
-    // margin-top: 0px;
-    // padding-top: 0px;
     padding-bottom: 100px;
     padding-right: 0px;
+    overflow-x: hidden;
   }
 `
 
@@ -85,7 +89,8 @@ export const Infoh1 = styled.h1`
   word-break: keep-all;
 
   ${theme.media.mobile} {
-    font-size: 2.2rem;
+    font-size: 2.1rem;
+    width: 100%;
   }
 `
 
@@ -107,11 +112,11 @@ export const Infoh3 = styled.h3`
 
   ${theme.media.tablet} {
     text-indent: 0px;
-    font-size: 1rem;
-    width: 80%;
-    margin-right: 5px;
-    margin-bottom: 200px;
-    text-align: right;
+    font-size: 0.9rem;
+    width: 90%;
+    margin-left: 0;
+    margin-bottom: 130px;
+    text-align: left;
   }
 `
 
@@ -123,7 +128,7 @@ export const Infoh2 = styled.h2`
 
   ${theme.media.mobile} {
     font-size: 1.3rem;
-    width: 80%;
+    width: 100%;
     margin: 0 auto;
     text-align: center;
     margin-bottom: 50px;
@@ -169,8 +174,6 @@ export const InfoSubTitle = styled.h4`
     font-size: 1.15rem;
     margin-left: 0;
     font-weight: 700;
-    // text-align: center;
-    // padding-right: 15px;
   }
 `
 
@@ -228,7 +231,7 @@ export const InfoTimelineTableHead = styled.thead`
 export const InfoTimelineTableBody = styled.tbody`
   width: calc(100% - 23dvw);  
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     width: 100%;
   }
 `
@@ -241,10 +244,6 @@ export const InfoTimelineTableTr = styled.tr`
 
   &:hover {
     background-color: var(--yellow);
-
-    span {
-    font-weight: 600;
-    }
 
     &::after {
       display: ${(props) => props.isImg ? 'block' : 'none'};
@@ -259,21 +258,20 @@ export const InfoTimelineTableTr = styled.tr`
     }
 
     .timeline-img {
-      // width: 24dvw;
       height: auto;
       z-index: 2;
     }
   }
 
-  ${theme.media.mobile} {
-    width: calc(100dvw - 30px);
+  ${theme.media.tablet} {
+    width: 100%;
 
-    .timeline-img {
-      img {
-        padding-left: 0px;
-      }
+    &:hover {
+      &::after {
+        display: none;
+      }    
     }
-  }
+}  
 `
 
 export const InfoTimelineTableTd = styled.td`
@@ -283,8 +281,8 @@ export const InfoTimelineTableTd = styled.td`
   font-size: 1.1rem;
   border-top: ${(props) => props.isFirstOfYear ? 'none' : '1px dotted rgb(167, 167, 167)'};
 
-  ${theme.media.mobile} {
-    padding: 10px;
+  ${theme.media.tablet} {
+    padding: 6px 10px 10px 10px;
   }
 `
 
@@ -299,13 +297,14 @@ export const InfoTimelineTableTdYear = styled(InfoTimelineTableTd)`
   background-color: rgb(248, 248, 248);
   padding-right: 2px;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     min-width: 55px;
+    padding-top: 8px;
   }
 `
 
 export const InfoTimelineTableTdMonth = styled(InfoTimelineTableTd)`
-  width: 80px;
+  width: 90px;
   flex-shrink: 0;
   text-align: right;
   font-weight: 500;
@@ -315,13 +314,25 @@ export const InfoTimelineTableTdMonth = styled(InfoTimelineTableTd)`
   padding-right: 13px;
   padding-left: 5px;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     min-width: 65px;
     word-break: keep-all;
-    width:60px;
-    // text-align: center;
-    padding-right: 7px;
+    width:65px;
+    line-height: 1.8;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    flex-shrink: 0;
   }
+`
+export const InfoTimelineMobile = styled.div`
+  display: flex; 
+  flex-direction: column;
+  gap: 5px;
+  flex-grow: 1;
+  flex-wrap: wrap;
+  width: 10px;
+  margin-left: 2px;
 `
 
 export const InfoTimelineTableTdTitle = styled(InfoTimelineTableTd)`
@@ -331,21 +342,26 @@ export const InfoTimelineTableTdTitle = styled(InfoTimelineTableTd)`
   word-break: keep-all;
   padding-left: 18px;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     padding-left: 10px;
     flex-grow: unset;
     flex-shrink: 1;
     flex-wrap: wrap;
+    padding-top: 10px;
+    font-size: 1.05rem;
   }
 `
+
 
 export const InfoTimelineInfo = styled.div`
   margin-top: 8px;
   margin-left: 10%;
   font-weight: 400;
+  word-break: keep-all;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     margin-left: 0;
+    font-size: 1rem;
   }
 `
 
@@ -369,47 +385,35 @@ export const InfoTimelineTableTdImg = styled.td`
   }
 
   &:hover {
-    // right: -100px;
-    width: 25dvw;
     height: auto;
     z-index: 2;
-
-    img {
-      padding-left: 0dvw;
-    }
   }
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     width: 100%;
     display: block;
     position: static;
     right: unset;
     top: unset;
     height: auto;
-    padding-left: 12px;
+    padding-left: 7px;
+    padding-right: 20px;
     margin-bottom: 15px;
 
     img {
+      margin-left: 5px;
       padding-left: 0px;
       border-top: none;
-      width: 100%;
       height: auto;
     }
 
     &:hover {
-      padding-left: 0px;
-      width: 100%;
       height: auto;
       right: 0;
     }
   }
 `
 
-export const InfoTimelineMobile = styled.div`
-  display: flex; 
-  flex-direction: column;
-  gap: 5px;
-`
 
 /*-------------------------------- Credits --------------------------------*/
 export const InfoCreditsTable = styled.table`

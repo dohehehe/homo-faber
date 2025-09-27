@@ -7,8 +7,8 @@ export const DetailWrapper = styled(motion.main, {
   shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom'
 })`
   width: ${(props) => props.isMobile ? '100dvw' : 'calc(80vw - 50px)'};
-  height: ${(props) => props.isMobile ? 'calc(87dvh - 47px)' : '100dvh'};
-  padding: ${(props) => props.isMobile ? '0px' : '0px 10dvw 0px 60px'};
+  height: ${(props) => props.isMobile ? 'calc(87dvh - 42px)' : '100dvh'};
+  padding: 0px 10dvw 0px 60px;
   background-color: #F7F7F7;
   position: fixed;
   right: ${(props) => props.isMobile ? 'unset' : props.right};
@@ -26,6 +26,11 @@ export const DetailWrapper = styled(motion.main, {
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+  
+
+  ${theme.media.mobile} {
+    padding: 0px !important;
+    box-shadow: 0px 0 8px 2px rgba(109, 109, 109, 0.66);
   }
 `
 export const DetailPageName = styled.h1`
@@ -38,12 +43,13 @@ export const DetailPageName = styled.h1`
   transform-origin: top left;
   top: 17px;
   margin-left: -29px;
+  z-index: 10;
   
   ${theme.media.mobile} { 
     transform: rotate(0deg);
     transform-origin: top left;
-    top: 15px;
-    margin-left: 13px;
+    top: 14px;
+    margin-left: 11px;
     font-size: 1rem;
   }
 `
@@ -53,14 +59,16 @@ export const InterviewHeader = styled.div`
   gap: 2dvw;
   margin-top: -14px;
   position: relative;
-  min-height: 70dvh;
+  min-height: 90dvh;
+  justify-content: flex-end;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     flex-direction: column;
     gap: 0px;
     margin-top: 0px;
     align-items: center;
     min-height: unset;
+    justify-content: unset;
   }
 `
 
@@ -75,7 +83,7 @@ export const InterviewTitle = styled.div`
   top:28px;
   left: 0px;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     gap: 10px;
     position: static;
     top: unset;
@@ -92,44 +100,34 @@ export const InterviewStore = styled.h2`
   -webkit-background-clip: text;
   color: transparent;
   background-color:rgb(101, 101, 101);
-  text-shadow: 0px 0px 3px rgba(166, 166, 166, 0.43), -0.1px 1px 4px rgba(95, 87, 87, 0.5), 1px -1px 1px rgba(255, 255, 255, 0.78);
+  text-shadow: 0px 0px 3px rgba(166, 166, 166, 0.43), -0.1px 1px 4px rgba(95, 87, 87, 0.5), 1px -1px 1px rgba(255, 255, 255, 0.78), 0px 0px 5px rgba(107, 107, 107, 0.79);
   position: relative;
   padding-top: 7px;
   transition: text-shadow .4s ;
   margin-right: -50px;
 
-  &:hover{
-    text-shadow: 0px 2px 3px rgba(221, 221, 221, 0.8), -0.5px -0.1px 5px rgba(100,92,92,0.6), 2px 2px 10px rgba(255,255,255,0.5);
-  }
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     font-size: 4.4rem;
-    background-color:rgb(100, 100, 100);
-    text-shadow: 1px 0px 2px rgba(245, 245, 245, 0.43), -0.1px -0.1px 4px rgba(178, 176, 176, 0.71), 0px 0px 1px rgba(255, 255, 255, 0.78);
+    background-color:rgb(230, 230, 230);
+    text-shadow: 0px 0px 3px rgba(212, 212, 212, 0.76), -0.1px 1px 1px rgba(130, 126, 126, 0.5), 1px -1px 1px rgba(221, 221, 221, 0.78), 0px 0px 5px rgba(107, 107, 107, 0.79);
     padding-top: 0px;
-    text-outline: 0.5px black;
-    -webkit-text-stroke: 0.1px rgba(161, 161, 161, 0.6);
     margin-right: 0px;
-
-    &:hover{
-      text-shadow: 1px 0px 2px rgba(245, 245, 245, 0.43), -0.1px -0.1px 4px rgba(178, 176, 176, 0.71), 0px 0px 1px rgba(255, 255, 255, 0.78);
-      background-color:rgb(190, 190, 190);
-
-    }
   }
 `
 export const InterviewPerson = styled.h3`
   font-weight: 800;
   font-size: 3dvw;
   padding-top: 4px;
-  background-color:rgb(121, 121, 121);
+  background-color:rgb(82, 82, 82);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  text-shadow: 3px 4px 5px rgba(245, 245, 245, 0.3), -0.1px -0.1px 6px rgba(100,92,92,0.2), 2px 2px 2px rgba(255,255,255,0.5);
+  text-shadow: 1px 0px 0px rgba(245, 245, 245, 0.26), -0.1px -0.1px 4px rgba(56, 50, 50, 0.3), 0px 0px 1px rgba(255, 255, 255, 0.61);
+  -webkit-text-stroke: 0.1px rgba(198, 198, 198, 0.96);
   margin-left: 12px;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     font-size: 2.4rem;
     z-index: 10;
     margin-top: 0px;
@@ -139,21 +137,27 @@ export const InterviewPerson = styled.h3`
     margin-left: 0px;
   }
 `
-export const InterviewIntro = styled.h4`
+export const InterviewIntro = styled.span`
   font-weight: 600;
   font-size: 1.3rem;
-  line-height: 1.75;
+  line-height: 1.7;
   word-break: keep-all;
   text-align: left;
   position: absolute;
-  bottom: -7px;
-  color:rgb(84, 84, 84);
+  left: 0px;
+  bottom: -60px;
+  color:rgb(73, 73, 73);
   width: 47%;
   min-width: 350px;
   margin-left: 20px;
-  mix-blend-mode: multiply;
+  text-decoration: underline 2rem  #F7F7F7;
+  text-underline-offset: -1.5rem;
+  font-family: var(--font-gothic);
+  z-index: 2;
+  display: inline;
+  text-decoration-skip-ink: none;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     position: static;
     font-size: 1.1rem;
     width: 100%;
@@ -165,20 +169,26 @@ export const InterviewIntro = styled.h4`
     color:rgb(34, 34, 34);
     order: 3;
     text-align: center;
+    text-decoration: unset;
   }
 `
 
 export const InterviewCoverImg = styled.img`
-  max-height: 95dvh;
-  max-width: 70%;
+  // max-height: 100dvh;
+  max-width: 80dvw;
+  height: 100dvh;
   margin-right: -10dvw;
-  margin-left: auto;
+  margin-left: -40px;
+  // text-align: right;
   object-fit: cover;
+  object-position: center;
   border-radius: 0% 0 0% 43%;
 
-  ${theme.media.mobile} {
-    width: 110dvw;
-    height: auto;
+  ${theme.media.tablet} {
+    max-height: 70dvh;
+    width: 130dvw;
+    min-height: 40dvh;
+    object-position: center;
     margin-right: 0px;
     margin-left: 0px;
     border-radius: 0 0 50% 50%;
@@ -199,7 +209,7 @@ export const InterviewInfo = styled.div`
     margin-top: 200px;
   }
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     font-size: 1rem;
     margin-right: 20px;
   }
@@ -240,6 +250,12 @@ export const InterviewLink = styled.div`
       margin-top: 40px;
       font-weight: 900;
       letter-spacing: 0.1rem;
+    }
+
+    ${theme.media.tablet} {
+      margin-top: -700px;
+
+      
     }
 
     ${theme.media.mobile} {

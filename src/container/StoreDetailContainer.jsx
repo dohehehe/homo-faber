@@ -7,7 +7,6 @@ import { useStoreDetail } from '@/hooks/useStores';
 import { getStoreTypes } from '@/utils/api/stores-api';
 import { getInterviewsByStore } from '@/utils/supabase/interview';
 import { useCustomScrollbar } from '@/hooks/useCustomScrollbar';
-import CustomScrollbar from '@/components/common/CustomScrollbar';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { useAuth } from '@/contexts/AuthContext';
 import * as S from '@/styles/store/storeDetailContainer.style';
@@ -29,7 +28,6 @@ function StoreDetailContainer({ }) {
   const { user } = useAuth();
   const { toggleBookmark, isStoreBookmarked, loading } = useBookmarks();
   const { store, isLoading, error } = useStoreDetail(storeId);
-  const { containerRef, scrollState, scrollToRatio } = useCustomScrollbar();
 
   // capacity와 industry 타입들을 가져오는 useEffect
   useEffect(() => {
@@ -243,7 +241,7 @@ function StoreDetailContainer({ }) {
 
                 </S.StoreDetailSection>
 
-                <S.StoreImgSection ref={containerRef}>
+                <S.StoreImgSection>
                   {store.card_img && (
                     <S.StoreCardImg src={`${store.card_img}`} />
                   )}
@@ -259,16 +257,6 @@ function StoreDetailContainer({ }) {
                   )}
                 </S.StoreImgSection>
               </S.StoreDetailCard>
-            )}
-            {!isMobile && (
-              <>
-                {/* 커스텀 스크롤바 */}
-                <CustomScrollbar
-                  scrollState={scrollState}
-                  onScrollToRatio={scrollToRatio}
-                  height={300}
-                />
-              </>
             )}
           </>
 

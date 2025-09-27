@@ -21,7 +21,7 @@ function InfoContainer({ onLoadComplete }) {
         <S.Infoh1>산림동의 만드는 사람들: 호모 파베르 HOMO FABER</S.Infoh1>
         <S.Infoh3><b>호모 파베르(Homo Faber)</b>는 “도구를 만드는 인간” 또는 “기술적 인간”을 뜻하는 라틴어로 철학자 앙리 베르그송이 인간을 정의하는 개념으로 제시했으며, 그는 인간의 본질을 도구를 만들고 사용하는 능력에서 찾는다.</S.Infoh3>
 
-        <S.Infoh2>청계천·을지로 산림동의 기억과 역사, 만드는 것이 좋은 사람들의 이야기</S.Infoh2>
+        <S.Infoh2>청계천·을지로 산림동의 기억과 역사,<br /> 만드는 것이 좋은 사람들의 이야기</S.Infoh2>
 
         <S.InfoArticle>
           <S.InfoSubTitle>만드는 것을 좋아하는 사람들</S.InfoSubTitle>

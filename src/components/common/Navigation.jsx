@@ -43,8 +43,8 @@ export default function Navigation() {
     { href: '/store', label: '업체' },
     { href: '/interview', label: '인터뷰' },
     { href: '/word', label: '용어' },
+    { href: '/fnq', label: '제작' },
     { href: '/info', label: '소개' },
-    { href: '/fnq', label: '문의' },
     { href: user ? '/mypage' : '/login', label: user ? '내정보' : '로그인' },
   ];
 

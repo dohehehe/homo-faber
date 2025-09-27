@@ -51,7 +51,7 @@ function AnimatedPanel({
   const { isMobile, isReady } = useWindowSize();
   const [right, setRight] = useState(() => {
     if (baseRoute === 'store') {
-      return 'calc(-80dvw + 190px)';
+      return 'calc(-80dvw + 400px)';
     }
     return '-81dvw';
   });
@@ -120,7 +120,7 @@ function AnimatedPanel({
     const getDesktopRightPosition = (isActive) => {
       if (baseRoute === 'store') {
         if (pathname === '/') {
-          return 'calc(-80dvw + 190px)';
+          return 'calc(-80dvw + 400px)';
         } else if (pathname.startsWith('/store')) {
           return '0px';
         } else {
@@ -247,14 +247,14 @@ function AnimatedPanel({
   // store 라우터의 경우 특별한 initial/exit 값 설정
   const getInitialPosition = () => {
     if (baseRoute === 'store') {
-      return isMobile ? { bottom: 'calc(-80dvh + 20px)' } : { right: 'calc(-80dvw + 190px)' };
+      return isMobile ? { bottom: 'calc(-80dvh + 20px)' } : { right: 'calc(-80dvw + 400px)' };
     }
     return isMobile ? { bottom: '-100dvh' } : { right: '-81dvw' };
   };
 
   const getExitPosition = () => {
     if (baseRoute === 'store') {
-      return isMobile ? { bottom: 'calc(-80dvh + 20px)' } : { right: 'calc(-80dvw + 190px)' };
+      return isMobile ? { bottom: 'calc(-80dvh + 20px)' } : { right: 'calc(-80dvw + 400px)' };
     }
     return isMobile ? { bottom: '-100dvh' } : { right: '-81dvw' };
   };

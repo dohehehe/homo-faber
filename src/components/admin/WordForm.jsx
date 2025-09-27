@@ -79,7 +79,11 @@ const WordForm = ({
 
           // 이미지 미리보기 설정
           if (word.img) {
-            setImagePreview(word.img);
+            // img가 배열인 경우 첫 번째 요소를 사용, 문자열인 경우 그대로 사용
+            const imageUrl = Array.isArray(word.img) ? word.img[0] : word.img;
+            if (imageUrl && typeof imageUrl === 'string') {
+              setImagePreview(imageUrl);
+            }
           }
 
           // 폼 유효성 검사 트리거
@@ -134,7 +138,7 @@ const WordForm = ({
     try {
       setIsSaving(true);
 
-      let imageData = wordData?.img || [];
+      let imageData = wordData?.img || '';
 
       // 이미지가 선택된 경우 업로드
       if (localImage) {
@@ -153,7 +157,7 @@ const WordForm = ({
         name: formData.name,
         meaning: formData.meaning,
         source: formData.source || '',
-        img: imageData ? imageData : (wordData?.img || []),
+        img: imageData || '',
       };
 
       if (formMode === 'create') {
@@ -279,7 +283,7 @@ const WordForm = ({
               >
                 {isUploading ? '업로드 중...' : '이미지 선택'}
               </Button>
-              {imagePreview && (
+              {imagePreview && typeof imagePreview === 'string' && imagePreview.trim() !== '' && (
                 <div className="image-preview" style={{ marginTop: '10px' }}>
                   <Image
                     src={imagePreview}
