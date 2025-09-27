@@ -56,7 +56,7 @@ export const StoreDetailCard = styled.article`
   color: black;
   display: flex;
   flex-grow: 1;
-  gap: 2%;
+  gap: 3%;
 
   ${theme.media.tablet} {
     gap: 0px;
@@ -71,7 +71,7 @@ export const StoreDetailCard = styled.article`
 `;
 
 export const StoreDetailSection = styled.section`
-  width: 52%;
+  width: 43%;
   text-align: center;
   overflow-y: auto;
   padding-top: 20px;
@@ -94,9 +94,8 @@ export const StoreDetailSection = styled.section`
 export const StoreImgSection = styled(StoreDetailSection)`
   margin-bottom: -20px;
   overflow-x: hidden;
-  width: 46%;
+  width: 54%;
   margin-top: -20px;
-  margin-right: 1dvw;
 
   &::-webkit-scrollbar {
     display: none;
@@ -137,7 +136,7 @@ export const StoreName = styled.h2`
   }
 
   ${theme.media.tablet} {
-    font-size: 3rem;
+    font-size: 3.1rem;
     font-weight: 800;
     margin-bottom: 10px;
   }
@@ -229,17 +228,21 @@ export const InterviewButton = styled.button`
   left: 38px;
   transform: rotate(90deg);
   transform-origin: top left;
-
-  &:hover {
-    text-decoration: 0.8px underline wavy;
+      text-decoration: 0.8px underline wavy;
     text-underline-offset: 5px;
     color: black;
 
-    &::after {
-      content: ' 보러가기';
-      // padding-left: 8px;
-    }
-  }
+
+  // &:hover {
+  //   text-decoration: 0.8px underline wavy;
+  //   text-underline-offset: 5px;
+  //   color: black;
+
+  //   &::after {
+  //     content: ' 보러가기';
+  //     // padding-left: 8px;
+  //   }
+  // }
   
   &:active {
     transform: translateY(0);
@@ -255,7 +258,6 @@ export const InterviewButton = styled.button`
     left: unset;
     color: #555;
     right: 8px;
-    
   }
 `
 
@@ -419,11 +421,11 @@ export const StoreImg = styled.img`
   vertical-align: top;
   position: relative;
   transition: all .4s ;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 
   &:hover{
     z-index: 2;
-    transform: scale(1.06);
+    transform: scale(1.05);
   }
 
   ${theme.media.tablet} {
