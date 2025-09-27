@@ -85,6 +85,7 @@ function InterviewDetailContainer({ }) {
                   <S.InterviewPerson>{interview?.stores.person}</S.InterviewPerson>
 
                 </S.InterviewTitle>
+
                 <S.InterviewIntro>{interview?.intro}</S.InterviewIntro>
                 <S.InterviewCoverImg src={interview?.cover_img} alt="이미지" />
               </S.InterviewHeader>
