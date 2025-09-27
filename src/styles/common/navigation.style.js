@@ -66,10 +66,10 @@ export const NavigationWrapper = styled.nav`
   top: 103px;
   left: 16px;
   z-index: 20;
-  background: rgba(227, 227, 227, 0.7);
+  background: rgba(201, 201, 201, 0.63);
   border: 1px solid rgba(109, 109, 109, 0.1);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 12px rgba(35, 35, 35, 0.59);
   padding: 8px 6px;
   display: flex;
   flex-direction: column;
@@ -106,9 +106,9 @@ export const NavigationItem = styled.div`
   padding: 8px 10px;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: ${props => props.active ? 600 : 400};
+  font-weight: ${props => props.active ? 700 : 500};
   line-height: 1;
-  color: 111;
+  color: #555;
   background: ${props => props => props.active ? 'rgb(240, 240, 240)' : 'transparent'};
   border: ${props => props.active ? '1px solid #ccc' : '1px solid transparent'};
   transition: background 0.2s ease, color 0.2s ease;
