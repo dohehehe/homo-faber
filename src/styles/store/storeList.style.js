@@ -78,10 +78,21 @@ export const TableRow = styled.tr`
   padding-left: 1px;
   display: flex;
   align-items: center;
+  background-color: ${props => props.isHovered ? '#f9f9f9' : 'transparent'};
+  transition: background-color 0.2s ease;
+  
   &:hover {
     background-color: #f9f9f9;
     cursor: pointer;
   }
+  
+  // /* Map2D에서 호버된 경우 더 강한 스타일 */
+  // ${props => props.isHovered && `
+  //   background-color: #d4edda !important;
+  //   border-left: 3px solid #28a745;
+  //   transform: scale(1.01);
+  //   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  // `}
 `;
 
 export const TableCell = styled.td`

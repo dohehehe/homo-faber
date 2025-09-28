@@ -22,6 +22,7 @@ export default function Navigation() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isMap3D, setIsMap3D] = useState(true); // 지도 상태 추적 (기본값: 3D)
 
   // 클라이언트에서만 실행되도록 설정
   useEffect(() => {
@@ -56,6 +57,12 @@ export default function Navigation() {
     setIsOpen(false);
   };
 
+  // 지도 전환 함수
+  const handleMapToggle = () => {
+    setIsMap3D(!isMap3D); // 상태 업데이트
+    window.dispatchEvent(new CustomEvent('toggleMapView'));
+  };
+
   return (
     <>
       <S.NavigationIcon
@@ -76,6 +83,7 @@ export default function Navigation() {
             </Link>
           );
         })}
+
         {isClient && isMobile && (
           <S.CloseButton onClick={handleLinkClick}>
             ✕
@@ -83,6 +91,17 @@ export default function Navigation() {
         )}
       </S.NavigationWrapper>
 
+      <S.MapToggleButton isOpen={isMobile && isOpen} onClick={handleMapToggle} isActive={isMap3D}>
+        <S.SwitchText isActive={!isMap3D}>
+          2D
+        </S.SwitchText>
+        <S.SwitchTrack isActive={isMap3D}>
+          <S.SwitchThumb isActive={isMap3D} />
+        </S.SwitchTrack>
+        <S.SwitchText isActive={isMap3D}>
+          3D
+        </S.SwitchText>
+      </S.MapToggleButton>
     </>
   );
 }

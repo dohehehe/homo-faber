@@ -127,9 +127,89 @@ export const CloseButton = styled.button`
   font-family: var(--font-gothic);
   cursor: pointer;
   background: none;
-  top: 280px;
+  top: 330px;
   left: 36px;
   border: none;
-  color: #222;
+  color: #666;
   z-index: 1001;
+`;
+
+export const MapToggleButton = styled.button`
+  display: ${props => props.isOpen ? 'flex' : 'none'};
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.8;
+  background: #999;
+  color: white;
+  border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  font-family: var(--font-gothic);
+  position: absolute;
+  bottom: 20px;
+  left: 30px;
+  z-index: 9;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+
+  &:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  ${theme.media.mobile} {
+    padding: 10px 14px;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    left: unset;
+    right: 20px;
+    bottom: 20px;
+  }
+`;
+
+export const SwitchTrack = styled.div`
+  position: relative;
+  width: 20px;
+  height: 40px;
+  background: ${props => props.isActive
+    ? 'rgba(255,255,255,0.3)'
+    : 'rgba(255,255,255,0.2)'
+  };
+  border-radius: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255,255,255,0.3);
+`;
+
+export const SwitchThumb = styled.div`
+  position: absolute;
+  top: ${props => props.isActive ? '22px' : '2px'};
+  left: 1px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transform: ${props => props.isActive ? 'scale(1.1)' : 'scale(1)'};
+`;
+
+export const SwitchText = styled.span`
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: ${props => props.isActive ? 'white' : '#444'};
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  
+  ${theme.media.mobile} {
+    font-size: 14px;
+  }
 `;

@@ -2,21 +2,20 @@
 
 import useWindowSize from '@/hooks/useWindowSize';
 import { usePOI } from '@/hooks/usePOI';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
-const Map3D = ({ stores }) => {
+const Map3D = ({ stores, onStoreHover, onStoreLeave, onMapClick }) => {
   const { width, height } = useWindowSize();
-  const pathname = usePathname();
   const router = useRouter();
-  usePOI(stores);
 
-  // /store 페이지 또는 개별 스토어 페이지에서 Map3D 클릭 시 홈으로 이동
-  const handleMapClick = (e) => {
-    if (pathname !== '/') {
-      router.push('/');
-    }
-  };
+  // POI 클릭 핸들러
+  const handlePOIClick = useCallback((storeId) => {
+    router.push(`/store/${storeId}`);
+  }, [router]);
+
+  usePOI(stores, handlePOIClick, onStoreHover, onStoreLeave);
+
 
   // 터치 이벤트 핸들러 추가
   const handleTouchStart = (e) => {
@@ -27,7 +26,9 @@ const Map3D = ({ stores }) => {
   const handleTouchEnd = (e) => {
     // e.preventDefault();
     e.stopPropagation();
-    handleMapClick(e);
+    if (onMapClick) {
+      onMapClick(e);
+    }
   };
 
   useEffect(() => {
@@ -90,11 +91,12 @@ const Map3D = ({ stores }) => {
       });
 
       Module.getViewCamera().setLocation(
-        new Module.JSVector3D(126.99514470317824, 37.568451978489975, 46),
+        new Module.JSVector3D(126.995128259481, 37.56844176478388, 37.128498304635286),
       );
-      Module.getViewCamera().setDirect(124);
+      Module.getViewCamera().setDirect(130);
       Module.getViewCamera().setFov(45);
-      Module.getViewCamera().setTilt(11);
+      Module.getViewCamera().setTilt(2);
+      Module.getViewCamera().setAltitude(40);
 
       // 구글 배경지도가 로딩속도가 빠름
       // 구글은 푸른색감 기본지도는 초록색감 -> 최종 디자인보고 결정
@@ -124,17 +126,12 @@ const Map3D = ({ stores }) => {
     <div
       id="map3D"
       style={{
-        width: '100dvw',
-        height: '100dvh',
+        width: '100%',
+        height: '100%',
         cursor: 'pointer',
         touchAction: 'manipulation', // 터치 동작 최적화
         WebkitTapHighlightColor: 'transparent', // iOS 터치 하이라이트 제거
-        position: 'fixed', // 고정 위치로 설정
-        top: '0',
-        left: '0',
-        zIndex: 1, // 낮은 z-index로 설정하여 다른 컴포넌트가 위에 올라올 수 있도록
       }}
-      onClick={handleMapClick}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     />

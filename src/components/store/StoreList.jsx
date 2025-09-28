@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { convertIndustryNameToKorean } from '@/utils/converters';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,6 +15,7 @@ const StoreList = ({ stores, isLoading, error }) => {
   const { user } = useAuth();
   const { toggleBookmark, isStoreBookmarked, loading } = useBookmarks();
   const { isMobile, isReady } = useWindowSize();
+  const [hoveredStoreId, setHoveredStoreId] = useState(null);
 
   const handleStoreClick = (storeId) => {
     router.push(`/store/${storeId}`);
@@ -25,6 +27,25 @@ const StoreList = ({ stores, isLoading, error }) => {
       toggleBookmark(storeId);
     }
   };
+
+  // Map2D에서 오는 hover 이벤트 리스너
+  useEffect(() => {
+    const handleStoreHover = (event) => {
+      setHoveredStoreId(event.detail.id);
+    };
+
+    const handleStoreLeave = () => {
+      setHoveredStoreId(null);
+    };
+
+    window.addEventListener('storeHover', handleStoreHover);
+    window.addEventListener('storeLeave', handleStoreLeave);
+
+    return () => {
+      window.removeEventListener('storeHover', handleStoreHover);
+      window.removeEventListener('storeLeave', handleStoreLeave);
+    };
+  }, []);
 
   return (
     <S.TableWrapper>
@@ -57,7 +78,11 @@ const StoreList = ({ stores, isLoading, error }) => {
             </tr>
           ) : (
             stores.map((store) => (
-              <S.TableRow key={store.id} onClick={() => handleStoreClick(store.id)}>
+              <S.TableRow
+                key={store.id}
+                onClick={() => handleStoreClick(store.id)}
+                isHovered={hoveredStoreId === store.id}
+              >
                 {user && (
                   <S.BookmarkCell>
                     <S.BookmarkButton
