@@ -127,15 +127,15 @@ export const CloseButton = styled.button`
   font-family: var(--font-gothic);
   cursor: pointer;
   background: none;
-  top: 280px;
+  top: 330px;
   left: 36px;
   border: none;
-  color: #222;
+  color: #666;
   z-index: 1001;
 `;
 
 export const MapToggleButton = styled.button`
-  display: flex;
+  display: ${props => props.isOpen ? 'flex' : 'none'};
   flex-direction: column;
   align-items: center;
   gap: 5px;
@@ -153,7 +153,7 @@ export const MapToggleButton = styled.button`
   position: absolute;
   bottom: 20px;
   left: 30px;
-  z-index: 99;
+  z-index: 9;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 
   &:hover {
@@ -170,6 +170,9 @@ export const MapToggleButton = styled.button`
     padding: 10px 14px;
     border-radius: 25px;
     font-size: 1.2rem;
+    left: unset;
+    right: 20px;
+    bottom: 20px;
   }
 `;
 

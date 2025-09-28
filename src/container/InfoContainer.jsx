@@ -3,6 +3,8 @@ import * as S from '@/styles/info/infoContainer.sytle';
 import Timeline from '@/components/info/Timeline';
 import Supporter from '@/components/info/Supporter';
 import Link from 'next/link';
+import Image from 'next/image';
+import useWindowSize from '@/hooks/useWindowSize';
 
 function InfoContainer({ onLoadComplete }) {
   useEffect(() => {
@@ -10,6 +12,7 @@ function InfoContainer({ onLoadComplete }) {
       onLoadComplete();
     }
   }, [onLoadComplete]);
+  const { isMobile } = useWindowSize();
 
   return (
     <S.InfoWrapper>
@@ -49,6 +52,17 @@ function InfoContainer({ onLoadComplete }) {
             <Link href="https://www.ohmynews.com/NWS_Web/iRoom/articles/news_list.aspx?MEM_CD=00772030" target="_blank">*산림동과 관련된 기고문은 <span>이곳</span>에서 더 읽어보실 수 있습니다</Link>
           </S.InfoParaLink>
         </S.InfoArticle>
+
+        <S.Infoh2>산림동 지도</S.Infoh2>
+        <img
+          src="/2Dmap.png"
+          alt="산림동 지도"
+          style={{ width: '100%', height: 'auto', margin: isMobile ? '10px 0px 0px 0px' : '10px 20px 0px 20px' }}
+        />
+        <S.InfoParaLink style={{ marginBottom: '200px', marginTop: '0px' }}>
+          디자인: 김은재
+        </S.InfoParaLink>
+
 
         <S.Infoh2>청계천·을지로의 재개발 투쟁사</S.Infoh2>
         <Timeline />

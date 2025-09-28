@@ -91,7 +91,7 @@ export default function Navigation() {
         )}
       </S.NavigationWrapper>
 
-      <S.MapToggleButton onClick={handleMapToggle} isActive={isMap3D}>
+      <S.MapToggleButton isOpen={isMobile && isOpen} onClick={handleMapToggle} isActive={isMap3D}>
         <S.SwitchText isActive={!isMap3D}>
           2D
         </S.SwitchText>

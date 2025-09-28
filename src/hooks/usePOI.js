@@ -1,9 +1,16 @@
 import { useEffect, useRef } from 'react';
 
-export function usePOI(stores, onPOIClick) {
+export function usePOI(stores, onPOIClick, onStoreHover, onStoreLeave) {
   const initializedRef = useRef(false);
   const onPOIClickRef = useRef(onPOIClick);
+  const onStoreHoverRef = useRef(onStoreHover);
+  const onStoreLeaveRef = useRef(onStoreLeave);
+  const storesRef = useRef(stores);
+
   onPOIClickRef.current = onPOIClick;
+  onStoreHoverRef.current = onStoreHover;
+  onStoreLeaveRef.current = onStoreLeave;
+  storesRef.current = stores;
 
   useEffect(() => {
     let currentLayer = null;
@@ -11,6 +18,7 @@ export function usePOI(stores, onPOIClick) {
     let detachHoverHandler = null;
     let prevHoverObject = null;
     const imageCache = new Map();
+    const MAX_CACHE_SIZE = 50; // 최대 캐시 크기 제한
 
     // 기존 레이어가 있는지 확인하고 제거
     const cleanupExistingLayer = () => {
@@ -207,6 +215,12 @@ export function usePOI(stores, onPOIClick) {
                   const hoverData = hoverCtx.getImageData(0, 0, hoverCanvas.width, hoverCanvas.height).data;
 
                   const poiId = `store_${store.id || index}`;
+                  // 캐시 크기 제한
+                  if (imageCache.size >= MAX_CACHE_SIZE) {
+                    const firstKey = imageCache.keys().next().value;
+                    imageCache.delete(firstKey);
+                  }
+
                   imageCache.set(poiId, {
                     normal: { data: normalData, w: normalWidth, h: normalHeight },
                     hover: { data: hoverData, w: hoverCanvas.width, h: hoverCanvas.height },
@@ -268,6 +282,12 @@ export function usePOI(stores, onPOIClick) {
                   const hoverData = hoverCtx.getImageData(0, 0, hoverCanvas.width, hoverCanvas.height).data;
 
                   const poiId = `store_${store.id || index}`;
+                  // 캐시 크기 제한
+                  if (imageCache.size >= MAX_CACHE_SIZE) {
+                    const firstKey = imageCache.keys().next().value;
+                    imageCache.delete(firstKey);
+                  }
+
                   imageCache.set(poiId, {
                     normal: { data: normalData, w: normalWidth, h: normalHeight },
                     hover: { data: hoverData, w: hoverCanvas.width, h: hoverCanvas.height },
@@ -378,7 +398,13 @@ export function usePOI(stores, onPOIClick) {
       const mapElement = document.getElementById('map3D');
       if (!mapElement) return;
 
+      let lastHoverTime = 0;
+      const HOVER_THROTTLE = 16; // ~60fps
+
       const handler = (e) => {
+        const now = Date.now();
+        if (now - lastHoverTime < HOVER_THROTTLE) return;
+        lastHoverTime = now;
         const rect = mapElement.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -392,6 +418,10 @@ export function usePOI(stores, onPOIClick) {
               prevHoverObject.setImage(cache.normal.data, cache.normal.w, cache.normal.h);
             }
             prevHoverObject = null;
+            // Store leave 이벤트 발생
+            if (onStoreLeaveRef.current) {
+              onStoreLeaveRef.current();
+            }
           }
           return;
         }
@@ -413,6 +443,16 @@ export function usePOI(stores, onPOIClick) {
         if (cache && cache.hover) {
           object.setImage(cache.hover.data, cache.hover.w, cache.hover.h);
           prevHoverObject = object;
+
+          // Store hover 이벤트 발생 - store 정보 찾기
+          if (onStoreHoverRef.current) {
+            // objId에서 'store_' 접두사 제거
+            const actualStoreId = objId.replace('store_', '');
+            const store = storesRef.current.find(s => s.id === actualStoreId);
+            if (store) {
+              onStoreHoverRef.current(store);
+            }
+          }
         }
       };
 
@@ -451,6 +491,8 @@ export function usePOI(stores, onPOIClick) {
             console.log('POI 레이어 정리됨');
           }
         }
+        // 이미지 캐시 정리
+        imageCache.clear();
       } catch (error) {
         console.warn('POI 레이어 정리 실패:', error);
       }

@@ -5,9 +5,8 @@ import { usePOI } from '@/hooks/usePOI';
 import { useEffect, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
-const Map3D = ({ stores }) => {
+const Map3D = ({ stores, onStoreHover, onStoreLeave, onMapClick }) => {
   const { width, height } = useWindowSize();
-  const pathname = usePathname();
   const router = useRouter();
 
   // POI 클릭 핸들러
@@ -15,14 +14,8 @@ const Map3D = ({ stores }) => {
     router.push(`/store/${storeId}`);
   }, [router]);
 
-  usePOI(stores, handlePOIClick);
+  usePOI(stores, handlePOIClick, onStoreHover, onStoreLeave);
 
-  // /store 페이지 또는 개별 스토어 페이지에서 Map3D 클릭 시 홈으로 이동
-  const handleMapClick = (e) => {
-    if (pathname !== '/') {
-      router.push('/');
-    }
-  };
 
   // 터치 이벤트 핸들러 추가
   const handleTouchStart = (e) => {
@@ -33,7 +26,9 @@ const Map3D = ({ stores }) => {
   const handleTouchEnd = (e) => {
     // e.preventDefault();
     e.stopPropagation();
-    handleMapClick(e);
+    if (onMapClick) {
+      onMapClick(e);
+    }
   };
 
   useEffect(() => {
@@ -137,7 +132,6 @@ const Map3D = ({ stores }) => {
         touchAction: 'manipulation', // 터치 동작 최적화
         WebkitTapHighlightColor: 'transparent', // iOS 터치 하이라이트 제거
       }}
-      onClick={handleMapClick}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     />
