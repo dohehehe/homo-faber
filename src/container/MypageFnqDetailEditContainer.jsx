@@ -192,16 +192,7 @@ function MypageFnqDetailEditContainer() {
         console.log('파일 필드 초기화 완료');
       }, 50);
     }
-  }, [fnq, isInitialized, appendFile, removeFile, fileFields.length]);
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
-  };
+  }, [fnq, isInitialized, appendFile, removeFile]);
 
   // 예산 포맷팅 함수 (천 단위 구분자)
   const formatBudget = (value) => {
@@ -210,14 +201,6 @@ function MypageFnqDetailEditContainer() {
     const numericValue = value.replace(/[^0-9]/g, '');
     // 천 단위 구분자 추가
     return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  };
-
-  // 숫자 포맷팅 함수 (천 단위 구분자)
-  const formatNumber = (value) => {
-    if (!value) return '-';
-    const numericValue = typeof value === 'number' ? value : parseInt(value);
-    if (isNaN(numericValue)) return '-';
-    return numericValue.toLocaleString('ko-KR') + ' 원';
   };
 
   // 예산 입력 핸들러
@@ -304,9 +287,6 @@ function MypageFnqDetailEditContainer() {
       return newFiles;
     });
     removeFile(index);
-
-    // 기존 파일도 제거된 것으로 표시 (실제로는 저장 시 제외됨)
-    // 이는 UI에서만 제거되고, 실제 데이터는 저장 시 처리됨
   };
 
   // 저장 핸들러
@@ -463,15 +443,15 @@ function MypageFnqDetailEditContainer() {
               message="프로젝트를 찾을 수 없습니다."
             />
           ) : (
-            <div key="edit-main-content">
+            <>
               <S.UserForm onSubmit={handleSubmit(handleSave)}>
                 <S.FnqEditButtonWrapper>
-                  <S.SubmitButton type="button" onClick={handleCancel} disabled={isSaving}>
+                  <S2.Button type="button" onClick={handleCancel} disabled={isSaving}>
                     취소
-                  </S.SubmitButton>
-                  <S.SubmitButton type="submit" disabled={isSaving}>
+                  </S2.Button>
+                  <S2.Button type="submit" disabled={isSaving}>
                     {isSaving ? '저장 중...' : '저장'}
-                  </S.SubmitButton>
+                  </S2.Button>
                 </S.FnqEditButtonWrapper>
 
                 <S.FormGroup>
@@ -576,10 +556,8 @@ function MypageFnqDetailEditContainer() {
                     + 파일 추가
                   </S.InputGalleryItemAddButton>
                 </S.FormGroup>
-
-
               </S.UserForm>
-            </div>
+            </>
           )}
 
           {/* 저장 성공 팝업 */}

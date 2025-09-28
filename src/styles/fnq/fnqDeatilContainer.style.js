@@ -8,7 +8,7 @@ export const DetailWrapper = styled(motion.main, {
 })`
   width: ${(props) => props.isMobile ? '100dvw' : 'calc(80vw - 50px)'};
   height: ${(props) => props.isMobile ? 'calc(87dvh - 37px)' : '100dvh'};
-  padding: ${(props) => props.isMobile ? '0px 9px' : '0px 20px 0px 60px'};
+  padding: ${(props) => props.isMobile ? '0px 9px' : '0px 0px 0px 60px'};
   background-color:rgb(255, 255, 255);
   position: fixed;
   right: ${(props) => props.isMobile ? 'unset' : props.right};
@@ -18,7 +18,7 @@ export const DetailWrapper = styled(motion.main, {
   box-shadow: -2px 0 4px 0 rgba(84,84,84,0.57);
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
+  overflow-y: hidden;
   overflow-x: hidden;
 
   &::-webkit-scrollbar {
@@ -26,7 +26,6 @@ export const DetailWrapper = styled(motion.main, {
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
-  }
 `
 export const DetailPageName = styled.h1`
   font-family: var(--font-gothic);
@@ -39,6 +38,7 @@ export const DetailPageName = styled.h1`
   top: 17px;
   margin-left: -30px;
   z-index: 3;
+  pointer-events: none;
   
   ${theme.media.mobile} { 
     transform: rotate(0deg);
@@ -49,12 +49,29 @@ export const DetailPageName = styled.h1`
   }
 `
 
+export const DetailContextWrapper = styled.div`
+  overflow-y: auto;
+  padding-right: 20px;
+  margin-top: -50px;
+  padding-top: 20px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  ${theme.media.mobile} { 
+  padding-top: 40px;
+  padding-right: 5px;
+  }
+`
+
 export const Header = styled.header`
   width: 100%;
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  margin-top: -30px;
+  // margin-top: -30px;
 
   ${theme.media.mobile} { 
     margin-top: 35px;
@@ -186,6 +203,7 @@ export const Button = styled.button`
   transition: all 0.2s ease;
   color: #444;
 
+
   &:hover {
     background-color: #DADADA;
   }
@@ -194,6 +212,7 @@ export const Button = styled.button`
     font-size: 1rem;
     padding: 5px 10px;
     font-weight: 800;
+    z-index: 5;
   }
 `
 
