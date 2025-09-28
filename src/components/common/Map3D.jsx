@@ -131,15 +131,11 @@ const Map3D = ({ stores }) => {
     <div
       id="map3D"
       style={{
-        width: '100dvw',
-        height: '100dvh',
+        width: '100%',
+        height: '100%',
         cursor: 'pointer',
         touchAction: 'manipulation', // 터치 동작 최적화
         WebkitTapHighlightColor: 'transparent', // iOS 터치 하이라이트 제거
-        position: 'fixed', // 고정 위치로 설정
-        top: '0',
-        left: '0',
-        zIndex: 1, // 낮은 z-index로 설정하여 다른 컴포넌트가 위에 올라올 수 있도록
       }}
       onClick={handleMapClick}
       onTouchStart={handleTouchStart}
