@@ -2,14 +2,20 @@
 
 import useWindowSize from '@/hooks/useWindowSize';
 import { usePOI } from '@/hooks/usePOI';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 const Map3D = ({ stores }) => {
   const { width, height } = useWindowSize();
   const pathname = usePathname();
   const router = useRouter();
-  usePOI(stores);
+
+  // POI 클릭 핸들러
+  const handlePOIClick = useCallback((storeId) => {
+    router.push(`/store/${storeId}`);
+  }, [router]);
+
+  usePOI(stores, handlePOIClick);
 
   // /store 페이지 또는 개별 스토어 페이지에서 Map3D 클릭 시 홈으로 이동
   const handleMapClick = (e) => {
