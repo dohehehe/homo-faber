@@ -96,11 +96,12 @@ const Map3D = ({ stores }) => {
       });
 
       Module.getViewCamera().setLocation(
-        new Module.JSVector3D(126.99514470317824, 37.568451978489975, 46),
+        new Module.JSVector3D(126.995128259481, 37.56844176478388, 37.128498304635286),
       );
-      Module.getViewCamera().setDirect(124);
+      Module.getViewCamera().setDirect(130);
       Module.getViewCamera().setFov(45);
-      Module.getViewCamera().setTilt(11);
+      Module.getViewCamera().setTilt(2);
+      Module.getViewCamera().setAltitude(40);
 
       // 구글 배경지도가 로딩속도가 빠름
       // 구글은 푸른색감 기본지도는 초록색감 -> 최종 디자인보고 결정

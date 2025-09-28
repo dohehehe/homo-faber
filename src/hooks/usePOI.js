@@ -8,6 +8,9 @@ export function usePOI(stores, onPOIClick) {
   useEffect(() => {
     let currentLayer = null;
     let detachClickHandler = null;
+    let detachHoverHandler = null;
+    let prevHoverObject = null;
+    const imageCache = new Map();
 
     // 기존 레이어가 있는지 확인하고 제거
     const cleanupExistingLayer = () => {
@@ -61,17 +64,19 @@ export function usePOI(stores, onPOIClick) {
         );
         currentLayer = layer;
 
-        const SIZE_OPTIONS = [120, 150, 180, 200];
-        const LINE_HEIGHT_OPTIONS = [10, 20, 30, 40];
-        const LINE_COLOR = new Module.JSColor(255, 255, 255);
+        const SIZE_OPTIONS = [130, 150, 180];
+        const LINE_HEIGHT_OPTIONS = [10, 15, 20, 25, 27];
+        const LINE_COLOR = new Module.JSColor(200, 200, 200);
 
         // 그림자 설정
-        const SHADOW_COLOR = 'rgba(182, 182, 182, 0.54)';
-        const SHADOW_BLUR = 10;
+        const SHADOW_COLOR = 'rgba(198, 198, 198, 0.81)';
+        const SHADOW_BLUR = 13;
         const SHADOW_OFFSET_X = 1;
-        const SHADOW_OFFSET_Y = 2;
+        const SHADOW_OFFSET_Y = 1;
         const PADDING =
           SHADOW_BLUR + Math.max(SHADOW_OFFSET_X, SHADOW_OFFSET_Y);
+        const HOVER_SHADOW_COLOR = 'rgba(255, 238, 107, 0.75)';
+        const HOVER_SCALE = 3;
 
         console.log(`POI 생성 시작: ${stores.length}개`);
 
@@ -97,7 +102,7 @@ export function usePOI(stores, onPOIClick) {
 
           // 캔버스 텍스트 렌더링에 사용할 폰트 준비
           const ensureFontsReady = () => (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
-          const getCanvasFont = (sizePx = 13, weight = 400) => {
+          const getCanvasFont = (sizePx = 14, weight = 400) => {
             const bodyStyle = getComputedStyle(document.body);
             const rootStyle = getComputedStyle(document.documentElement);
             let family = (bodyStyle.getPropertyValue('--font-gothic') || '').trim();
@@ -134,7 +139,7 @@ export function usePOI(stores, onPOIClick) {
                   const newWidth = Math.round(originalWidth * ratio);
                   const newHeight = Math.round(originalHeight * ratio);
 
-                  const fontSpec = getCanvasFont(13, 400);
+                  const fontSpec = getCanvasFont(14, 400);
 
                   // 먼저 텍스트 치수를 계산
                   const measureCanvas = document.createElement('canvas');
@@ -152,10 +157,11 @@ export function usePOI(stores, onPOIClick) {
                   const contentWidth = Math.max(newWidth, textWidth);
                   const contentHeight = newHeight + TEXT_GAP + textHeight;
 
-                  const canvas = document.createElement('canvas');
-                  const ctx = canvas.getContext('2d');
-                  canvas.width = contentWidth + PADDING * 2;
-                  canvas.height = contentHeight + PADDING * 2;
+                  // Base canvas (normal)
+                  const baseCanvas = document.createElement('canvas');
+                  const ctx = baseCanvas.getContext('2d');
+                  baseCanvas.width = contentWidth + PADDING * 2;
+                  baseCanvas.height = contentHeight + PADDING * 2;
 
                   // 이미지 그림자
                   ctx.shadowColor = SHADOW_COLOR;
@@ -182,11 +188,31 @@ export function usePOI(stores, onPOIClick) {
                   const textY = PADDING + newHeight + TEXT_GAP;
                   ctx.fillText(label, textX, textY);
 
-                  poi.setImage(
-                    ctx.getImageData(0, 0, canvas.width, canvas.height).data,
-                    canvas.width,
-                    canvas.height,
-                  );
+                  const normalWidth = baseCanvas.width;
+                  const normalHeight = baseCanvas.height;
+                  const normalData = ctx.getImageData(0, 0, normalWidth, normalHeight).data;
+
+                  // Hover canvas (scaled + darker shadow)
+                  const hoverCanvas = document.createElement('canvas');
+                  const hoverCtx = hoverCanvas.getContext('2d');
+                  hoverCanvas.width = Math.round(normalWidth * HOVER_SCALE);
+                  hoverCanvas.height = Math.round(normalHeight * HOVER_SCALE);
+                  hoverCtx.shadowColor = HOVER_SHADOW_COLOR;
+                  hoverCtx.shadowBlur = SHADOW_BLUR + 2;
+                  hoverCtx.shadowOffsetX = SHADOW_OFFSET_X;
+                  hoverCtx.shadowOffsetY = SHADOW_OFFSET_Y;
+                  const drawX = Math.round((hoverCanvas.width - normalWidth * HOVER_SCALE) / 2);
+                  const drawY = Math.round((hoverCanvas.height - normalHeight * HOVER_SCALE) / 2);
+                  hoverCtx.drawImage(baseCanvas, drawX, drawY, normalWidth * HOVER_SCALE, normalHeight * HOVER_SCALE);
+                  const hoverData = hoverCtx.getImageData(0, 0, hoverCanvas.width, hoverCanvas.height).data;
+
+                  const poiId = `store_${store.id || index}`;
+                  imageCache.set(poiId, {
+                    normal: { data: normalData, w: normalWidth, h: normalHeight },
+                    hover: { data: hoverData, w: hoverCanvas.width, h: hoverCanvas.height },
+                  });
+
+                  poi.setImage(normalData, normalWidth, normalHeight);
                   poi.setPositionLine(randomLineHeight, LINE_COLOR);
                   layer.addObject(poi, 0);
                 } catch (error) {
@@ -201,7 +227,7 @@ export function usePOI(stores, onPOIClick) {
                 try {
                   await ensureFontsReady();
                   const label = store.name || '';
-                  const fontSpec = getCanvasFont(12, 600);
+                  const fontSpec = getCanvasFont(14, 600);
 
                   const measureCanvas = document.createElement('canvas');
                   const measureCtx = measureCanvas.getContext('2d');
@@ -212,21 +238,42 @@ export function usePOI(stores, onPOIClick) {
                     (metrics.actualBoundingBoxAscent || 12) + (metrics.actualBoundingBoxDescent || 4),
                   );
 
-                  const canvas = document.createElement('canvas');
-                  const ctx = canvas.getContext('2d');
-                  canvas.width = textWidth + PADDING * 2;
-                  canvas.height = textHeight + PADDING * 2;
+                  // Base canvas normal
+                  const baseCanvas = document.createElement('canvas');
+                  const ctx = baseCanvas.getContext('2d');
+                  baseCanvas.width = textWidth + PADDING * 2;
+                  baseCanvas.height = textHeight + PADDING * 2;
 
                   ctx.font = fontSpec;
                   ctx.fillStyle = 'white';
                   ctx.textBaseline = 'top';
                   ctx.fillText(label, PADDING, PADDING);
 
-                  poi.setImage(
-                    ctx.getImageData(0, 0, canvas.width, canvas.height).data,
-                    canvas.width,
-                    canvas.height,
-                  );
+                  const normalWidth = baseCanvas.width;
+                  const normalHeight = baseCanvas.height;
+                  const normalData = ctx.getImageData(0, 0, normalWidth, normalHeight).data;
+
+                  // Hover
+                  const hoverCanvas = document.createElement('canvas');
+                  const hoverCtx = hoverCanvas.getContext('2d');
+                  hoverCanvas.width = Math.round(normalWidth * HOVER_SCALE);
+                  hoverCanvas.height = Math.round(normalHeight * HOVER_SCALE);
+                  hoverCtx.shadowColor = HOVER_SHADOW_COLOR;
+                  hoverCtx.shadowBlur = SHADOW_BLUR + 2;
+                  hoverCtx.shadowOffsetX = SHADOW_OFFSET_X;
+                  hoverCtx.shadowOffsetY = SHADOW_OFFSET_Y;
+                  const drawX = Math.round((hoverCanvas.width - normalWidth * HOVER_SCALE) / 2);
+                  const drawY = Math.round((hoverCanvas.height - normalHeight * HOVER_SCALE) / 2);
+                  hoverCtx.drawImage(baseCanvas, drawX, drawY, normalWidth * HOVER_SCALE, normalHeight * HOVER_SCALE);
+                  const hoverData = hoverCtx.getImageData(0, 0, hoverCanvas.width, hoverCanvas.height).data;
+
+                  const poiId = `store_${store.id || index}`;
+                  imageCache.set(poiId, {
+                    normal: { data: normalData, w: normalWidth, h: normalHeight },
+                    hover: { data: hoverData, w: hoverCanvas.width, h: hoverCanvas.height },
+                  });
+
+                  poi.setImage(normalData, normalWidth, normalHeight);
                   poi.setPositionLine(randomLineHeight, LINE_COLOR);
                   layer.addObject(poi, 0);
                 } catch (error) {
@@ -281,6 +328,9 @@ export function usePOI(stores, onPOIClick) {
 
         // POI 클릭 이벤트 설정
         setupPOIClickHandler(layer);
+
+        // POI hover 이벤트 설정
+        setupPOIHoverHandler(layer);
       } catch (error) {
         console.error('POI 생성 실패:', error);
       }
@@ -324,6 +374,62 @@ export function usePOI(stores, onPOIClick) {
       };
     };
 
+    const setupPOIHoverHandler = (layer) => {
+      const mapElement = document.getElementById('map3D');
+      if (!mapElement) return;
+
+      const handler = (e) => {
+        const rect = mapElement.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const pick = layer.pick(x, y);
+
+        if (!pick || !pick.objectKey) {
+          if (prevHoverObject) {
+            const prevId = prevHoverObject.getId();
+            const cache = imageCache.get(prevId);
+            if (cache && cache.normal) {
+              prevHoverObject.setImage(cache.normal.data, cache.normal.w, cache.normal.h);
+            }
+            prevHoverObject = null;
+          }
+          return;
+        }
+
+        const object = layer.keyAtObject(pick.objectKey);
+        if (!object || !object.getId) return;
+
+        const objId = object.getId();
+        if (prevHoverObject && prevHoverObject !== object) {
+          const prevId = prevHoverObject.getId();
+          const prevCache = imageCache.get(prevId);
+          if (prevCache && prevCache.normal) {
+            prevHoverObject.setImage(prevCache.normal.data, prevCache.normal.w, prevCache.normal.h);
+          }
+          prevHoverObject = null;
+        }
+
+        const cache = imageCache.get(objId);
+        if (cache && cache.hover) {
+          object.setImage(cache.hover.data, cache.hover.w, cache.hover.h);
+          prevHoverObject = object;
+        }
+      };
+
+      mapElement.addEventListener('mousemove', handler);
+      detachHoverHandler = () => {
+        try { mapElement.removeEventListener('mousemove', handler); } catch (_) { }
+        if (prevHoverObject) {
+          const prevId = prevHoverObject.getId();
+          const cache = imageCache.get(prevId);
+          if (cache && cache.normal) {
+            prevHoverObject.setImage(cache.normal.data, cache.normal.w, cache.normal.h);
+          }
+          prevHoverObject = null;
+        }
+      };
+    };
+
     // stores가 있으면 Module 기다리기 시작
     if (stores && stores.length > 0) {
       waitForModule();
@@ -334,6 +440,9 @@ export function usePOI(stores, onPOIClick) {
       try {
         if (detachClickHandler) {
           detachClickHandler();
+        }
+        if (detachHoverHandler) {
+          detachHoverHandler();
         }
         if (currentLayer) {
           const layerList = Module.getObjectLayerList();
