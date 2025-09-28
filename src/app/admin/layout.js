@@ -83,6 +83,12 @@ export default function AdminLayout({ children }) {
         >
           단어 관리
         </Button>
+        <Button
+          active={activeTab === 'fnq'}
+          onClick={() => handleTabClick('fnq')}
+        >
+          문의 관리
+        </Button>
       </ButtonGroup>
 
       <ContentArea>

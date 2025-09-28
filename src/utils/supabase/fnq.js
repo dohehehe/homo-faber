@@ -54,7 +54,6 @@ export async function createFnq(fnqData) {
       .from('fnq')
       .insert({
         title: fnqData.title,
-        material: fnqData.material || null,
         img: fnqData.img || null,
         detail: fnqData.detail,
         count: fnqData.count || null,
@@ -89,7 +88,6 @@ export async function updateFnq(fnqId, fnqData) {
       .from('fnq')
       .update({
         title: fnqData.title,
-        material: fnqData.material || null,
         img: fnqData.img || null,
         detail: fnqData.detail,
         count: fnqData.count || null,
@@ -113,6 +111,35 @@ export async function updateFnq(fnqId, fnqData) {
     return fnq;
   } catch (error) {
     console.error('fnq 업데이트 중 오류:', error);
+    throw error;
+  }
+}
+
+export async function updateFnqStatus(fnqId, statusId) {
+  const supabase = createClient();
+
+  try {
+    const { data: fnq, error: fnqError } = await supabase
+      .from('fnq')
+      .update({
+        status_id: statusId,
+      })
+      .eq('id', fnqId)
+      .select(`
+        *,
+        fnq_status:status_id (
+          id,
+          status,
+          name
+        )
+      `)
+      .single();
+
+    if (fnqError) throw fnqError;
+
+    return fnq;
+  } catch (error) {
+    console.error('fnq 상태 업데이트 중 오류:', error);
     throw error;
   }
 }
@@ -148,7 +175,7 @@ export async function searchFnqs(searchKeyword, userId = null) {
         name
       )
     `)
-    .or(`title.ilike.%${searchKeyword}%,material.ilike.%${searchKeyword}%,detail.ilike.%${searchKeyword}%`)
+    .or(`title.ilike.%${searchKeyword}%,detail.ilike.%${searchKeyword}%`)
     .order('created_at', { ascending: false });
 
   // 사용자별 필터링

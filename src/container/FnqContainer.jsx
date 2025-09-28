@@ -101,7 +101,6 @@ function FnqContainer() {
     try {
       const dataToSave = {
         title: formData.title || '',
-        material: formData.material || '',
         count: formData.count || '',
         budget: formData.budget || '',
         due_date: formData.due_date || '',
