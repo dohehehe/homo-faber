@@ -29,7 +29,7 @@ export const FnqWrapper = styled(motion.main)`
 
   ${theme.media.mobile} { 
     padding: 0px 12px 0px 10px;
-    height: 100dvh;
+    height: calc(87dvh);
     overflow-y: hidden;
     border-left: none;
     box-shadow: 0px -8px 10px 0 rgba(62, 62, 62, 0.76);
@@ -99,12 +99,13 @@ export const UserForm = styled.form`
   position: relative;
   z-index: 1;
   gap: 90px;
-  padding-bottom: 10px;
   padding-left: 5px;
   overflow-y: scroll;
   -ms-overflow-style: none;
   scrollbar-width: none;
   margin-top: -13px;
+  padding-bottom: 40px;
+  height: 100%;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -116,6 +117,8 @@ export const UserForm = styled.form`
     padding-left: 0px;
     padding-right: 4px;
     // width: 100%;
+    height: calc(87dvh - 37px);
+    padding-bottom: 50px;
   }
 `;
 
@@ -178,7 +181,7 @@ export const SubmitButton = styled.button`
   border-radius: 20px;
   padding-top: 14px;
   position: sticky;
-  bottom: 0px;
+  bottom: -30px;
   right: 15px;
 
   &:hover {

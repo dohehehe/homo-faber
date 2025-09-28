@@ -211,7 +211,7 @@ function MypageFnqDeatilContainer() {
               message="프로젝트를 찾을 수 없습니다."
             />
           ) : (
-            <div key="main-content">
+            <S.DetailContextWrapper key="main-content" style={{ overflowY: 'auto' }}>
               <S.Header>
                 <S.HeaderTitle>
                   <S.Title>{fnq?.title}</S.Title>
@@ -270,7 +270,7 @@ function MypageFnqDeatilContainer() {
 
               <EditorFnqRenderer item={fnq?.detail} />
 
-            </div>
+            </S.DetailContextWrapper>
           )}
         </S.DetailWrapper>
       )}

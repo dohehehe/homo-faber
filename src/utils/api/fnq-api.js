@@ -167,6 +167,43 @@ export async function deleteFnq(fnqId) {
 }
 
 /**
+ * fnq 상태를 업데이트합니다.
+ * @param {string} fnqId - fnq ID
+ * @param {string} statusId - 새로운 상태 ID
+ * @returns {Promise<Object>} 업데이트된 fnq 데이터
+ */
+export async function updateFnqStatus(fnqId, statusId) {
+  try {
+    if (!fnqId) {
+      throw new Error('fnq ID가 필요합니다.');
+    }
+
+    if (!statusId) {
+      throw new Error('상태 ID가 필요합니다.');
+    }
+
+    const response = await fetch(`/api/fnq/${fnqId}/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status_id: statusId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'fnq 상태 업데이트 중 오류가 발생했습니다.');
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('API Error (updateFnqStatus):', error);
+    throw error;
+  }
+}
+
+/**
  * 모든 fnq_status를 가져옵니다.
  * @returns {Promise<Array>} fnq_status 목록
  */
