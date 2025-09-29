@@ -1,12 +1,30 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --white: #F8F8F8;
+  --black: #000000;
+  --light-black: #434343;
+  --yellow: #FFF8B8;
+  --brown: #363315;
+  --gray: #A9A9A9;
+  --red: #FE0000;
+  --neon-green: #40FF89;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+  }
+}
+
+html {
+  font-size: 10px;
+  /* 웹 기준 폰트 크기 */
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 11px;
+    /* 모바일 기준 폰트 크기 */
   }
 }
 
@@ -17,9 +35,9 @@ body {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--black);
+  background: var(--white);
+  font-family: var(--font-gothic), 'Gothic A1', Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
