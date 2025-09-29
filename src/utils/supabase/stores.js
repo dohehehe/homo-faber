@@ -22,6 +22,7 @@ export async function getStores() {
       )
     `,
     )
+    .order('priority', { ascending: false })
     .order('name');
 
   if (error) throw error;
@@ -86,6 +87,7 @@ export async function createStore(storeData) {
         move_address: storeData.move_address,
         move_latitude: storeData.move_latitude,
         move_longitude: storeData.move_longitude,
+        priority: storeData.priority || false,
         keyword: storeData.keyword || null,
         card_img: storeData.card_img || null,
         thumbnail_img: storeData.thumbnail_img || null,
@@ -290,6 +292,7 @@ export async function updateStore(storeId, storeData) {
         move_address: storeData.move_address,
         move_latitude: storeData.move_latitude,
         move_longitude: storeData.move_longitude,
+        priority: storeData.priority || false,
         keyword: storeData.keyword || null,
         card_img: storeData.card_img || null,
         thumbnail_img: storeData.thumbnail_img || null,
