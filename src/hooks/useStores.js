@@ -240,29 +240,55 @@ export function useStoreFilters(
 
     switch (sortBy) {
       case 'recommended':
-        // 추천순 정렬 - keyword가 있는 스토어를 위로
+        // 추천순 정렬 - priority가 true인 스토어를 먼저, 그 다음 keyword가 있는 스토어를 위로
         sortedStores.sort((a, b) => {
+          const aHasPriority = a.priority === true;
+          const bHasPriority = b.priority === true;
           const aHasKeyword = Array.isArray(a.keyword) && a.keyword.length > 0;
           const bHasKeyword = Array.isArray(b.keyword) && b.keyword.length > 0;
 
-          // keyword가 있는 스토어를 위로
+          // priority가 true인 스토어를 가장 위로
+          if (aHasPriority && !bHasPriority) return -1;
+          if (!aHasPriority && bHasPriority) return 1;
+
+          // 둘 다 priority가 같다면 keyword가 있는 스토어를 위로
           if (aHasKeyword && !bHasKeyword) return -1;
           if (!aHasKeyword && bHasKeyword) return 1;
 
-          // 둘 다 keyword가 있거나 둘 다 없는 경우 이름순으로 정렬
+          // 나머지는 이름순으로 정렬
           return (a.name || '').localeCompare(b.name || '');
         });
         break;
 
       case 'nameDesc':
-        // 이름 내림차순 정렬
-        sortedStores.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
+        // 이름 내림차순 정렬 - priority가 true인 스토어를 먼저
+        sortedStores.sort((a, b) => {
+          const aHasPriority = a.priority === true;
+          const bHasPriority = b.priority === true;
+
+          // priority가 true인 스토어를 위로
+          if (aHasPriority && !bHasPriority) return -1;
+          if (!aHasPriority && bHasPriority) return 1;
+
+          // 나머지는 이름 내림차순으로 정렬
+          return (b.name || '').localeCompare(a.name || '');
+        });
         break;
 
       case 'nameAsc':
       default:
-        // 이름 오름차순 정렬 (기본값)
-        sortedStores.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        // 이름 오름차순 정렬 (기본값) - priority가 true인 스토어를 먼저
+        sortedStores.sort((a, b) => {
+          const aHasPriority = a.priority === true;
+          const bHasPriority = b.priority === true;
+
+          // priority가 true인 스토어를 위로
+          if (aHasPriority && !bHasPriority) return -1;
+          if (!aHasPriority && bHasPriority) return 1;
+
+          // 나머지는 이름 오름차순으로 정렬
+          return (a.name || '').localeCompare(b.name || '');
+        });
         break;
     }
 
