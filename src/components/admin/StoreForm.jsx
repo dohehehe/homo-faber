@@ -83,6 +83,7 @@ const StoreForm = ({
       move_address: '',
       move_latitude: '',
       move_longitude: '',
+      priority: false,
       gallery: [],
     },
     mode: 'onChange', // 실시간 유효성 검사
@@ -141,6 +142,7 @@ const StoreForm = ({
           setValue('move_address', store.move_address || '');
           setValue('move_latitude', store.move_latitude || '');
           setValue('move_longitude', store.move_longitude || '');
+          setValue('priority', store.priority || false);
 
           // keyword를 텍스트로 변환
           if (store.keyword && Array.isArray(store.keyword)) {
@@ -350,6 +352,7 @@ const StoreForm = ({
         move_address: formData.move_address,
         move_latitude: formData.move_latitude,
         move_longitude: formData.move_longitude,
+        priority: formData.priority,
         keyword: processedKeyword,
         contacts: {
           phone: formData.phone,
@@ -543,6 +546,14 @@ const StoreForm = ({
                     style={{ width: '16px', height: '16px' }}
                   />
                   <span>이전</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    {...register('priority')}
+                    style={{ width: '16px', height: '16px' }}
+                  />
+                  <span>우선순위</span>
                 </label>
               </div>
             </S.FormField>

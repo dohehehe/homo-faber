@@ -135,7 +135,7 @@ export const CloseButton = styled.button`
 `;
 
 export const MapToggleButton = styled.button`
-  display: ${props => props.isOpen ? 'flex' : 'none'};
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
@@ -173,6 +173,7 @@ export const MapToggleButton = styled.button`
     left: unset;
     right: 20px;
     bottom: 20px;
+    display: ${props => props.isOpen ? 'flex' : 'none'};
   }
 `;
 

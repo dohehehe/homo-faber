@@ -25,6 +25,7 @@ export async function GET(request) {
           material_types(id, name)
         )
       `)
+      .order('priority', { ascending: false })
       .order('name');
 
     // 검색 키워드가 있는 경우
@@ -70,6 +71,7 @@ export async function POST(request) {
       move_address,
       move_latitude,
       move_longitude,
+      priority,
       keyword,
       card_img,
       thumbnail_img,
@@ -103,6 +105,7 @@ export async function POST(request) {
         move_address,
         move_latitude,
         move_longitude,
+        priority: priority || false,
         keyword: keyword || null,
         card_img: card_img || null,
         thumbnail_img: thumbnail_img || null,
