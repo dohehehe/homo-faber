@@ -58,3 +58,44 @@ a {
     color-scheme: dark;
   }
 }
+
+/* Google Maps 로고 및 저작권 표시 완전 숨기기 */
+.gm-style-cc,
+.gm-style-cc *,
+.gm-style .gm-style-cc,
+.gm-style .gm-style-cc *,
+div[style*="position: absolute"][style*="left: 0"][style*="bottom: 0"],
+div[style*="position: absolute"][style*="left: 0"][style*="bottom: 0"] *,
+a[href*="google.com/maps"],
+a[href*="maps.google.com"],
+a[target="_blank"][href*="google"],
+div[aria-label*="Google"],
+div[aria-label*="google"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Google Maps 하단 영역 전체 숨기기 */
+.gm-style>div:last-child,
+.gm-style>div:last-child>div,
+.gm-style>div:last-child>div>div {
+  display: none !important;
+}
+
+/* 추가적인 Google Maps UI 요소들 */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-t,
+.gm-style-iw-tc {
+  display: none !important;
+}
+
+/* Google 로고가 포함된 모든 div */
+div[style*="background-image"][style*="google"],
+div[style*="background"][style*="google"] {
+  display: none !important;
+}
