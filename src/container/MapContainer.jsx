@@ -19,7 +19,7 @@ const Map2D = dynamic(() => import('../components/common/Map2D'), {
   loading: () => <Loader text="지도를 불러오는 중..." />
 });
 
-export default function Map3DWrapper() {
+export default function MapContainer() {
   const { stores, isLoading, error } = useStores();
   const [isMap3D, setIsMap3D] = useState(true); // 기본값은 3D
   const [hoveredStore, setHoveredStore] = useState(null); // 호버된 store 상태

@@ -12,6 +12,8 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
+  const infoWindowRef = useRef(null);
+  const customOverlayRef = useRef(null);
 
   // POI 클릭 핸들러
   const handlePOIClick = useCallback((storeId) => {
@@ -32,220 +34,207 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
       const lat = parseFloat(store.latitude);
       const lng = parseFloat(store.longitude);
 
-      // 디버깅을 위한 로그
-      console.log(`Store: ${store.name}, Original: lat=${store.latitude}, lng=${store.longitude}, Parsed: lat=${lat}, lng=${lng}`);
-      console.log(`Store images: card_img=${store.card_img}, thumbnail_img=${store.thumbnail_img}`);
 
       // 유효한 좌표인지 확인
       if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
-        // 커스텀 마커 아이콘 생성 (가게 이미지 포함)
-        const createCustomIcon = async (store) => {
-          const hasImage = store.thumbnail_img;
-          const imageUrl = store.thumbnail_img;
-
-          if (hasImage) {
-            try {
-              // Canvas를 사용하여 이미지와 연두색 네모를 결합
-              const canvas = document.createElement('canvas');
-              const ctx = canvas.getContext('2d');
-              canvas.width = 100;
-              canvas.height = 100;
-
-              // 배경을 투명하게 설정 (원형 배경 제거)
-
-              // 이미지 로드 및 그리기
-              const img = new Image();
-              img.crossOrigin = 'anonymous'; // CORS 문제 해결
-
-              return new Promise((resolve) => {
-                img.onload = () => {
-                  // 이미지 비율 계산 (가로 100px, 세로는 비율에 맞게)
-                  const imageWidth = 100;
-                  const imageHeight = (img.height / img.width) * imageWidth;
-
-                  // 연두색 네모 그리기 (이미지 앞에)
-                  ctx.fillStyle = 'rgba(65, 255, 138, 0.3)'; // 연두색
-                  ctx.fillRect(0, 0, imageWidth, imageHeight);
-
-                  // 검정색 stroke 추가
-                  ctx.strokeStyle = '#000000';
-                  ctx.lineWidth = 0.5;
-                  ctx.strokeRect(0, 0, imageWidth, imageHeight);
-
-                  // blending mode를 lighten으로 설정
-                  ctx.globalCompositeOperation = 'lighten';
-
-                  // 이미지 그리기 (contain 방식 - 비율 유지)
-                  ctx.drawImage(img, 0, 0, imageWidth, imageHeight);
-
-                  // blending mode를 원래대로 복원
-                  ctx.globalCompositeOperation = 'source-over';
-
-                  resolve({
-                    url: canvas.toDataURL(),
-                    scaledSize: new google.maps.Size(imageWidth, imageHeight),
-                    anchor: new google.maps.Point(imageWidth / 2, imageHeight)
-                  });
-                };
-
-                img.onerror = () => {
-                  console.warn(`Failed to load image for store: ${store.name}`);
-                  // 이미지 로드 실패 시 기본 마커 사용
-                  resolve(createDefaultIcon(store));
-                };
-
-                img.src = imageUrl;
-              });
-            } catch (error) {
-              console.warn(`Error creating custom icon for store: ${store.name}`, error);
-              return createDefaultIcon(store);
-            }
-          } else {
-            return createDefaultIcon(store);
-          }
-        };
-
-        // 호버 아이콘 생성 함수 (1.4배 확대, 연두색 배경 없음)
-        const createHoverIcon = async (store) => {
-          if (!store.thumbnail_img) {
-            return createDefaultIcon(store);
-          }
-
-          try {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-
-            return new Promise((resolve) => {
-              img.onload = () => {
-                // 원본 이미지 비율 계산
-                const originalWidth = 100;
-                const originalHeight = (img.height / img.width) * originalWidth;
-
-                // 1.4배 확대된 크기 계산
-                const scale = 1.4;
-                let finalWidth = originalWidth * scale;
-                let finalHeight = originalHeight * scale;
-
-                // 최대 높이 140px를 넘지 않도록 비율 계산
-                const maxHeight = 140;
-                if (finalHeight > maxHeight) {
-                  const ratio = maxHeight / finalHeight;
-                  finalWidth = finalWidth * ratio;
-                  finalHeight = maxHeight;
-                }
-
-                // Canvas 생성 및 크기 설정
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = finalWidth;
-                canvas.height = finalHeight;
-
-                // 이미지 그리기 (contain 방식 - 비율 유지)
-                ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
-
-                // 검정색 stroke 추가
-                ctx.strokeStyle = '#000000';
-                ctx.lineWidth = 0.5;
-                ctx.strokeRect(0, 0, finalWidth, finalHeight);
-
-                resolve({
-                  url: canvas.toDataURL(),
-                  scaledSize: new google.maps.Size(finalWidth, finalHeight),
-                  anchor: new google.maps.Point(finalWidth / 2, finalHeight)
-                });
-              };
-
-              img.onerror = () => {
-                console.warn(`Failed to load hover image for store: ${store.name}`);
-                resolve(createDefaultIcon(store));
-              };
-
-              img.src = store.thumbnail_img;
-            });
-          } catch (error) {
-            console.warn(`Error creating hover icon for store: ${store.name}`, error);
-            return createDefaultIcon(store);
-          }
-        };
-
-        // 기본 마커 생성 함수
+        // 기본 마커 생성 함수 (검은 동그라미)
         const createDefaultIcon = (store) => {
           return {
             url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-               <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                 <!-- 기본 마커 -->
-                 <circle cx="20" cy="20" r="18" fill="#41FF8A" stroke="#000000" stroke-width="0.5"/>
-                 <circle cx="20" cy="20" r="6" fill="white" stroke="#000000" stroke-width="0.5"/>
+               <svg width="10" height="10" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                 <!-- 검은 동그라미 마커 -->
+                 <circle cx="5" cy="5" r="5" fill="#322F18" stroke="#ffffff" stroke-width="1"/>
                </svg>
              `),
-            scaledSize: new google.maps.Size(40, 40),
-            anchor: new google.maps.Point(20, 40)
+            scaledSize: new google.maps.Size(20, 20),
+            anchor: new google.maps.Point(20, 20)
           };
         };
 
-        // 비동기로 아이콘 생성
-        createCustomIcon(store).then(iconConfig => {
-          const marker = new google.maps.Marker({
-            position: { lat: lat, lng: lng },
-            map: mapInstanceRef.current,
-            title: store.name,
-            icon: iconConfig
-          });
+        // 호버 아이콘 생성 함수 (1.4배 확대된 검은 동그라미)
+        const createHoverIcon = (store) => {
+          return {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+               <svg width="10" height="10" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                 <!-- 검은 동그라미 마커 -->
+                 <circle cx="5" cy="5" r="5" fill="#42ff89" stroke="#ffffff" stroke-width="1"/>
+               </svg>
+             `),
+            scaledSize: new google.maps.Size(20, 20),
+            anchor: new google.maps.Point(20, 20)
+          };
+        };
 
-          // 마커 클릭 이벤트
-          marker.addListener('click', () => {
-            handlePOIClick(store.id);
-          });
 
-          // 마커 호버 이벤트 - 이미지 확대 및 연두색 배경 제거
-          marker.addListener('mouseover', () => {
-            marker.setZIndex(1000);
-
-            // 상위 컴포넌트에 호버된 store 정보 전달
-            if (onStoreHover) {
-              onStoreHover(store);
-            }
-
-            // 호버 시 아이콘 생성 (1.4배 확대, 연두색 배경 없음)
-            if (store.thumbnail_img) {
-              createHoverIcon(store).then(hoverIconConfig => {
-                marker.setIcon(hoverIconConfig);
-              });
-            }
-          });
-
-          marker.addListener('mouseout', () => {
-            marker.setZIndex(1);
-
-            // 상위 컴포넌트에 호버 해제 정보 전달
-            if (onStoreLeave) {
-              onStoreLeave();
-            }
-
-            // 원래 아이콘으로 복원
-            createCustomIcon(store).then(originalIconConfig => {
-              marker.setIcon(originalIconConfig);
-            });
-          });
-
-          markersRef.current.push(marker);
-        }).catch(error => {
-          console.warn(`Failed to create icon for store: ${store.name}`, error);
-          // 기본 아이콘으로 폴백
-          const defaultIcon = createDefaultIcon(store);
-          const marker = new google.maps.Marker({
-            position: { lat: lat, lng: lng },
-            map: mapInstanceRef.current,
-            title: store.name,
-            icon: defaultIcon
-          });
-
-          marker.addListener('click', () => {
-            handlePOIClick(store.id);
-          });
-
-          markersRef.current.push(marker);
+        // 기본 아이콘으로 마커 생성
+        const defaultIcon = createDefaultIcon(store);
+        const marker = new google.maps.Marker({
+          position: { lat: lat, lng: lng },
+          map: mapInstanceRef.current,
+          title: store.name,
+          icon: defaultIcon
         });
+
+        // 마커 클릭 이벤트
+        marker.addListener('click', () => {
+          handlePOIClick(store.id);
+        });
+
+        // 마커 호버 이벤트 - 확대된 아이콘으로 변경 및 가게 이름 표시
+        marker.addListener('mouseover', () => {
+          marker.setZIndex(999998);
+
+          // 상위 컴포넌트에 호버된 store 정보 전달
+          if (onStoreHover) {
+            onStoreHover(store);
+          }
+
+          // 호버 시 확대된 아이콘으로 변경
+          const hoverIcon = createHoverIcon(store);
+          marker.setIcon(hoverIcon);
+
+          // 기존 커스텀 오버레이 제거
+          if (customOverlayRef.current) {
+            customOverlayRef.current.setMap(null);
+            customOverlayRef.current = null;
+          }
+
+          // 커스텀 오버레이로 툴팁 생성 (X 아이콘 없음)
+          const hasImage = store.thumbnail_img;
+          const tooltipContent = hasImage
+            ? `
+              <div style="
+                padding: 10px 8px 5px 8px;
+                background: rgba(255, 255, 255, 0.8);
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                color: #333;
+                flex-direction: column;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                max-width: 300px;
+                position: relative;
+                margin-bottom: 15px;
+                z-index: 999999;
+              ">
+                <img 
+                  src="${store.thumbnail_img}" 
+                  alt="${store.name}"
+                  style="
+                    width: 100%;
+                    height: auto;
+                    object-fit: cover;
+                    border-radius: 4px;
+                    border: 1px solid #eee;
+                  "
+                  onerror="this.style.display='none'"
+                />
+                <div>
+                  <div style="font-weight: 600; margin-bottom: 4px; font-size: 1rem; text-align: center;">${store.name}</div>
+                  ${store.keyword && Array.isArray(store.keyword) && store.keyword.length > 0 ? `
+                    <div>
+                      ${store.keyword.map(keyword =>
+              `<span style="
+                          font-size: 0.9rem;
+                          color: #555;
+                          white-space: wrap;
+                          word-break: keep-all;
+                                    ">${keyword}</span>`
+            ).join(', ')}
+                  </div>
+                  ` : ''}
+                </div>
+              </div>
+            `
+            : `
+              <div style="
+                padding: 8px 12px 5px 12px;
+                background: white;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 1rem;
+                font-weight: 600;
+                color: #333;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                position: relative;
+                z-index: 999999;
+                margin-bottom: 15px;
+                max-width: 300px;
+              ">
+                <div style="font-weight: 600; margin-bottom: 4px; text-align: center;">${store.name}</div>
+                ${store.keyword && Array.isArray(store.keyword) && store.keyword.length > 0 ? `
+                  <div style="
+                    width: 90%; margin: 0 auto;
+                    white-space: wrap;
+                    word-break: keep-all;
+                  ">
+                    ${store.keyword.map(keyword =>
+              `<span style="
+              font-size: 0.9rem;
+              color: #555;
+              white-space: nowrap;
+                        ">${keyword}</span>`
+            ).join(', ')}
+                </div>
+                ` : ''}
+              </div>
+            `;
+
+          // 커스텀 오버레이 생성
+          const overlayElement = document.createElement('div');
+          overlayElement.innerHTML = tooltipContent;
+          overlayElement.style.position = 'absolute';
+          overlayElement.style.transform = 'translate(-50%, -100%)';
+          overlayElement.style.marginTop = '-10px';
+          overlayElement.style.zIndex = '999999';
+          overlayElement.style.pointerEvents = 'none';
+
+          customOverlayRef.current = new google.maps.OverlayView();
+          customOverlayRef.current.onAdd = function () {
+            const panes = this.getPanes();
+            // overlayMouseTarget 레이어를 사용하여 최상위에 표시
+            panes.overlayMouseTarget.appendChild(overlayElement);
+          };
+
+          customOverlayRef.current.draw = function () {
+            const projection = this.getProjection();
+            const position = projection.fromLatLngToDivPixel(marker.getPosition());
+            overlayElement.style.left = position.x + 'px';
+            overlayElement.style.top = position.y + 'px';
+          };
+
+          customOverlayRef.current.onRemove = function () {
+            if (overlayElement.parentNode) {
+              overlayElement.parentNode.removeChild(overlayElement);
+            }
+          };
+
+          customOverlayRef.current.setMap(mapInstanceRef.current);
+        });
+
+        marker.addListener('mouseout', () => {
+          marker.setZIndex(1);
+
+          // 상위 컴포넌트에 호버 해제 정보 전달
+          if (onStoreLeave) {
+            onStoreLeave();
+          }
+
+          // 원래 아이콘으로 복원
+          marker.setIcon(defaultIcon);
+
+          // 커스텀 오버레이 제거
+          if (customOverlayRef.current) {
+            customOverlayRef.current.setMap(null);
+            customOverlayRef.current = null;
+          }
+        });
+
+        markersRef.current.push(marker);
       }
     });
   }, [stores, handlePOIClick]);
@@ -300,7 +289,7 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
               "elementType": "labels.text.fill",
               "stylers": [
                 {
-                  "color": "#0057ff"
+                  "color": "#322F18"
                 }
               ]
             },
@@ -327,7 +316,7 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
               "elementType": "geometry.fill",
               "stylers": [
                 {
-                  "color": "#f2f2f2"
+                  "color": "#322F18"
                 }
               ]
             },
@@ -336,7 +325,7 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
               "elementType": "geometry.stroke",
               "stylers": [
                 {
-                  "color": "#d9d9d9"
+                  "color": "#322F18"
                 }
               ]
             },
@@ -345,7 +334,7 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
               "elementType": "geometry.fill",
               "stylers": [
                 {
-                  "lightness": "75"
+                  "lightness": "35"
                 },
                 {
                   "hue": "#00ff61"
@@ -357,7 +346,7 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
               "elementType": "geometry.stroke",
               "stylers": [
                 {
-                  "color": "#000000"
+                  "color": "#322F18"
                 }
               ]
             },
@@ -396,7 +385,10 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
                   "color": "#42ff89"
                 },
                 {
-                  "weight": "7.32"
+                  "weight": "6"
+                },
+                {
+                  "lightness": "34"
                 }
               ]
             },
@@ -429,7 +421,7 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
                   "visibility": "simplified"
                 },
                 {
-                  "hue": "#ffe600"
+                  "hue": "#322F18"
                 }
               ]
             },
@@ -456,7 +448,7 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
                   "weight": "5.46"
                 },
                 {
-                  "hue": "#ffde00"
+                  "hue": "#322F18"
                 },
                 {
                   "lightness": "-34"
@@ -542,6 +534,18 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
           markersRef.current = [];
         }
 
+        // InfoWindow 정리
+        if (infoWindowRef.current) {
+          infoWindowRef.current.close();
+          infoWindowRef.current = null;
+        }
+
+        // 커스텀 오버레이 정리
+        if (customOverlayRef.current) {
+          customOverlayRef.current.setMap(null);
+          customOverlayRef.current = null;
+        }
+
         // 지도 인스턴스 정리
         if (mapInstanceRef.current) {
           mapInstanceRef.current = null;
@@ -564,6 +568,7 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
         width: '100%',
         height: '100%',
         cursor: 'pointer',
+        position: 'relative',
       }}
     />
   );
