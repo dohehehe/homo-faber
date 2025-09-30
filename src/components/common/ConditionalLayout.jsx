@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import Map3DWrapper from '@/container/Map3DWrapper';
+import MapContainer from '@/container/MapContainer';
 import AnimatedPanel from '@/components/common/AnimatedPanel';
 import LandingPage from '@/components/common/LandingPage';
 import styled from '@emotion/styled';
@@ -39,7 +39,7 @@ export default function ConditionalLayout() {
     return (
       <>
         <LandingPage />
-        <Map3DWrapper />
+        <MapContainer />
         <AnimatedPanel baseRoute='store' />
         <AnimatedPanel baseRoute='interview' />
         <AnimatedPanel baseRoute='word' />
@@ -55,7 +55,7 @@ export default function ConditionalLayout() {
   return (
     <>
       <LandingPage />
-      <Map3DWrapper />
+      <MapContainer />
       {isMobile && (
         <MobileBg
           pathname={pathname}

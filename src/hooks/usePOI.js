@@ -241,7 +241,7 @@ export function usePOI(stores, onPOIClick, onStoreHover, onStoreLeave) {
                 try {
                   await ensureFontsReady();
                   const label = store.name || '';
-                  const fontSpec = getCanvasFont(14, 600);
+                  const fontSpec = getCanvasFont(15, 600);
 
                   const measureCanvas = document.createElement('canvas');
                   const measureCtx = measureCanvas.getContext('2d');
@@ -309,7 +309,7 @@ export function usePOI(stores, onPOIClick, onStoreHover, onStoreLeave) {
               try {
                 await ensureFontsReady();
                 const label = store.name || '';
-                const fontSpec = getCanvasFont(16, 600);
+                const fontSpec = getCanvasFont(13, 400);
 
                 const measureCanvas = document.createElement('canvas');
                 const measureCtx = measureCanvas.getContext('2d');
@@ -326,7 +326,7 @@ export function usePOI(stores, onPOIClick, onStoreHover, onStoreLeave) {
                 canvas.height = textHeight + PADDING * 2;
 
                 ctx.font = fontSpec;
-                ctx.fillStyle = '#111';
+                ctx.fillStyle = 'rgb(220,220,220)';
                 ctx.textBaseline = 'top';
                 ctx.fillText(label, PADDING, PADDING);
 
