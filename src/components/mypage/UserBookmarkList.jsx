@@ -7,14 +7,16 @@ import Loader from '@/components/common/Loader';
 import * as S2 from '@/styles/user/mypageContainer.style';
 import * as S from '@/styles/user/userBookmarkList.style';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 function UserBookmarkList() {
   const { bookmarks, loading: bookmarksLoading } = useBookmarks();
   const { isMobile, isReady } = useWindowSize();
+  const router = useRouter();
 
   const handleBookmarkClick = (storeId) => {
     // 북마크된 가게 상세 페이지로 이동
-    window.location.href = `/store/${storeId}`;
+    router.push(`/store/${storeId}`);
   };
 
   return (

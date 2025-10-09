@@ -9,6 +9,7 @@ import * as S from '@/styles/user/mypageContainer.style';
 import UserBookmarkList from '@/components/mypage/UserBookmarkList';
 import UserFnqList from '@/components/mypage/UserFnqList';
 import { getUserInfo } from '@/utils/api/user-api';
+import UserCommentList from '@/components/mypage/UserCommentList';
 
 function MypageContainer({ onLoadComplete }) {
   const { user, loading, signOut } = useAuth();
@@ -130,10 +131,21 @@ function MypageContainer({ onLoadComplete }) {
         >
           문의 목록
         </S.TabButton>
+
+        <S.TabButton style={{ marginLeft: '-23px', pointerEvents: 'none' }}>|</S.TabButton>
+
+        <S.TabButton
+          style={{ marginLeft: '-5px' }}
+          active={activeTab === 'comments'}
+          onClick={() => setActiveTab('comments')}
+        >
+          후기 목록
+        </S.TabButton>
       </S.TabContainer>
 
       {activeTab === 'bookmarks' && <UserBookmarkList />}
       {activeTab === 'fnqs' && <UserFnqList />}
+      {activeTab === 'comments' && <UserCommentList />}
 
     </S.MyPageWrapper>
   );
