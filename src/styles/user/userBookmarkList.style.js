@@ -169,7 +169,7 @@ export const BookmarkContactCell = styled(BookmarkTableCell)`
 `;
 
 export const NoBookmarks = styled.div`
-  width: 100dvw;
+  width: 100%;
   text-align: center;
   color: #666;
   font-size: 14px;

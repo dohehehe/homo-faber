@@ -8,14 +8,14 @@ export const DetailWrapper = styled(motion.main, {
 })`
   width: calc(80vw - 60px);
   height: 100dvh;
-  padding: 0px 5px 0px 50px;
+  padding: 0px 0px 0px 50px;
   background-color: #F7F7F7;
   position: fixed;
   right: ${(props) => props.isMobile ? 'unset' : props.right};
   bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
   top: ${(props) => props.isMobile ? 'unset' : '0px'};
   left: ${(props) => props.isMobile ? '0px' : 'unset'};
-  z-index: 10;
+  z-index: 5;
   box-shadow: -2px 0 4px 0 rgba(79,75,31,0.57);
   display: flex;
   overflow: hidden;
@@ -26,6 +26,7 @@ export const DetailWrapper = styled(motion.main, {
     height: calc(87dvh - 47px);
     padding: 0px;
     overflow-y: scroll;
+    flex-direction: column;
   }
 `;
 
@@ -44,9 +45,52 @@ export const DetailPageName = styled.h1`
     transform: rotate(0deg);
     transform-origin: top left;
     top: 15px;
+    margin-left: 10px;
     left: 10px;
     font-size: 1rem;
     z-index: 10;
+    position: sticky;
+  }
+`
+
+export const InterviewButton = styled.button`
+  // margin-top: 6px;
+  padding: 8px 0px;
+  background-color: transparent; 
+  color: #888;
+  border: none;
+  border-radius: 4px;
+  font-family: var(--font-gothic);
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  // margin-left: auto;
+  position: absolute;
+  letter-spacing: 0.1rem;
+  top: 110px;
+  left: 38px;
+  transform: rotate(90deg);
+  transform-origin: top left;
+  text-decoration: 0.8px underline wavy;
+  text-underline-offset: 5px;
+  color: black;
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  ${theme.media.tablet} {
+    font-size: 1rem;
+    padding: unset;
+    position: sticky;
+    z-index: 10;
+    transform: unset;
+    top: 10px;
+    left: unset;
+    color: #555;
+    right: 8px;
+    margin-left: auto;
   }
 `
 
@@ -56,12 +100,12 @@ export const StoreDetailCard = styled.article`
   color: black;
   display: flex;
   flex-grow: 1;
-  gap: 3%;
+  gap: 7%;
 
   ${theme.media.tablet} {
     gap: 0px;
     padding-top: 38px;
-    overflow-y: scroll;
+    // overflow-y: scroll;
     display: block;
     -ms-overflow-style: none;
     &::-webkit-scrollbar {
@@ -71,7 +115,7 @@ export const StoreDetailCard = styled.article`
 `;
 
 export const StoreDetailSection = styled.section`
-  width: 43%;
+  width: 45%;
   text-align: center;
   overflow-y: auto;
   padding-top: 20px;
@@ -79,7 +123,12 @@ export const StoreDetailSection = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-left: 20px;
+  padding-left: 50px;
+    &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
   ${theme.media.tablet} {
     width: 100%;
@@ -94,14 +143,9 @@ export const StoreDetailSection = styled.section`
 export const StoreImgSection = styled(StoreDetailSection)`
   margin-bottom: -20px;
   overflow-x: hidden;
-  width: 54%;
+  width: 48%;
   margin-top: -20px;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  padding-left:0px;
 
   ${theme.media.tablet} {
     width: 100%;
@@ -210,56 +254,7 @@ export const StoreAdress = styled.h3`
   }
 `
 
-export const InterviewButton = styled.button`
-  // margin-top: 6px;
-  padding: 8px 0px;
-  background-color: transparent; 
-  color: #888;
-  border: none;
-  border-radius: 4px;
-  font-family: var(--font-gothic);
-  font-size: 0.9rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  // margin-left: auto;
-  position: absolute;
-  top: 110px;
-  left: 38px;
-  transform: rotate(90deg);
-  transform-origin: top left;
-      text-decoration: 0.8px underline wavy;
-    text-underline-offset: 5px;
-    color: black;
 
-
-  // &:hover {
-  //   text-decoration: 0.8px underline wavy;
-  //   text-underline-offset: 5px;
-  //   color: black;
-
-  //   &::after {
-  //     content: ' 보러가기';
-  //     // padding-left: 8px;
-  //   }
-  // }
-  
-  &:active {
-    transform: translateY(0);
-  }
-
-  ${theme.media.tablet} {
-    font-size: 1rem;
-    padding: unset;
-    position: absolute;
-    z-index: 10;
-    transform: unset;
-    top: 11px;
-    left: unset;
-    color: #555;
-    right: 8px;
-  }
-`
 
 export const StoreTagList = styled.div`
   font-size: 1.24rem;
@@ -300,6 +295,7 @@ export const StoreCapacity = styled.div`
   font-weight: 700;
   margin-top: 25px;
   font-size: 1.24rem;
+  margin-right: auto;
 
   ${theme.media.tablet} {
     font-size: 1rem;
@@ -328,7 +324,7 @@ export const StoreContactList = styled.div`
   grid-template-columns: max-content 1fr;
   gap: 12px 2px;
   width: fit-content;
-  margin-top: 40px;
+  margin-top: 80px;
   // margin-right: auto;
   width: 100%;
   padding-left: 3px;
@@ -405,7 +401,7 @@ export const StoreCardImg = styled.img`
 export const StoreImgList = styled.div`
   width: 100%;
   margin-top: -40px;
-  padding: 0 40px 10px 40px;
+  padding: 0 30px 10px 40px;
   margin-bottom: 40px;
 
   ${theme.media.tablet} {

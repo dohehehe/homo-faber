@@ -6,13 +6,16 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useStoreDetail } from '@/hooks/useStores';
 import { getStoreTypes } from '@/utils/api/stores-api';
 import { getInterviewsByStore } from '@/utils/supabase/interview';
-import { useCustomScrollbar } from '@/hooks/useCustomScrollbar';
+import { getCommentsByStore } from '@/utils/api/comments-api';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { useAuth } from '@/contexts/AuthContext';
 import * as S from '@/styles/store/storeDetailContainer.style';
 import useWindowSize from '@/hooks/useWindowSize';
 import Loader from '@/components/common/Loader';
 import Error from '@/components/common/Error';
+import * as S2 from '@/styles/store/storeComment.style';
+import StoreComment from '@/components/store/StoreComment';
+import StoreCommentForm from '@/components/store/StoreCommentForm';
 
 function StoreDetailContainer({ }) {
   const router = useRouter();
@@ -23,6 +26,7 @@ function StoreDetailContainer({ }) {
   const [capacityTypes, setCapacityTypes] = useState([]);
   const [industryTypes, setIndustryTypes] = useState([]);
   const [interviews, setInterviews] = useState([]);
+  const [comments, setComments] = useState([]);
   const storeId = pathname.startsWith('/store/') && pathname !== '/store' ? pathname.split('/')[2] : null;
 
   const { user } = useAuth();
@@ -55,6 +59,20 @@ function StoreDetailContainer({ }) {
       }
     };
     fetchInterviews();
+  }, [storeId]);
+
+  // store와 연결된 comments들을 가져오는 useEffect
+  useEffect(() => {
+    const fetchComments = async () => {
+      if (!storeId) return;
+      try {
+        const commentsData = await getCommentsByStore(storeId);
+        setComments(commentsData);
+      } catch (error) {
+        console.error('Comments 가져오기 실패:', error);
+      }
+    };
+    fetchComments();
   }, [storeId]);
 
   // pathname 변경 시 위치 업데이트
@@ -93,6 +111,26 @@ function StoreDetailContainer({ }) {
     if (user && storeId) {
       toggleBookmark(storeId);
     }
+  };
+
+
+  // 댓글 추가 핸들러
+  const handleCommentAdded = (newComment) => {
+    setComments(prev => [newComment, ...prev]);
+  };
+
+  // 댓글 수정 핸들러
+  const handleCommentUpdate = (commentId, updatedData) => {
+    setComments(prev =>
+      prev.map(comment =>
+        comment.id === commentId ? { ...comment, ...updatedData } : comment
+      )
+    );
+  };
+
+  // 댓글 삭제 핸들러
+  const handleCommentDelete = (commentId) => {
+    setComments(prev => prev.filter(comment => comment.id !== commentId));
   };
 
   return (
@@ -195,7 +233,7 @@ function StoreDetailContainer({ }) {
                         .map(capacity => {
                           const capacityTypeId = capacity.capacity_types?.id;
                           if (capacityTypeId === '7346574b-f036-4be2-803b-7614a908b53c') {
-                            return '- 개인 • 학생 작업 가능 -';
+                            return '- 개인 • 학생 작업 가능';
                           }
                         })
                       }
@@ -239,6 +277,34 @@ function StoreDetailContainer({ }) {
                   </S.StoreContactList>
 
 
+                  {/* 댓글 섹션 - 웹에서만 표시 */}
+                  {!isMobile && (
+                    <S2.CommentsSection>
+                      <S2.CommentsTitle>후기 ({comments.length})</S2.CommentsTitle>
+
+                      {/* 댓글 작성 폼 */}
+                      <StoreCommentForm
+                        storeId={storeId}
+                        onCommentAdded={handleCommentAdded}
+                      />
+
+                      {/* 댓글 목록 */}
+                      <S2.CommentsList>
+                        {comments.length > 0 ? (
+                          comments.map((comment) => (
+                            <StoreComment
+                              key={comment.id}
+                              comment={comment}
+                              onUpdate={handleCommentUpdate}
+                              onDelete={handleCommentDelete}
+                            />
+                          ))
+                        ) : (
+                          <S2.NoComments>아직 후기가 없습니다.</S2.NoComments>
+                        )}
+                      </S2.CommentsList>
+                    </S2.CommentsSection>
+                  )}
                 </S.StoreDetailSection>
 
                 <S.StoreImgSection>
@@ -258,11 +324,40 @@ function StoreDetailContainer({ }) {
                 </S.StoreImgSection>
               </S.StoreDetailCard>
             )}
-          </>
 
+            {/* 댓글 섹션 - 모바일에서만 표시 */}
+            {isMobile && (
+              <S2.CommentsSection>
+                <S2.CommentsTitle>후기 ({comments.length})</S2.CommentsTitle>
+
+                {/* 댓글 작성 폼 */}
+                <StoreCommentForm
+                  storeId={storeId}
+                  onCommentAdded={handleCommentAdded}
+                />
+
+                {/* 댓글 목록 */}
+                <S2.CommentsList>
+                  {comments.length > 0 ? (
+                    comments.map((comment) => (
+                      <StoreComment
+                        key={comment.id}
+                        comment={comment}
+                        onUpdate={handleCommentUpdate}
+                        onDelete={handleCommentDelete}
+                      />
+                    ))
+                  ) : (
+                    <S2.NoComments>아직 후기가 없습니다.</S2.NoComments>
+                  )}
+                </S2.CommentsList>
+              </S2.CommentsSection>
+            )}
+          </>
         </S.DetailWrapper>
-      )}
-    </AnimatePresence>
+      )
+      }
+    </AnimatePresence >
   );
 }
 
