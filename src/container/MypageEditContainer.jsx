@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useLayoutEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { updateUserProfile } from '@/utils/api/user-api';
+import { updateUserProfile, getUserInfo } from '@/utils/api/user-api';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AnimatePresence } from 'motion/react';
 import * as S from '@/styles/user/userContainer.style';
@@ -26,6 +26,7 @@ function MypageEditContainer({ }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [userInfo, setUserInfo] = useState(null);
 
   // 모바일에서 사용할 bottom 위치를 계산하는 함수
   const getMobileBottomPosition = (pathname) => {
@@ -67,14 +68,30 @@ function MypageEditContainer({ }) {
 
   // 사용자 데이터로 폼 초기화
   useEffect(() => {
-    if (user) {
-      setFormData({
-        name: user.user_metadata?.name || '',
-        password: '',
-        confirmPassword: '',
-      });
-    }
-  }, [user]);
+    const fetchUserData = async () => {
+      if (user && !loading) {
+        try {
+          const userData = await getUserInfo();
+          setUserInfo(userData);
+          setFormData({
+            name: userData?.name || user.user_metadata?.name || '',
+            password: '',
+            confirmPassword: '',
+          });
+        } catch (error) {
+          console.error('사용자 정보 조회 중 오류:', error);
+          // 오류 발생 시 기본값 설정
+          setFormData({
+            name: user.user_metadata?.name || '',
+            password: '',
+            confirmPassword: '',
+          });
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [user, loading]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

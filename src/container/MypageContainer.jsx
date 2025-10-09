@@ -8,12 +8,15 @@ import Loader from '@/components/common/Loader';
 import * as S from '@/styles/user/mypageContainer.style';
 import UserBookmarkList from '@/components/mypage/UserBookmarkList';
 import UserFnqList from '@/components/mypage/UserFnqList';
+import { getUserInfo } from '@/utils/api/user-api';
 
 function MypageContainer({ onLoadComplete }) {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState('bookmarks');
+  const [userInfo, setUserInfo] = useState(null);
+  const [userInfoLoading, setUserInfoLoading] = useState(true);
 
   // 마이페이지 패널 클릭 시 홈으로 이동
   const handleMypageWrapperClick = () => {
@@ -36,6 +39,27 @@ function MypageContainer({ onLoadComplete }) {
     }
   }, [user, loading, router]);
 
+  // 사용자 정보 가져오기
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      if (user && !loading) {
+        try {
+          setUserInfoLoading(true);
+          const userData = await getUserInfo();
+          setUserInfo(userData);
+        } catch (error) {
+          console.error('사용자 정보 조회 중 오류:', error);
+          // 오류 발생 시 기본값 설정
+          setUserInfo({ name: user.user_metadata?.name || '사용자' });
+        } finally {
+          setUserInfoLoading(false);
+        }
+      }
+    };
+
+    fetchUserInfo();
+  }, [user, loading]);
+
   const handleLogout = async () => {
     try {
       await signOut();
@@ -46,7 +70,7 @@ function MypageContainer({ onLoadComplete }) {
   };
 
 
-  if (loading) {
+  if (loading || userInfoLoading) {
     return (
       <S.MyPageWrapper>
         <Loader text="로딩 중..." />
@@ -72,7 +96,7 @@ function MypageContainer({ onLoadComplete }) {
 
       <S.ProfileCard onClick={(e) => e.stopPropagation()}>
         <S.UserName>
-          {user.user_metadata?.name || '사용자'}
+          {userInfo?.name || user.user_metadata?.name || '사용자'}
         </S.UserName>
         <S.UserEmail>{user.email}</S.UserEmail>
 

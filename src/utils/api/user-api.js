@@ -4,6 +4,32 @@
  */
 
 /**
+ * 사용자 정보를 users 테이블에서 가져옵니다.
+ * @returns {Promise<Object>} 사용자 데이터
+ */
+export async function getUserInfo() {
+  try {
+    const response = await fetch('/api/user/info', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || '사용자 정보 조회 중 오류가 발생했습니다.');
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('API Error (getUserInfo):', error);
+    throw error;
+  }
+}
+
+/**
  * 사용자 프로필을 업데이트합니다.
  * @param {Object} profileData - 업데이트할 프로필 데이터
  * @returns {Promise<Object>} 업데이트된 사용자 데이터
