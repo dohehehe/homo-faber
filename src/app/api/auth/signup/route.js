@@ -31,6 +31,22 @@ export async function POST(request) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
+    // 회원가입 성공 시 users 테이블에 사용자 정보 생성
+    if (data?.user) {
+      const { error: insertError } = await supabase
+        .from('users')
+        .insert({
+          id: data.user.id,
+          name: userData?.name || '사용자',
+          email: email,
+        });
+
+      if (insertError) {
+        console.error('Error creating user in users table:', insertError);
+        // users 테이블 삽입 실패해도 회원가입은 성공으로 처리
+      }
+    }
+
     return NextResponse.json({ data });
   } catch (error) {
     console.error('Unexpected error in POST /api/auth/signup:', error);

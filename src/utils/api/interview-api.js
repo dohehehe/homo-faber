@@ -4,8 +4,8 @@
  */
 
 /**
- * 모든 인터뷰 목록을 가져옵니다.
- * @param {string} storeId - 선택적으로 특정 스토어의 인터뷰만 가져오기
+ * 모든 인터뷰를 가져옵니다.
+ * @param {string} storeId - 특정 스토어 ID (선택사항)
  * @returns {Promise<Array>} 인터뷰 목록
  */
 export async function getInterviews(storeId = null) {
@@ -24,7 +24,7 @@ export async function getInterviews(storeId = null) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || '인터뷰 목록을 불러오는 중 오류가 발생했습니다.');
+      throw new Error(errorData.error || '인터뷰를 불러오는 중 오류가 발생했습니다.');
     }
 
     const result = await response.json();
@@ -36,39 +36,16 @@ export async function getInterviews(storeId = null) {
 }
 
 /**
- * 특정 스토어의 인터뷰 목록을 가져옵니다.
- * @param {string} storeId - 스토어 ID
- * @returns {Promise<Array>} 해당 스토어의 인터뷰 목록
- */
-export async function getInterviewsByStore(storeId) {
-  try {
-    const response = await fetch(`/api/interviews?store_id=${storeId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || '스토어 인터뷰 목록을 불러오는 중 오류가 발생했습니다.');
-    }
-
-    const result = await response.json();
-    return result.data || [];
-  } catch (error) {
-    console.error('API Error (getInterviewsByStore):', error);
-    throw error;
-  }
-}
-
-/**
  * 특정 인터뷰를 가져옵니다.
  * @param {string} interviewId - 인터뷰 ID
  * @returns {Promise<Object>} 인터뷰 데이터
  */
 export async function getInterviewById(interviewId) {
   try {
+    if (!interviewId) {
+      throw new Error('인터뷰 ID가 필요합니다.');
+    }
+
     const response = await fetch(`/api/interviews/${interviewId}`, {
       method: 'GET',
       headers: {
@@ -78,7 +55,10 @@ export async function getInterviewById(interviewId) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || `인터뷰 (ID: ${interviewId})를 불러오는 중 오류가 발생했습니다.`);
+      if (response.status === 404) {
+        throw new Error('인터뷰를 찾을 수 없습니다.');
+      }
+      throw new Error(errorData.error || '인터뷰를 불러오는 중 오류가 발생했습니다.');
     }
 
     const result = await response.json();
@@ -90,7 +70,7 @@ export async function getInterviewById(interviewId) {
 }
 
 /**
- * 새로운 인터뷰를 생성합니다.
+ * 인터뷰를 생성합니다.
  * @param {Object} interviewData - 인터뷰 데이터
  * @returns {Promise<Object>} 생성된 인터뷰 데이터
  */
@@ -125,6 +105,10 @@ export async function createInterview(interviewData) {
  */
 export async function updateInterview(interviewId, updateData) {
   try {
+    if (!interviewId) {
+      throw new Error('인터뷰 ID가 필요합니다.');
+    }
+
     const response = await fetch(`/api/interviews/${interviewId}`, {
       method: 'PUT',
       headers: {
@@ -135,7 +119,7 @@ export async function updateInterview(interviewId, updateData) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || `인터뷰 (ID: ${interviewId}) 업데이트 중 오류가 발생했습니다.`);
+      throw new Error(errorData.error || '인터뷰 업데이트 중 오류가 발생했습니다.');
     }
 
     const result = await response.json();
@@ -153,6 +137,10 @@ export async function updateInterview(interviewId, updateData) {
  */
 export async function deleteInterview(interviewId) {
   try {
+    if (!interviewId) {
+      throw new Error('인터뷰 ID가 필요합니다.');
+    }
+
     const response = await fetch(`/api/interviews/${interviewId}`, {
       method: 'DELETE',
       headers: {
@@ -162,7 +150,7 @@ export async function deleteInterview(interviewId) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || `인터뷰 (ID: ${interviewId}) 삭제 중 오류가 발생했습니다.`);
+      throw new Error(errorData.error || '인터뷰 삭제 중 오류가 발생했습니다.');
     }
 
     return true;

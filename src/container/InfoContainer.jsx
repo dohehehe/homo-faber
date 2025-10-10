@@ -48,8 +48,11 @@ function InfoContainer({ onLoadComplete }) {
             대다수 기술자들은 40년 넘게 청계천에서 생활해 왔다. 옆집에 숟가락이 몇 개 있는지 다 알 정도로 가까운 동료들이 겨우 빌딩 하나 때문에 흩어져야 한다. 재개발은 이들의 공장뿐만 아니라 이들의 추억과 친구들도 앗아가고 있다. 산림동에서 청년기 꼬마(견습생) 시절을 거쳐, 결혼도 하고, 함께 아이를 기르고, 첫째 둘째 시집, 장가가는 것도 함께 지켜본 사이는 동료나 친구라는 말로도 부족하다. 이 책은 손으로 기술을 익혀온 사람들의 경험과 지혜를 통해 대기업 중심의 산업사에서 소외되는 소규모 제조업의 역할과 가치를 발견한다. 이는 예술적 가치를 지닌 아트북일 뿐만 아니라 민속학적 가치가 있는 자료가 될 것이다.</S.InfoPara>
           <S.InfoPara>
             청계천을지로보존연대를 믿고 함께 연대해 주신 산림동의 기술자들, 한대식 회장님 및 임원들, 회원님들께 진심으로 존경의 말씀을 올린다. 비록 어려운 상황에서도 상인들의 이야기를 들어주고 협약식을 현실화하는데 공헌한 안병석 국장님, 임해원 주무관님께도 감사의 말씀을 드린다.</S.InfoPara>
-          <S.InfoParaLink>
-            <Link href="https://www.ohmynews.com/NWS_Web/iRoom/articles/news_list.aspx?MEM_CD=00772030" target="_blank">*산림동과 관련된 기고문은 <span>이곳</span>에서 더 읽어보실 수 있습니다</Link>
+          <S.InfoParaLink >
+            <Link href="https://www.ohmynews.com/NWS_Web/iRoom/articles/news_list.aspx?MEM_CD=00772030" target="_blank">* 산림동과 관련된 기고문은 <span>이곳</span>에서 더 읽어보실 수 있습니다</Link>
+          </S.InfoParaLink>
+          <S.InfoParaLink style={{ marginTop: '0px' }}>
+            <Link href="https://smartstore.naver.com/listentothecity/products/12477105528" target="_blank">* 산림동의 만드는 사람들: 호모 파베르 도서는 <span>이곳</span>에서 만나보실 수 있습니다</Link>
           </S.InfoParaLink>
         </S.InfoArticle>
 

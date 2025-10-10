@@ -5,14 +5,18 @@ import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStoreDetail } from '@/hooks/useStores';
 import { getStoreTypes } from '@/utils/api/stores-api';
-import { getInterviewsByStore } from '@/utils/supabase/interview';
-import { useCustomScrollbar } from '@/hooks/useCustomScrollbar';
+import { getInterviews } from '@/utils/api/interview-api';
+import { getCommentsByStore } from '@/utils/api/comments-api';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { useAuth } from '@/contexts/AuthContext';
 import * as S from '@/styles/store/storeDetailContainer.style';
 import useWindowSize from '@/hooks/useWindowSize';
 import Loader from '@/components/common/Loader';
 import Error from '@/components/common/Error';
+import * as S2 from '@/styles/store/storeComment.style';
+import StoreComment from '@/components/store/StoreComment';
+import StoreCommentForm from '@/components/store/StoreCommentForm';
+import ImageModal from '@/components/common/ImageModal';
 
 function StoreDetailContainer({ }) {
   const router = useRouter();
@@ -23,11 +27,26 @@ function StoreDetailContainer({ }) {
   const [capacityTypes, setCapacityTypes] = useState([]);
   const [industryTypes, setIndustryTypes] = useState([]);
   const [interviews, setInterviews] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const storeId = pathname.startsWith('/store/') && pathname !== '/store' ? pathname.split('/')[2] : null;
 
   const { user } = useAuth();
   const { toggleBookmark, isStoreBookmarked, loading } = useBookmarks();
   const { store, isLoading, error } = useStoreDetail(storeId);
+
+  // 이미지 클릭 핸들러
+  const handleImageClick = (imageUrl, imageName) => {
+    setSelectedImage({ publicUrl: imageUrl, name: imageName });
+    setIsModalOpen(true);
+  };
+
+  // 모달 닫기 핸들러
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null);
+  };
 
   // capacity와 industry 타입들을 가져오는 useEffect
   useEffect(() => {
@@ -48,13 +67,27 @@ function StoreDetailContainer({ }) {
     const fetchInterviews = async () => {
       if (!storeId) return;
       try {
-        const interviewData = await getInterviewsByStore(storeId);
+        const interviewData = await getInterviews(storeId);
         setInterviews(interviewData);
       } catch (error) {
         console.error('Interviews 가져오기 실패:', error);
       }
     };
     fetchInterviews();
+  }, [storeId]);
+
+  // store와 연결된 comments들을 가져오는 useEffect
+  useEffect(() => {
+    const fetchComments = async () => {
+      if (!storeId) return;
+      try {
+        const commentsData = await getCommentsByStore(storeId);
+        setComments(commentsData);
+      } catch (error) {
+        console.error('Comments 가져오기 실패:', error);
+      }
+    };
+    fetchComments();
   }, [storeId]);
 
   // pathname 변경 시 위치 업데이트
@@ -95,6 +128,26 @@ function StoreDetailContainer({ }) {
     }
   };
 
+
+  // 댓글 추가 핸들러
+  const handleCommentAdded = (newComment) => {
+    setComments(prev => [newComment, ...prev]);
+  };
+
+  // 댓글 수정 핸들러
+  const handleCommentUpdate = (commentId, updatedData) => {
+    setComments(prev =>
+      prev.map(comment =>
+        comment.id === commentId ? { ...comment, ...updatedData } : comment
+      )
+    );
+  };
+
+  // 댓글 삭제 핸들러
+  const handleCommentDelete = (commentId) => {
+    setComments(prev => prev.filter(comment => comment.id !== commentId));
+  };
+
   return (
     <AnimatePresence mode="wait">
       {storeId && (
@@ -131,7 +184,7 @@ function StoreDetailContainer({ }) {
               <S.StoreDetailCard>
                 <S.StoreDetailSection>
                   <S.StoreName>
-                    {store.name}
+                    <S.StoreNameTxt>{store.name}</S.StoreNameTxt>
                     {/* 북마크 버튼 */}
                     {user && (
                       <S.BookmarkButton
@@ -195,7 +248,7 @@ function StoreDetailContainer({ }) {
                         .map(capacity => {
                           const capacityTypeId = capacity.capacity_types?.id;
                           if (capacityTypeId === '7346574b-f036-4be2-803b-7614a908b53c') {
-                            return '- 개인 • 학생 작업 가능 -';
+                            return '- 개인 • 학생 작업 가능';
                           }
                         })
                       }
@@ -239,11 +292,43 @@ function StoreDetailContainer({ }) {
                   </S.StoreContactList>
 
 
+                  {/* 댓글 섹션 - 웹에서만 표시 */}
+                  {!isMobile && (
+                    <S2.CommentsSection>
+                      <S2.CommentsTitle>후기 ({comments.length})</S2.CommentsTitle>
+
+                      {/* 댓글 작성 폼 */}
+                      <StoreCommentForm
+                        storeId={storeId}
+                        onCommentAdded={handleCommentAdded}
+                      />
+
+                      {/* 댓글 목록 */}
+                      <S2.CommentsList>
+                        {comments.length > 0 ? (
+                          comments.map((comment) => (
+                            <StoreComment
+                              key={comment.id}
+                              comment={comment}
+                              onUpdate={handleCommentUpdate}
+                              onDelete={handleCommentDelete}
+                            />
+                          ))
+                        ) : (
+                          <S2.NoComments>아직 후기가 없습니다.</S2.NoComments>
+                        )}
+                      </S2.CommentsList>
+                    </S2.CommentsSection>
+                  )}
                 </S.StoreDetailSection>
 
                 <S.StoreImgSection>
                   {store.card_img && (
-                    <S.StoreCardImg src={`${store.card_img}`} />
+                    <S.StoreCardImg
+                      src={`${store.card_img}`}
+                      onClick={() => handleImageClick(store.card_img, '스토어 대표 이미지')}
+                      style={{ cursor: 'pointer' }}
+                    />
                   )}
 
                   {store.store_gallery?.length > 0 && (
@@ -251,18 +336,60 @@ function StoreDetailContainer({ }) {
                       {store.store_gallery
                         .map(tag => tag?.image_url)
                         .map((imgURL, index) => (
-                          <S.StoreImg key={index} src={`${imgURL}`} />
+                          <S.StoreImg
+                            key={index}
+                            src={`${imgURL}`}
+                            onClick={() => handleImageClick(imgURL, `갤러리 이미지 ${index + 1}`)}
+                            style={{ cursor: 'pointer' }}
+                          />
                         ))}
                     </S.StoreImgList>
                   )}
                 </S.StoreImgSection>
               </S.StoreDetailCard>
             )}
-          </>
 
+            {/* 댓글 섹션 - 모바일에서만 표시 */}
+            {isMobile && (
+              <S2.CommentsSection>
+                <S2.CommentsTitle>후기 ({comments.length})</S2.CommentsTitle>
+
+                {/* 댓글 작성 폼 */}
+                <StoreCommentForm
+                  storeId={storeId}
+                  onCommentAdded={handleCommentAdded}
+                />
+
+                {/* 댓글 목록 */}
+                <S2.CommentsList>
+                  {comments.length > 0 ? (
+                    comments.map((comment) => (
+                      <StoreComment
+                        key={comment.id}
+                        comment={comment}
+                        onUpdate={handleCommentUpdate}
+                        onDelete={handleCommentDelete}
+                      />
+                    ))
+                  ) : (
+                    <S2.NoComments>아직 후기가 없습니다.</S2.NoComments>
+                  )}
+                </S2.CommentsList>
+              </S2.CommentsSection>
+            )}
+          </>
         </S.DetailWrapper>
-      )}
-    </AnimatePresence>
+      )
+      }
+
+      {/* 이미지 모달 */}
+      <ImageModal
+        isOpen={isModalOpen}
+        imageUrl={selectedImage?.publicUrl}
+        imageName={selectedImage?.name}
+        onClose={handleCloseModal}
+      />
+    </AnimatePresence >
   );
 }
 

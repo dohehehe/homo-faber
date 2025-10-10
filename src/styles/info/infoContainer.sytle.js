@@ -208,11 +208,13 @@ export const InfoParaLink = styled.div`
   }
 
   ${theme.media.mobile} {
-    width: 80%;
     font-size: 1rem;
     margin-left: auto;
     margin-top: 80px;
     margin-bottom: 10px;
+    text-align: left;
+    text-indent: -10px;
+    padding-left: 10px;
   }
 `
 

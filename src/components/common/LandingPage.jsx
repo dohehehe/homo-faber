@@ -181,19 +181,19 @@ const LandingPage = ({ children }) => {
         </ContentContainer>
         <ImgContainer>
           <ImageWrapper num={1}>
-            <Image src={`/img/(web)-01.jpg`} alt='호모파베르' fill style={{ objectFit: 'cover' }} />
+            <Image src={`/img/(web)-01.jpg`} alt='호모파베르' fill sizes="100vw" style={{ objectFit: 'cover' }} />
           </ImageWrapper>
           <ImageWrapper num={2}>
-            <Image src={`/img/(web)-02.jpg`} alt='호모파베르' fill style={{ objectFit: 'cover' }} />
+            <Image src={`/img/(web)-02.jpg`} alt='호모파베르' fill sizes="100vw" style={{ objectFit: 'cover' }} />
           </ImageWrapper>
           <ImageWrapper num={3}>
-            <Image src={`/img/(web)-03.jpg`} alt='호모파베르' fill style={{ objectFit: 'cover' }} />
+            <Image src={`/img/(web)-03.jpg`} alt='호모파베르' fill sizes="100vw" style={{ objectFit: 'cover' }} />
           </ImageWrapper>
           <ImageWrapper num={4}>
-            <Image src={`/img/(web)-04.jpg`} alt='호모파베르' fill style={{ objectFit: 'cover' }} />
+            <Image src={`/img/(web)-04.jpg`} alt='호모파베르' fill sizes="100vw" style={{ objectFit: 'cover' }} />
           </ImageWrapper>
           <ImageWrapper num={5}>
-            <Image src={`/img/(web)-05.jpg`} alt='호모파베르' fill style={{ objectFit: 'cover' }} />
+            <Image src={`/img/(web)-05.jpg`} alt='호모파베르' fill sizes="100vw" style={{ objectFit: 'cover' }} />
           </ImageWrapper>
         </ImgContainer>
       </LandingOverlay>
