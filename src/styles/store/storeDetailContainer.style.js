@@ -80,7 +80,7 @@ export const InterviewButton = styled.button`
     transform: translateY(0);
   }
 
-  ${theme.media.tablet} {
+  ${theme.media.mobile} {
     font-size: 1rem;
     padding: unset;
     position: sticky;
@@ -101,10 +101,11 @@ export const StoreDetailCard = styled.article`
   display: flex;
   flex-grow: 1;
   gap: 7%;
+  padding-top: 10px;
 
   ${theme.media.tablet} {
     gap: 0px;
-    padding-top: 38px;
+    padding-top: 15px;
     // overflow-y: scroll;
     display: block;
     -ms-overflow-style: none;
@@ -129,6 +130,7 @@ export const StoreDetailSection = styled.section`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+  min-width: 450px;
 
   ${theme.media.tablet} {
     width: 100%;
@@ -137,6 +139,7 @@ export const StoreDetailSection = styled.section`
     position: static;
     display: block;
     padding-left: 0px;
+    min-width: unset;
   }
 `
 
@@ -144,12 +147,13 @@ export const StoreImgSection = styled(StoreDetailSection)`
   margin-bottom: -20px;
   overflow-x: hidden;
   width: 48%;
-  margin-top: -20px;
+  // margin-top: 0px;
   padding-left:0px;
+  min-width: unset;
 
   ${theme.media.tablet} {
     width: 100%;
-    margin-top: 10px;
+    margin-top: 20px;
     margin-right: 0px;
     margin-bottom: 0px;
     overflow-y: unset;
@@ -171,9 +175,15 @@ export const StoreName = styled.h2`
   padding-top: 3px;
   margin-top:-2px;
   position: relative;
-  width: fit-content;
-  margin: 0 auto;
+  width: 100%;
+  // margin: 0 auto;
+  padding-bottom: 8px;
+  // width: fit-content;
   margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-right: 10px;
 
   &:hover{
       text-shadow: 0px 2px 3px rgba(221, 221, 221, 0.8), -0.1px -0.1px 5px rgba(100,92,92,0.6), 2px 2px 10px rgba(255,255,255,0.5);
@@ -186,20 +196,37 @@ export const StoreName = styled.h2`
   }
 `;
 
+export const StoreNameTxt = styled.span`
+  flex-wrap: wrap;
+  // word-break: break-all;
+  width: fit-content;
+  display: inline;
+  // width: 300px;
+  // flex-grow: 1;
+
+  ${theme.media.tablet} {
+    // display: inline;
+  }
+`
+
 export const BookmarkButton = styled.button`
-  position: absolute;
-  top: -22px;
-  right: -50px;
+  // position: absolute;
+  top: 0px;
+  right: 0px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 10px 12px;
+  padding: 5px 7px;
   border-radius: 50%;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
+  // margin-right: -40px;
+  min-width: 30px;
+  flex-shrink: 0;
+  margin-top: -18px;
   
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
@@ -212,7 +239,10 @@ export const BookmarkButton = styled.button`
   }
 
   ${theme.media.tablet} {
-    right: -43px;
+    padding: 2px 2px;
+    // position: absolute;
+    margin-right: -38px;
+    // margin-left: -6px;
   }
 `;
 
@@ -385,9 +415,9 @@ export const StoreDescription = styled.div`
 `
 
 export const StoreCardImg = styled.img`
-  width: 100%;
+  width: 80%;
   transform: rotate(-2deg);
-  margin-top: -30px;
+  // margin-top: -30px;
   transition: .3s all;
   &:hover{
     transform: rotate(2deg);
@@ -400,13 +430,14 @@ export const StoreCardImg = styled.img`
 `
 export const StoreImgList = styled.div`
   width: 100%;
-  margin-top: -40px;
+  // margin-top: -40px;
+  margin-top: 15px;
   padding: 0 30px 10px 40px;
   margin-bottom: 40px;
 
   ${theme.media.tablet} {
     padding: 0;
-    margin-top: -36px;
+    // margin-top: -36px;
     width: unset;
   }
 `

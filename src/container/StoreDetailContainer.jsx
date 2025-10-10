@@ -169,7 +169,7 @@ function StoreDetailContainer({ }) {
               <S.StoreDetailCard>
                 <S.StoreDetailSection>
                   <S.StoreName>
-                    {store.name}
+                    <S.StoreNameTxt>{store.name}</S.StoreNameTxt>
                     {/* 북마크 버튼 */}
                     {user && (
                       <S.BookmarkButton
