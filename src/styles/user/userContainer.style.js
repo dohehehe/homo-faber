@@ -7,7 +7,7 @@ export const UserWrapper = styled.main`
   height: 100dvh;
   padding-left: 60px;
   padding-top: 27px;
-  z-index: 3;
+  z-index: 7;
   background:rgb(225, 225, 225);
   overflow: hidden;
   border-left: solid 3px #DADADA;
@@ -481,7 +481,7 @@ export const EditWrapper = styled(motion.main, {
   right: ${(props) => props.isMobile ? 'unset' : props.right};
   bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
   top: ${(props) => props.isMobile ? 'unset' : '0px'};
-  z-index: 4;
+  z-index: 7;
   box-shadow: -2px 0 4px 0 rgba(84,84,84,0.57);
   display: flex;
   flex-direction: column;

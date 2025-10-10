@@ -74,7 +74,7 @@ function MypageContainer({ onLoadComplete }) {
   if (loading || userInfoLoading) {
     return (
       <S.MyPageWrapper>
-        <Loader text="로딩 중..." />
+        <Loader baseColor="rgb(244, 244, 244)" style={{ marginTop: '5px' }} />
       </S.MyPageWrapper>
     );
   }

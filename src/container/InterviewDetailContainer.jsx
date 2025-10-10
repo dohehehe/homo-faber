@@ -92,7 +92,7 @@ function InterviewDetailContainer({ }) {
 
               <EditorInterviewRender item={interview?.contents} />
 
-              <S.InterviewLink> {interview?.stores.name} {interview?.stores.person} 기술자와 <br />산림동의 다른 기술자들의 이야기를 <br /><span style={{ fontWeight: '900', padding: '8px 0px', color: 'rgb(71, 71, 71)' }}> &lt;산림동의 만드는 사람들&gt;</span> 책에서 계속 만나 보실 수 있습니다<Link href='https://tumblbug.com/homofaber' target='_blank'> 구매 링크 바로가기</Link></S.InterviewLink>
+              <S.InterviewLink> {interview?.stores.name} {interview?.stores.person} 기술자와 <br />산림동의 다른 기술자들의 이야기를 <br /><span style={{ fontWeight: '900', padding: '8px 0px', color: 'rgb(71, 71, 71)' }}> &lt;산림동의 만드는 사람들&gt;</span> 책에서 계속 만나 보실 수 있습니다<Link href='https://smartstore.naver.com/listentothecity/products/12477105528' target='_blank'> 구매 링크 바로가기</Link></S.InterviewLink>
 
             </>
           )}

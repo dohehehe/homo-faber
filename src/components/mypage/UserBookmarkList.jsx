@@ -40,7 +40,7 @@ function UserBookmarkList() {
             {bookmarksLoading ? (
               <tr>
                 <td colSpan={isReady && isMobile ? 2 : 4}>
-                  <Loader baseColor="rgb(255, 255, 255)" style={{ marginTop: '5px' }} />
+                  <Loader baseColor="rgb(244, 244, 244)" style={{ marginTop: '5px' }} />
                 </td>
               </tr>
             ) : bookmarks.length > 0 ? (
