@@ -51,6 +51,19 @@ export async function PUT(request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // users 테이블도 함께 업데이트
+    if (name) {
+      const { error: usersTableError } = await supabase
+        .from('users')
+        .update({ name: name })
+        .eq('id', user.id);
+
+      if (usersTableError) {
+        console.error('Error updating users table:', usersTableError);
+        // users 테이블 업데이트 실패해도 auth 업데이트는 성공으로 처리
+      }
+    }
+
     return NextResponse.json({ data });
   } catch (error) {
     console.error('Unexpected error in PUT /api/user/profile:', error);

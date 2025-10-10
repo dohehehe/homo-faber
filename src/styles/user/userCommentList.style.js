@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 import theme from '@/styles/Theme';
 
-
-export const BookmarkTableHeaderCell = styled.th`
+export const CommentTableHeaderCell = styled.th`
   padding: 14px 15px 13px 15px;
   text-align: left;
   font-size: 1.2rem;
@@ -18,54 +17,39 @@ export const BookmarkTableHeaderCell = styled.th`
   }
 `;
 
-export const BookmarkTableBody = styled.tbody`
+export const CommentTableBody = styled.tbody`
   overflow-y: auto;
   letter-spacing: 0.1rem;
   -webkit-overflow-scrolling: touch;
 `;
 
-export const BookmarkTableRow = styled.tr`
+export const CommentTableRow = styled.tr`
   padding-left: 1px;
   display: flex;
   align-items: center;
   
   &:hover {
-    background-color: ${props => {
-    const status = props.status;
-    switch (status) {
-      case '확인중':
-      case 'pending':
-        return '#FFD375';
-      case '중개중':
-      case 'in_progress':
-        return '#87DE9B';
-      case '답변완료':
-      case 'completed':
-        return '#7FBDFF';
-      default:
-        return 'white';
-    }
-  }};
+    background-color: #f8f9fa;
     cursor: pointer;
   }
 `;
 
-export const BookmarkTableCell = styled.td`
-  padding: 11px 0px 9px 0px;
+export const CommentTableCell = styled.td`
+  padding: 9px 0px 6px 0px;
   vertical-align: middle;
   font-size: 1.1rem;
 
   ${theme.media.mobile} {
-    padding: 11px 0px 9px 0px;
+    padding: 9px 0px 6px 0px;
   }
 `;
 
-export const BookmarkTitleCell = styled(BookmarkTableCell)`
+export const CommentTitleCell = styled(CommentTableCell)`
   display: flex;
   align-items: center;
   padding-left: 10px;
   letter-spacing: 0.18rem;
-  width: 201.8px;
+  width: 160px;
   overflow-x: auto;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
@@ -79,17 +63,7 @@ export const BookmarkTitleCell = styled(BookmarkTableCell)`
   }
 `;
 
-export const BookmarkTitleCellFnq = styled(BookmarkTitleCell)`
-  width: 110px;
-  padding: 4px 0px 4px 10px;
-
-  ${theme.media.mobile} {
-    width: 95px;
-  }
-`;
-
-
-export const BookmarkName = styled.div`
+export const CommentStoreName = styled.div`
   font-weight: 700;
   margin-right: 12px;
 
@@ -98,38 +72,13 @@ export const BookmarkName = styled.div`
   }
 `;
 
-export const BookmarkStatus = styled(BookmarkName)`
-  color: ${props => {
-    const status = props.status;
-    switch (status) {
-      case '확인중':
-      case 'pending':
-        return '#F39D00';
-      case '중개중':
-      case 'in_progress':
-        return '#28A745';
-      case '답변완료':
-      case 'completed':
-        return '#007BFF';
-    }
-  }};
-  font-weight: 900;
-  margin-left: 3px;
-`;
-
-export const BookmarkIndustry = styled.div`
-  margin-right: 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
-`;
-
-export const BookmarkLine = styled.div`
+export const CommentLine = styled.div`
   border-bottom: 1.6px dotted; 
   flex: 1;
 `;
 
-export const BookmarkKeywordCell = styled(BookmarkTableCell)`
-  width: 570px;
+export const CommentContentCell = styled(CommentTableCell)`
+  width: 600px;
   display: block;
   padding-left: 10px;
   overflow: hidden;
@@ -152,12 +101,25 @@ export const BookmarkKeywordCell = styled(BookmarkTableCell)`
   }
 `;
 
-export const BookmarkContactCell = styled(BookmarkTableCell)`
+export const CommentText = styled.div`
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #333;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  ${theme.media.mobile} {
+    font-size: 1.1rem;
+  }
+`;
+
+export const CommentDateCell = styled(CommentTableCell)`
   padding-left: 15px;
   font-family: var(--font-abeezee);
   letter-spacing: 0.05rem;
   font-size: 1.14rem;
-  text-align: right;
   padding-right: 7px;
   width: 140px;
 
@@ -168,7 +130,13 @@ export const BookmarkContactCell = styled(BookmarkTableCell)`
   }
 `;
 
-export const NoBookmarks = styled.div`
+export const CommentStatus = styled.span`
+  color: #28A745;
+  font-weight: 600;
+  font-size: 0.9rem;
+`;
+
+export const NoComments = styled.div`
   width: 100%;
   text-align: center;
   color: #666;

@@ -46,6 +46,7 @@ export default function Navigation() {
     { href: '/word', label: '용어' },
     { href: '/fnq', label: '제작' },
     { href: '/info', label: '소개' },
+    { href: '/gallery', label: '갤러리' },
     { href: user ? '/mypage' : '/login', label: user ? '내정보' : '로그인' },
   ];
 
