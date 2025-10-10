@@ -9,7 +9,7 @@ export const NavigationIcon = styled.img`
   position: fixed;
   top: 18px;
   left: 20px;
-  z-index: 1000;
+  z-index: 10;
   transition: all 1s ease-in-out; 
   animation: ${props => props.isOpen ? 'breathe2 2s ease-in-out' : 'breathe 7s ease-in-out infinite'};
 
@@ -65,7 +65,7 @@ export const NavigationWrapper = styled.nav`
   position: fixed;
   top: 103px;
   left: 16px;
-  z-index: 20;
+  z-index: 5;
   background: rgba(201, 201, 201, 0.63);
   border: 1px solid rgba(109, 109, 109, 0.1);
   border-radius: 12px;
@@ -98,6 +98,7 @@ export const NavigationWrapper = styled.nav`
     // gap: 3px 4px;
     padding: 6px 6px;
     border-radius: 8px;
+    z-index: 10;
   }
 `;
 
@@ -117,6 +118,7 @@ export const NavigationItem = styled.div`
    padding: 10px 14px;
     border-radius: 10px;
     font-size: 1.2rem;
+    z-index: 10;
   }
 `;
 
@@ -127,7 +129,7 @@ export const CloseButton = styled.button`
   font-family: var(--font-gothic);
   cursor: pointer;
   background: none;
-  top: 330px;
+  top: 380px;
   left: 36px;
   border: none;
   color: #666;
@@ -153,7 +155,7 @@ export const MapToggleButton = styled.button`
   position: absolute;
   bottom: 20px;
   left: 30px;
-  z-index: 9;
+  z-index: 5;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 
   &:hover {
@@ -174,6 +176,7 @@ export const MapToggleButton = styled.button`
     right: 20px;
     bottom: 20px;
     display: ${props => props.isOpen ? 'flex' : 'none'};
+    z-index: 10;
   }
 `;
 

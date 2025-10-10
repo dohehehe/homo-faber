@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { useCallback, useMemo, useState, useEffect, lazy, Suspense, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import useWindowSize from '@/hooks/useWindowSize';
+import theme from '@/styles/Theme';
 
 // Lazy loading으로 컨테이너들을 동적으로 import
 const InterviewContainer = lazy(() => import('@/container/InterviewContainer'));
@@ -15,6 +16,7 @@ const SignupContainer = lazy(() => import('@/container/SignupContainer'));
 const MypageContainer = lazy(() => import('@/container/MypageContainer'));
 const StoreContainer = lazy(() => import('@/container/StoreContainer'));
 const FnqContainer = lazy(() => import('@/container/FnqContainer'));
+const GalleryContainer = lazy(() => import('@/container/GalleryContainer'));
 
 const SidePanelWrapper = styled(motion.div, {
   shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom',
@@ -25,10 +27,14 @@ const SidePanelWrapper = styled(motion.div, {
   right: ${(props) => props.isMobile ? 'unset' : props.right};
   bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
   top: ${(props) => props.isMobile ? 'unset' : '0px'};
-  z-index: 2;
+  z-index: 6;
   // overflow: hidden;
   // background: orange;
   box-shadow: -8px 4px 10px 0 rgba(0,0,0,0.25);
+
+  ${theme.media.mobile} {
+    z-index: 2;
+  }
 `;
 
 const LoadingFallback = styled.div`
@@ -216,6 +222,8 @@ function AnimatedPanel({
           return StoreContainer;
         case 'fnq':
           return FnqContainer;
+        case 'gallery':
+          return GalleryContainer;
         default:
           return null;
       }
