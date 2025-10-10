@@ -76,9 +76,6 @@ export const InterviewButton = styled.button`
   text-underline-offset: 5px;
   color: black;
 
-  &:active {
-    transform: translateY(0);
-  }
 
   ${theme.media.mobile} {
     font-size: 1rem;
