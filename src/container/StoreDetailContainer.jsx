@@ -16,6 +16,7 @@ import Error from '@/components/common/Error';
 import * as S2 from '@/styles/store/storeComment.style';
 import StoreComment from '@/components/store/StoreComment';
 import StoreCommentForm from '@/components/store/StoreCommentForm';
+import ImageModal from '@/components/common/ImageModal';
 
 function StoreDetailContainer({ }) {
   const router = useRouter();
@@ -27,11 +28,25 @@ function StoreDetailContainer({ }) {
   const [industryTypes, setIndustryTypes] = useState([]);
   const [interviews, setInterviews] = useState([]);
   const [comments, setComments] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const storeId = pathname.startsWith('/store/') && pathname !== '/store' ? pathname.split('/')[2] : null;
 
   const { user } = useAuth();
   const { toggleBookmark, isStoreBookmarked, loading } = useBookmarks();
   const { store, isLoading, error } = useStoreDetail(storeId);
+
+  // 이미지 클릭 핸들러
+  const handleImageClick = (imageUrl, imageName) => {
+    setSelectedImage({ publicUrl: imageUrl, name: imageName });
+    setIsModalOpen(true);
+  };
+
+  // 모달 닫기 핸들러
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null);
+  };
 
   // capacity와 industry 타입들을 가져오는 useEffect
   useEffect(() => {
@@ -309,7 +324,11 @@ function StoreDetailContainer({ }) {
 
                 <S.StoreImgSection>
                   {store.card_img && (
-                    <S.StoreCardImg src={`${store.card_img}`} />
+                    <S.StoreCardImg
+                      src={`${store.card_img}`}
+                      onClick={() => handleImageClick(store.card_img, '스토어 대표 이미지')}
+                      style={{ cursor: 'pointer' }}
+                    />
                   )}
 
                   {store.store_gallery?.length > 0 && (
@@ -317,7 +336,12 @@ function StoreDetailContainer({ }) {
                       {store.store_gallery
                         .map(tag => tag?.image_url)
                         .map((imgURL, index) => (
-                          <S.StoreImg key={index} src={`${imgURL}`} />
+                          <S.StoreImg
+                            key={index}
+                            src={`${imgURL}`}
+                            onClick={() => handleImageClick(imgURL, `갤러리 이미지 ${index + 1}`)}
+                            style={{ cursor: 'pointer' }}
+                          />
                         ))}
                     </S.StoreImgList>
                   )}
@@ -357,6 +381,14 @@ function StoreDetailContainer({ }) {
         </S.DetailWrapper>
       )
       }
+
+      {/* 이미지 모달 */}
+      <ImageModal
+        isOpen={isModalOpen}
+        imageUrl={selectedImage?.publicUrl}
+        imageName={selectedImage?.name}
+        onClose={handleCloseModal}
+      />
     </AnimatePresence >
   );
 }

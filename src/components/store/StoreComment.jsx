@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { updateComment, deleteComment } from '@/utils/api/comments-api';
 import * as S from '@/styles/store/storeComment.style';
+import ImageModal from '@/components/common/ImageModal';
 
 const StoreComment = ({ comment, onUpdate, onDelete }) => {
   const { user } = useAuth();
@@ -14,8 +15,22 @@ const StoreComment = ({ comment, onUpdate, onDelete }) => {
   const [editImagePreviews, setEditImagePreviews] = useState([]); // 모든 이미지 미리보기 (기존 + 새로 추가)
   const [existingImages, setExistingImages] = useState([]); // 기존 이미지 URL들
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isOwner = user && comment.user_id === user.id;
+
+  // 이미지 클릭 핸들러
+  const handleImageClick = (imageUrl, imageName) => {
+    setSelectedImage({ publicUrl: imageUrl, name: imageName });
+    setIsModalOpen(true);
+  };
+
+  // 모달 닫기 핸들러
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null);
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -229,7 +244,8 @@ const StoreComment = ({ comment, onUpdate, onDelete }) => {
                   key={index}
                   src={imageUrl}
                   alt={`후기 이미지 ${index + 1}`}
-                  onClick={() => window.open(imageUrl, '_blank')}
+                  onClick={() => handleImageClick(imageUrl, `후기 이미지 ${index + 1}`)}
+                  style={{ cursor: 'pointer' }}
                 />
               ))}
             </S.CommentGallery>
@@ -252,6 +268,14 @@ const StoreComment = ({ comment, onUpdate, onDelete }) => {
           </S.CommentInfoWrapper>
         </>
       )}
+
+      {/* 이미지 모달 */}
+      <ImageModal
+        isOpen={isModalOpen}
+        imageUrl={selectedImage?.publicUrl}
+        imageName={selectedImage?.name}
+        onClose={handleCloseModal}
+      />
     </S.CommentItem>
   );
 }

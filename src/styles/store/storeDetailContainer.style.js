@@ -15,7 +15,7 @@ export const DetailWrapper = styled(motion.main, {
   bottom: ${(props) => props.isMobile ? props.bottom : 'unset'};
   top: ${(props) => props.isMobile ? 'unset' : '0px'};
   left: ${(props) => props.isMobile ? '0px' : 'unset'};
-  z-index: 5;
+  z-index: 7;
   box-shadow: -2px 0 4px 0 rgba(79,75,31,0.57);
   display: flex;
   overflow: hidden;
