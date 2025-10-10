@@ -87,7 +87,7 @@ function GalleryContainer({ onLoadComplete }) {
                 src={image.publicUrl}
                 alt={image.name}
                 loading="lazy"
-                key={image.id}
+                key={`${image.id || image.name}-${index}`}
                 onClick={() => handleImageClick(image)}
                 style={{ cursor: 'pointer' }}
                 ref={index === galleryImages.length - 1 ? lastImageElementRef : null}

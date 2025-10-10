@@ -9,7 +9,7 @@ export const NavigationIcon = styled.img`
   position: fixed;
   top: 18px;
   left: 20px;
-  z-index: 10;
+  z-index: 1000;
   transition: all 1s ease-in-out; 
   animation: ${props => props.isOpen ? 'breathe2 2s ease-in-out' : 'breathe 7s ease-in-out infinite'};
 

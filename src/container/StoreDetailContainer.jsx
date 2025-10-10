@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStoreDetail } from '@/hooks/useStores';
 import { getStoreTypes } from '@/utils/api/stores-api';
-import { getInterviewsByStore } from '@/utils/supabase/interview';
+import { getInterviews } from '@/utils/api/interview-api';
 import { getCommentsByStore } from '@/utils/api/comments-api';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { useAuth } from '@/contexts/AuthContext';
@@ -67,7 +67,7 @@ function StoreDetailContainer({ }) {
     const fetchInterviews = async () => {
       if (!storeId) return;
       try {
-        const interviewData = await getInterviewsByStore(storeId);
+        const interviewData = await getInterviews(storeId);
         setInterviews(interviewData);
       } catch (error) {
         console.error('Interviews 가져오기 실패:', error);

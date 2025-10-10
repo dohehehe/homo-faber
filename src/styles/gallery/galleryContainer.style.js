@@ -35,6 +35,19 @@ export const GalleryWrapper = styled(motion.main)`
   ${theme.media.mobile} { 
     padding: 0px 7px 0px 5px;
     border-left: none;
+
+      & .masonry-grid {
+        display: flex;
+        margin-left: -20px;
+        /* gutter size offset */
+        // width: 100%;
+      }
+
+      & .masonry-grid_column {
+        padding-left: 20px;
+        /* gutter size */
+        background-clip: padding-box;
+      }
   }
 `;
 
@@ -93,10 +106,6 @@ export const GalleryImage = styled.img`
   margin-bottom: 18px;
   border-radius: 4px;
   box-shadow: 0px 0px 10px 0 rgba(0,0,0,0.25);
-
-  ${theme.media.mobile} {
-    padding-right: 0px;
-  }
 
   &:hover {
     transform: scale(1.05);

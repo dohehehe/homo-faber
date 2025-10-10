@@ -175,24 +175,33 @@ export const useImageUpload = (options = {}) => {
 
   /**
    * 이미지 삭제 핸들러
-   * @param {string} filePath - 삭제할 파일 경로
-   * @returns {Promise<boolean>} 삭제 성공 여부
+   * @param {string|Array<string>} filePath - 삭제할 파일 경로 (문자열 또는 배열)
+   * @returns {Promise<Object>} 삭제 결과
    */
   const deleteImage = useCallback(async (filePath) => {
     try {
+      // 배열이 아닌 경우 배열로 변환
+      const paths = Array.isArray(filePath) ? filePath : [filePath];
+
       const { error } = await supabase.storage
         .from(bucket)
-        .remove([filePath]);
+        .remove(paths);
 
       if (error) {
         throw error;
       }
 
-      console.log('이미지 삭제 성공:', filePath);
-      return true;
+      console.log('이미지 삭제 성공:', paths);
+      return {
+        success: true,
+        message: '이미지가 삭제되었습니다.'
+      };
     } catch (error) {
       console.error('이미지 삭제 오류:', error);
-      return false;
+      return {
+        success: false,
+        error: error.message || '이미지 삭제에 실패했습니다.'
+      };
     }
   }, [bucket, supabase]);
 
@@ -201,6 +210,7 @@ export const useImageUpload = (options = {}) => {
     uploadImageToServer, // 새로운 서버사이드 업로드
     uploadMultipleImages,
     deleteImage,
+    deleteImageFromServer: deleteImage, // 별칭 추가
     processImageForPreview,
   };
 };

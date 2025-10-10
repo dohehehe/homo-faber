@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { getPublicGalleryImages } from '@/utils/api/gallery-api';
 
 export function useGallery() {
   const [galleryImages, setGalleryImages] = useState([]);
@@ -9,7 +9,7 @@ export function useGallery() {
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
 
-  const ITEMS_PER_PAGE = 8; // 한 번에 로드할 이미지 수 (더 작게 설정)
+  const ITEMS_PER_PAGE = 8; // 한 번에 로드할 이미지 수
 
   const fetchGalleryImages = useCallback(async (page = 0, reset = false) => {
     try {
@@ -22,51 +22,16 @@ export function useGallery() {
       }
       setError(null);
 
-      const supabase = createClient();
-      const offset = page * ITEMS_PER_PAGE;
-
-      // Storage에서 이미지 파일 목록 가져오기 (페이지네이션)
-      const { data: files, error: listError } = await supabase.storage
-        .from('gallery')
-        .list('', {
-          limit: ITEMS_PER_PAGE,
-          offset: offset,
-        });
-
-      if (listError) {
-        throw listError;
-      }
-
-      // 각 파일에 대해 public URL 생성
-      const imagesWithUrls = (files || [])
-        .filter(file => {
-          // 이미지 파일만 필터링
-          const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
-          return imageExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
-        })
-        .map(file => {
-          const { data: { publicUrl } } = supabase.storage
-            .from('gallery')
-            .getPublicUrl(file.name);
-
-          return {
-            id: file.id,
-            name: file.name,
-            publicUrl,
-            created_at: file.created_at,
-            updated_at: file.updated_at
-          };
-        });
+      // API를 통해 갤러리 이미지 가져오기
+      const result = await getPublicGalleryImages(page, ITEMS_PER_PAGE);
 
       // 더 이상 로드할 이미지가 없는지 확인
-      if (imagesWithUrls.length < ITEMS_PER_PAGE) {
-        setHasMore(false);
-      }
+      setHasMore(result.hasMore);
 
       if (reset) {
-        setGalleryImages(imagesWithUrls);
+        setGalleryImages(result.data);
       } else {
-        setGalleryImages(prev => [...prev, ...imagesWithUrls]);
+        setGalleryImages(prev => [...prev, ...result.data]);
       }
 
       setCurrentPage(page);
