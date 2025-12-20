@@ -32,12 +32,20 @@ export const metadata = {
     description: '',
     type: 'website',
     locale: 'ko_KR',
+    images: [
+      {
+        url: '/img/DSC03100.jpg',
+        width: 1200,
+        height: 630,
+        alt: '산림동의 만드는 사람들: 호모파베르',
+      },
+    ],
   },
   twitter: {
-    card: '',
+    card: 'summary_large_image',
     title: '산림동의 만드는 사람들: 호모파베르',
     description: '',
-    images: '',
+    images: ['/img/DSC03100.jpg'],
   },
 };
 
