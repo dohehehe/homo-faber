@@ -7,7 +7,7 @@ export const NavigationIcon = styled.img`
   object-fit: cover;
   object-position: center;
   position: fixed;
-  top: 18px;
+  top: 10px;
   left: 24px;
   z-index: 1000;
   transition: all 1s ease-in-out; 
@@ -44,6 +44,22 @@ export const NavigationIcon = styled.img`
     left: 8px;
   }
 `;
+
+export const Title = styled.h1`
+  position: fixed;
+  top: 18px;
+  left: 24px;
+  z-index: 99;
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-left: -3px;
+  margin-right: 130px;
+
+  ${theme.media.mobile} {
+    font-size: 2.4rem;
+    margin-right: 0px;
+  }
+`
 
 export const NavigationBg = styled.div`
     display: none;

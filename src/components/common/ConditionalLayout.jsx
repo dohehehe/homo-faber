@@ -3,7 +3,6 @@
 import { usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import AnimatedPanel from '@/components/common/AnimatedPanel';
-import LandingPage from '@/components/common/LandingPage';
 import styled from '@emotion/styled';
 import { motion } from 'motion/react';
 import useWindowSize from '@/hooks/useWindowSize';
@@ -41,9 +40,10 @@ export default function ConditionalLayout() {
     return null;
   }
 
-  // 초기 로딩 시 필요한 패널만 렌더링 (홈 페이지는 store만)
+  // 초기 로딩 시 필요한 패널만 렌더링 (홈 페이지는 home만)
   const isHomePage = pathname === '/';
-  const shouldLoadStore = isHomePage || pathname?.startsWith('/store');
+  const shouldLoadHome = isHomePage;
+  const shouldLoadStore = pathname?.startsWith('/store');
   const shouldLoadInterview = pathname?.startsWith('/interview');
   const shouldLoadWord = pathname?.startsWith('/word');
   const shouldLoadInfo = pathname?.startsWith('/info');
@@ -56,8 +56,8 @@ export default function ConditionalLayout() {
   if (!isReady) {
     return (
       <>
-        <LandingPage />
         <MapContainer />
+        {shouldLoadHome && <AnimatedPanel baseRoute='home' />}
         {shouldLoadStore && <AnimatedPanel baseRoute='store' />}
         {shouldLoadInterview && <AnimatedPanel baseRoute='interview' />}
         {shouldLoadWord && <AnimatedPanel baseRoute='word' />}
@@ -72,7 +72,6 @@ export default function ConditionalLayout() {
 
   return (
     <>
-      <LandingPage />
       <MapContainer />
       {isMobile && (
         <MobileBg
@@ -88,6 +87,7 @@ export default function ConditionalLayout() {
           }}
         />
       )}
+      {shouldLoadHome && <AnimatedPanel baseRoute='home' />}
       {shouldLoadStore && <AnimatedPanel baseRoute='store' />}
       {shouldLoadInterview && <AnimatedPanel baseRoute='interview' />}
       {shouldLoadWord && <AnimatedPanel baseRoute='word' />}

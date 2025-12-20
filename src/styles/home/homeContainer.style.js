@@ -1,0 +1,66 @@
+import styled from '@emotion/styled';
+import theme from '@/styles/Theme';
+
+export const HomeWrapper = styled.main`
+  width: 100%;
+  height: 100%;
+  padding-left: 64px;
+  padding-top: 20px;
+  position: relative;
+  z-index: 2;
+  background-color: var(--yellow);
+  cursor: ${(props) => (props.pathname && (props.pathname == '/')) ? 'pointer' : 'default'};
+  display: flex;
+  flex-direction: column;
+  box-shadow: -2px 4px 10px 0 rgba(0,0,0,0.25);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 15px;
+    height: 100%;
+    background: linear-gradient(270deg, rgba(69, 67, 43, 1) 0%, rgba(239, 232, 168, 1) 12%, rgba(239, 232, 168, 1) 35%, rgba(69, 67, 43, 1) 41%, rgba(217, 212, 166, 1) 47%, rgba(217, 212, 166, 1) 73%, rgba(69, 67, 43, 1) 78%, rgba(192, 189, 158, 1) 86%, rgba(192, 189, 158, 1) 99%, rgba(69, 67, 43, 1) 100%);
+
+    ${theme.media.mobile} {
+      width: 100%;
+      height: 10px;
+      background: linear-gradient(360deg, rgba(69, 67, 43, 1) 0%, rgba(239, 232, 168, 1) 12%, rgba(239, 232, 168, 1) 35%, rgba(69, 67, 43, 1) 41%, rgba(217, 212, 166, 1) 47%, rgba(217, 212, 166, 1) 73%, rgba(69, 67, 43, 1) 78%, rgba(192, 189, 158, 1) 86%, rgba(192, 189, 158, 1) 99%, rgba(69, 67, 43, 1) 100%);
+    }
+  }
+
+  &:hover {
+    transform: ${(props) => (props.pathname && (props.pathname == '/')) ? 'translateX(-40px)' : 'default'};
+  }
+
+  ${theme.media.mobile} {
+    padding-left: 0;
+
+    &:hover{
+      transform: unset;
+    }
+  }
+`;
+
+export const HomePageName = styled.h1`
+  font-family: var(--font-gothic);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.3rem;
+  position: absolute;
+  transform: rotate(90deg);
+  transform-origin: top left;
+  top: 17px;
+  left: 43px;
+
+  ${theme.media.mobile} { 
+    transform: rotate(0deg);
+    transform-origin: top left;
+    top: 22px;
+    left:10px;
+    font-size: 1rem;
+  }
+`

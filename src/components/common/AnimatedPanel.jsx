@@ -16,6 +16,7 @@ const SignupContainer = lazy(() => import('@/container/SignupContainer'));
 const MypageContainer = lazy(() => import('@/container/MypageContainer'));
 const StoreContainer = lazy(() => import('@/container/StoreContainer'));
 const FnqContainer = lazy(() => import('@/container/FnqContainer'));
+const HomeContainer = lazy(() => import('@/container/HomeContainer'));
 
 const SidePanelWrapper = styled(motion.div, {
   shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom',
@@ -68,35 +69,58 @@ function AnimatedPanel({
   });
 
   const [isVisible, setIsVisible] = useState(() => {
+    if (baseRoute === 'home') {
+      // home은 홈(/)에서 시작하므로 초기에 활성화
+      return pathname === '/';
+    }
     if (baseRoute === 'store') {
-      // store는 홈(/)에서 시작하므로 초기에 활성화
-      return true;
+      // store는 /store로 시작하는 경로에서만 활성화
+      return pathname?.startsWith('/store') || false;
     }
     return false;
   });
 
   const [isLoaded, setIsLoaded] = useState(() => {
+    if (baseRoute === 'home') {
+      // home은 홈(/)에서 시작하므로 초기에 로드
+      return pathname === '/';
+    }
     if (baseRoute === 'store') {
-      // store는 홈(/)에서 시작하므로 초기에 로드
-      return true;
+      // store는 /store로 시작하는 경로에서만 로드
+      return pathname?.startsWith('/store') || false;
     }
     return false;
   });
 
   const [isClient, setIsClient] = useState(false);
+  // 패널 확장/축소 상태 (true: 넓게, false: 좁게)
+  const [isExpanded, setIsExpanded] = useState(() => {
+    if (baseRoute === 'home') {
+      // home은 처음에 좁게 시작
+      return false;
+    }
+    // 다른 패널들은 기본적으로 활성화되면 넓게
+    return false;
+  });
+  // 홈 패널이 처음 자동으로 넓게 나오는지 여부
+  const [hasAutoExpanded, setHasAutoExpanded] = useState(false);
 
   // 현재 경로가 이 패널의 baseRoute와 일치하는지 확인
   const isActiveRoute = useMemo(() => {
+    if (baseRoute === 'home') {
+      // home은 홈(/)에서만 활성화
+      return pathname === '/';
+    }
     if (baseRoute === 'store') {
-      // store는 홈(/) 또는 /store로 시작하는 라우터에서 활성화
-      return pathname === '/' || pathname.startsWith('/store');
+      // store는 /store로 시작하는 라우터에서만 활성화
+      return pathname.startsWith('/store');
     }
     return pathname.startsWith(`/${baseRoute}`);
   }, [pathname, baseRoute]);
 
   // store 라우터의 활성화 상태를 별도로 관리
   const isStoreActive = useMemo(() => {
-    return baseRoute === 'store' && (pathname === '/' || pathname.startsWith('/store'));
+    return baseRoute === 'store' && pathname.startsWith('/store');
   }, [baseRoute, pathname]);
 
 
@@ -104,55 +128,129 @@ function AnimatedPanel({
   useLayoutEffect(() => {
     if (!isReady) return;
 
-    const getMobileBottomPosition = (isActive) => {
+    const getMobileBottomPosition = (isActive, expanded) => {
       if (baseRoute === 'store') {
-        if (pathname === '/') {
-          return 'calc(-80dvh + 20px)';
-        } else if (pathname.startsWith('/store')) {
-          return '0px';
+        if (pathname.startsWith('/store')) {
+          return expanded ? '0px' : 'calc(-80dvh + 20px)';
         } else {
           return 'calc(-80dvh + 20px)';
         }
       }
 
+      if (baseRoute === 'home') {
+        // home은 확장 상태에 따라 위치 변경
+        return expanded ? '0px' : 'calc(-80dvh + 20px)';
+      }
+
       if (isActive) {
-        return '0px';
+        return expanded ? '0px' : 'calc(-80dvh + 20px)';
       } else {
         return '-100dvh';
       }
     };
 
-    const getDesktopRightPosition = (isActive) => {
+    const getDesktopRightPosition = (isActive, expanded) => {
       if (baseRoute === 'store') {
-        if (pathname === '/') {
-          return 'calc(-80dvw + 400px)';
-        } else if (pathname.startsWith('/store')) {
-          return '0px';
+        if (pathname.startsWith('/store')) {
+          return expanded ? '0px' : 'calc(-80dvw + 400px)';
         } else {
           return 'calc(-80dvw + 120px)';
         }
       }
 
+      if (baseRoute === 'home') {
+        // home은 확장 상태에 따라 위치 변경
+        return expanded ? '0px' : 'calc(-80dvw + 400px)';
+      }
+
       if (isActive) {
-        return '0';
+        return expanded ? '0' : 'calc(-80dvw + 400px)';
       } else {
         return '-81dvw';
       }
     };
 
     if (isMobile) {
-      const newBottom = getMobileBottomPosition(isActiveRoute);
+      const newBottom = getMobileBottomPosition(isActiveRoute, isExpanded);
       setBottom(newBottom);
     } else {
-      const newRight = getDesktopRightPosition(isActiveRoute);
+      const newRight = getDesktopRightPosition(isActiveRoute, isExpanded);
       setRight(newRight);
     }
-  }, [pathname, isMobile, isReady, isActiveRoute, baseRoute]);
+  }, [pathname, isMobile, isReady, isActiveRoute, baseRoute, isExpanded]);
 
   // 클라이언트 사이드에서만 실행
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // 지도 클릭 시 패널 축소 이벤트 리스너
+  useEffect(() => {
+    if (!isClient) return;
+
+    const handleCollapsePanel = () => {
+      // 현재 활성화된 패널만 축소
+      if (isActiveRoute) {
+        setIsExpanded(false);
+      }
+    };
+
+    window.addEventListener('collapsePanel', handleCollapsePanel);
+    return () => {
+      window.removeEventListener('collapsePanel', handleCollapsePanel);
+    };
+  }, [isClient, isActiveRoute]);
+
+  // 패널 클릭 핸들러 - 패널 영역 클릭 시 확장
+  const handlePanelClick = useCallback((e) => {
+    // 현재 활성화된 패널만 확장
+    if (!isActiveRoute || !isClient) return;
+
+    // 클릭된 요소가 인터랙티브 요소인지 확인
+    const target = e.target;
+    const isInteractive = target.closest('button, a, input, select, textarea, [role="button"], [onClick]');
+
+    // 인터랙티브 요소가 아닌 경우에만 확장
+    if (!isInteractive) {
+      e.stopPropagation();
+      setIsExpanded(true);
+    }
+  }, [isActiveRoute, isClient]);
+
+  // 홈 패널 자동 확장 (처음 렌더링 시 좁게 있다가 넓게 나옴)
+  useEffect(() => {
+    if (!isClient || baseRoute !== 'home' || !isActiveRoute) return;
+
+    // 홈으로 돌아왔을 때 자동 확장 상태 리셋
+    if (!hasAutoExpanded) {
+      // 짧은 지연 후 자동으로 넓게
+      const timer = setTimeout(() => {
+        setIsExpanded(true);
+        setHasAutoExpanded(true);
+      }, 500); // 0.5초 후 자동 확장
+
+      return () => clearTimeout(timer);
+    }
+  }, [isClient, baseRoute, isActiveRoute, hasAutoExpanded]);
+
+  // 홈에서 벗어났을 때 자동 확장 상태 리셋
+  useEffect(() => {
+    if (baseRoute === 'home' && !isActiveRoute) {
+      setHasAutoExpanded(false);
+      setIsExpanded(false);
+    }
+  }, [baseRoute, isActiveRoute]);
+
+  // 다른 패널들은 활성화되면 자동으로 넓게
+  useEffect(() => {
+    if (!isClient || baseRoute === 'home') return;
+
+    if (isActiveRoute) {
+      setIsExpanded(true);
+    } else {
+      setIsExpanded(false);
+    }
+  }, [isClient, baseRoute, isActiveRoute]);
 
   // store 라우터 전용 useEffect
   useEffect(() => {
@@ -175,9 +273,28 @@ function AnimatedPanel({
     }
   }, [isClient, baseRoute, isStoreActive]);
 
-  // 일반 라우터용 useEffect
+  // home 라우터 전용 useEffect
   useEffect(() => {
-    if (!isClient || baseRoute === 'store') return;
+    if (!isClient || baseRoute !== 'home') return;
+
+    if (isActiveRoute) {
+      setIsVisible(true);
+      setIsLoaded(true);
+    } else {
+      // 다른 라우터로 이동하면 애니메이션 완료 후 언마운트
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+        setTimeout(() => {
+          setIsLoaded(false);
+        }, 200);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isClient, baseRoute, isActiveRoute]);
+
+  // 일반 라우터용 useEffect (store, home 제외)
+  useEffect(() => {
+    if (!isClient || baseRoute === 'store' || baseRoute === 'home') return;
 
     // 패널이 활성화되면 렌더링 시작
     if (isActiveRoute) {
@@ -221,6 +338,8 @@ function AnimatedPanel({
           return StoreContainer;
         case 'fnq':
           return FnqContainer;
+        case 'home':
+          return HomeContainer;
         default:
           return null;
       }
@@ -249,9 +368,13 @@ function AnimatedPanel({
   const currentRight = isClient && !isMobile ? right : null;
   const currentBottom = isClient && isMobile ? bottom : null;
 
-  // store 라우터의 경우 특별한 initial/exit 값 설정
+  // store와 home 라우터의 경우 특별한 initial/exit 값 설정
   const getInitialPosition = () => {
     if (baseRoute === 'store') {
+      return isMobile ? { bottom: 'calc(-80dvh + 20px)' } : { right: 'calc(-80dvw + 400px)' };
+    }
+    if (baseRoute === 'home') {
+      // home은 처음에 좁게 시작
       return isMobile ? { bottom: 'calc(-80dvh + 20px)' } : { right: 'calc(-80dvw + 400px)' };
     }
     return isMobile ? { bottom: '-100dvh' } : { right: '-81dvw' };
@@ -261,6 +384,9 @@ function AnimatedPanel({
     if (baseRoute === 'store') {
       return isMobile ? { bottom: 'calc(-80dvh + 20px)' } : { right: 'calc(-80dvw + 400px)' };
     }
+    if (baseRoute === 'home') {
+      return isMobile ? { bottom: 'calc(-80dvh + 20px)' } : { right: 'calc(-80dvw + 400px)' };
+    }
     return isMobile ? { bottom: '-100dvh' } : { right: '-81dvw' };
   };
 
@@ -268,7 +394,14 @@ function AnimatedPanel({
     <AnimatePresence mode="wait">
       <SidePanelWrapper
         key={`panel-${baseRoute}`}
-        onClick={onWrapperClick}
+        onClick={(e) => {
+          // 패널 클릭 시 토글
+          handlePanelClick(e);
+          // 기존 onWrapperClick도 호출 (있는 경우)
+          if (onWrapperClick) {
+            onWrapperClick(e);
+          }
+        }}
         initial={getInitialPosition()}
         animate={isMobile ? { bottom: currentBottom } : { right: currentRight }}
         exit={getExitPosition()}
