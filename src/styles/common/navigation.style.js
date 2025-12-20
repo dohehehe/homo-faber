@@ -217,3 +217,29 @@ export const SwitchText = styled.span`
     font-size: 14px;
   }
 `;
+
+export const LanguageToggleWrapper = styled.div`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;
+  
+  ${theme.media.mobile} {
+    top: 15px;
+    right: 15px;
+    z-index: 1001;
+  }
+`;
+
+export const LanguageToggleContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+  padding: 4px;
+  
+  ${theme.media.mobile} {
+    margin-top: 6px;
+    padding: 2px;
+  }
+`;

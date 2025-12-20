@@ -6,7 +6,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import useWindowSize from '@/hooks/useWindowSize';
+import { useLanguage } from '@/hooks/useLanguage';
 import * as S from '@/styles/common/navigation.style';
+import LanguageToggle from '@/components/common/LanguageToggle';
 
 function isActive(pathname, href) {
   // Treat '/' as home for '/home' as well
@@ -23,6 +25,7 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isMap3D, setIsMap3D] = useState(true); // 지도 상태 추적 (기본값: 3D)
+  const { t } = useLanguage();
 
   // 클라이언트에서만 실행되도록 설정
   useEffect(() => {
@@ -39,15 +42,15 @@ export default function Navigation() {
     }
   }, [isMobile, isClient]);
 
+  // 다국어 네비게이션 링크
   const links = [
-    { href: '/', label: '홈' },
-    { href: '/store', label: '업체' },
-    { href: '/interview', label: '인터뷰' },
-    { href: '/word', label: '용어' },
-    { href: '/fnq', label: '제작' },
-    { href: '/info', label: '소개' },
-    { href: '/gallery', label: '갤러리' },
-    { href: user ? '/mypage' : '/login', label: user ? '내정보' : '로그인' },
+    { href: '/', label: t('nav.home') },
+    { href: '/store', label: t('nav.store') },
+    { href: '/interview', label: t('nav.interview') },
+    { href: '/word', label: t('nav.word') },
+    { href: '/fnq', label: t('nav.fnq') },
+    { href: '/info', label: t('nav.info') },
+    { href: user ? '/mypage' : '/login', label: user ? t('nav.mypage') : t('nav.login') },
   ];
 
   const toggleNavigation = () => {
@@ -103,6 +106,8 @@ export default function Navigation() {
           3D
         </S.SwitchText>
       </S.MapToggleButton>
+
+      <LanguageToggle />
     </>
   );
 }
