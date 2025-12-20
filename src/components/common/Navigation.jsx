@@ -24,7 +24,7 @@ export default function Navigation() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [isMap3D, setIsMap3D] = useState(true); // 지도 상태 추적 (기본값: 3D)
+  const [isMap3D, setIsMap3D] = useState(false); // 지도 상태 추적 (기본값: 2D)
   const { t } = useLanguage();
 
   // 클라이언트에서만 실행되도록 설정
