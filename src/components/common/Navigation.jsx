@@ -107,7 +107,7 @@ export default function Navigation() {
         </S.SwitchText>
       </S.MapToggleButton>
 
-      <LanguageToggle />
+      <LanguageToggle isOpen={isMobile && isOpen} />
     </>
   );
 }

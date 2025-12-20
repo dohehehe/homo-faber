@@ -3,6 +3,7 @@
 import { useLanguage } from '@/hooks/useLanguage';
 import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
+import theme from '@/styles/Theme';
 
 const ToggleContainer = styled.div`
   display: flex;
@@ -24,6 +25,13 @@ const ToggleContainer = styled.div`
   z-index: 19;
   width: 80px;
   // min-width: 110px;
+
+  ${theme.media.mobile} {
+    display: ${props => props.isOpen ? 'flex' : 'none'};
+    top: 10px;
+    left: unset;
+    right: 10px;
+  }
 `;
 
 const LanguageButton = styled.button`
@@ -61,7 +69,6 @@ const LanguageButton = styled.button`
   }
 
   &:focus {
-    outline: none;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.3);
   }
 `;
@@ -116,6 +123,7 @@ const LanguageText = styled.span`
  * @param {Function} props.onLanguageChange - 언어 변경 시 호출되는 콜백 함수
  */
 export default function LanguageToggle({
+  isOpen,
   variant = 'buttons',
   position = 'inline',
   showLabels = true,
@@ -138,7 +146,7 @@ export default function LanguageToggle({
   // 서버사이드 렌더링 시 로딩 상태 처리
   if (!isClient || isLoading) {
     return (
-      <ToggleContainer>
+      <ToggleContainer isOpen={isOpen}>
         <LanguageButton disabled>
           <LanguageText>KO</LanguageText>
         </LanguageButton>
@@ -175,7 +183,7 @@ export default function LanguageToggle({
 
   // 기본 buttons variant
   return (
-    <ToggleContainer onClick={handleToggle}>
+    <ToggleContainer onClick={handleToggle} isOpen={isOpen}>
       <LanguageButton isActive={isKorean}>
         {showLabels ? '한국어' : 'KO'}
       </LanguageButton>
