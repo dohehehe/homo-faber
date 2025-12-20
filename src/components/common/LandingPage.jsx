@@ -92,6 +92,7 @@ const ImgContainer = styled.div`
   right: 0;
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 `;
 ;
 
@@ -117,7 +118,15 @@ const LandingPage = ({ children }) => {
           <SubTitle>기술유통중개소에서 기술자들을 쉽게 만나보세요</SubTitle>
         </ContentContainer>
         <ImgContainer>
-          <img src={`/img/DSC03100.jpg`} alt='호모파베르' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <Image
+            src="/img/DSC03100.jpg"
+            alt="호모파베르"
+            fill
+            priority
+            quality={85}
+            style={{ objectFit: 'cover' }}
+            sizes="100vw"
+          />
         </ImgContainer>
       </LandingOverlay>
       {children}

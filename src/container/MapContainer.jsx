@@ -10,13 +10,13 @@ import Error from '@/components/common/Error';
 // Map3D를 dynamic import로 로드하여 ExitStatus 오류 방지
 const Map3D = dynamic(() => import('../components/common/Map3D'), {
   ssr: false,
-  loading: () => <Loader text="지도를 불러오는 중..." />
+  loading: () => <Loader text="지도를 불러오는 중..." baseColor="white" />
 });
 
 // Map2D를 dynamic import로 로드
 const Map2D = dynamic(() => import('../components/common/Map2D'), {
   ssr: false,
-  loading: () => <Loader text="지도를 불러오는 중..." />
+  loading: () => <Loader text="지도를 불러오는 중..." baseColor="white" />
 });
 
 export default function MapContainer() {
