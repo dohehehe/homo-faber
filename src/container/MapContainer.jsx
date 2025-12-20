@@ -27,11 +27,10 @@ export default function MapContainer() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // /store 페이지 또는 개별 스토어 페이지에서 Map3D 클릭 시 홈으로 이동
+  // 지도 클릭 시 패널을 작게 만들기
   const handleMapClick = (e) => {
-    if (pathname !== '/') {
-      router.push('/');
-    }
+    // 패널 축소 이벤트 발생
+    window.dispatchEvent(new CustomEvent('collapsePanel'));
   };
 
   // 지도 전환 함수
@@ -86,14 +85,17 @@ export default function MapContainer() {
   return (
     <>
       {/* Map2D - 처음에는 2D 지도만 렌더링 */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100dvw',
-        height: '100dvh',
-        zIndex: isMap3D ? 1 : 2
-      }} onClick={handleMapClick}>
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100dvw',
+          height: '100dvh',
+          zIndex: isMap3D ? 1 : 2
+        }}
+        onClick={handleMapClick}
+      >
         <Map2D
           stores={stores}
           onStoreHover={handleStoreHover}
@@ -103,14 +105,16 @@ export default function MapContainer() {
 
       {/* Map3D - 한 번 마운트되면 유지하고 z-index로 전환 */}
       {hasMounted3D && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100dvw',
-          height: '100dvh',
-          zIndex: isMap3D ? 2 : 1
-        }} onClick={handleMapClick}>
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100dvw',
+            height: '100dvh',
+            zIndex: isMap3D ? 2 : 1
+          }}
+        >
           <Map3D
             stores={stores}
             onStoreHover={handleStoreHover}
