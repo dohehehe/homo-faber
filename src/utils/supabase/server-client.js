@@ -6,8 +6,8 @@ export const createServerSupabaseClient = () => {
   const cookieStore = cookies();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_ANON_KEY,
     {
       cookies: {
         get(name) {
@@ -36,8 +36,8 @@ export const createServerSupabaseClient = () => {
 // 서버사이드에서 사용할 간단한 클라이언트 (쿠키 없이)
 export const createServerSupabaseClientSimple = () => {
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_ANON_KEY,
     {
       cookies: {
         get() { return undefined; },

@@ -149,247 +149,248 @@ function StoreDetailContainer({ }) {
   };
 
   return (
-    <AnimatePresence mode="wait">
-      {storeId && (
-        <S.DetailWrapper
-          key={storeId}
-          right={right}
-          bottom={bottom}
-          isMobile={isMobile}
-          initial={isMobile ? { bottom: '-100dvh' } : { right: '-100dvw' }}
-          animate={isMobile ? { bottom: bottom } : { right: right }}
-          exit={isMobile ? { bottom: '-100dvh' } : { right: '-100dvw' }}
-          transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
-        >
+    <>
+      <AnimatePresence mode="wait">
+        {storeId && (
+          <S.DetailWrapper
+            key={storeId}
+            right={right}
+            bottom={bottom}
+            isMobile={isMobile}
+            initial={isMobile ? { bottom: '-100dvh' } : { right: '-100dvw' }}
+            animate={isMobile ? { bottom: bottom } : { right: right }}
+            exit={isMobile ? { bottom: '-100dvh' } : { right: '-100dvw' }}
+            transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+          >
 
 
-          <>
-            <S.DetailPageName>업체 상세</S.DetailPageName>
-            {interviews.length > 0 && (
-              <S.InterviewButton
-                onClick={() => router.push(`/interview/${interviews[0].id}`)}
-              >
-                {store?.person} 기술자 인터뷰
-              </S.InterviewButton>
-            )}
+            <>
+              <S.DetailPageName>업체 상세</S.DetailPageName>
+              {interviews.length > 0 && (
+                <S.InterviewButton
+                  onClick={() => router.push(`/interview/${interviews[0].id}`)}
+                >
+                  {store?.person} 기술자 인터뷰
+                </S.InterviewButton>
+              )}
 
 
-            {error ? (
-              <Error />
-            ) : isLoading ? (
-              <Loader baseColor="#F7F7F7" style={{ marginTop: isMobile ? '0px' : '-3px', transform: isMobile ? 'none' : 'rotate(90deg)', transformOrigin: isMobile ? 'none' : 'top left', position: "relative", zIndex: "-10" }} />
-            ) : !store ? (
-              <Error style={{ marginTop: isMobile ? '40px' : '4px' }} message="업체를 찾을 수 없습니다." />
-            ) : (
-              <S.StoreDetailCard>
-                <S.StoreDetailSection>
-                  <S.StoreName>
-                    <S.StoreNameTxt>{store.name}</S.StoreNameTxt>
-                    {/* 북마크 버튼 */}
-                    {user && (
-                      <S.BookmarkButton
-                        onClick={handleBookmarkClick}
-                        disabled={loading}
-                        title={isStoreBookmarked(storeId) ? '북마크 제거' : '북마크 추가'}
-                      >
-                        <S.BookmarkIcon isBookmarked={isStoreBookmarked(storeId)}>
-                          {isStoreBookmarked(storeId) ? '★' : '☆'}
-                        </S.BookmarkIcon>
-                      </S.BookmarkButton>
+              {error ? (
+                <Error />
+              ) : isLoading ? (
+                <Loader baseColor="#F7F7F7" style={{ marginTop: isMobile ? '0px' : '-3px', transform: isMobile ? 'none' : 'rotate(90deg)', transformOrigin: isMobile ? 'none' : 'top left', position: "relative", zIndex: "-10" }} />
+              ) : !store ? (
+                <Error style={{ marginTop: isMobile ? '40px' : '4px' }} message="업체를 찾을 수 없습니다." />
+              ) : (
+                <S.StoreDetailCard>
+                  <S.StoreDetailSection>
+                    <S.StoreName>
+                      <S.StoreNameTxt>{store.name}</S.StoreNameTxt>
+                      {/* 북마크 버튼 */}
+                      {user && (
+                        <S.BookmarkButton
+                          onClick={handleBookmarkClick}
+                          disabled={loading}
+                          title={isStoreBookmarked(storeId) ? '북마크 제거' : '북마크 추가'}
+                        >
+                          <S.BookmarkIcon isBookmarked={isStoreBookmarked(storeId)}>
+                            {isStoreBookmarked(storeId) ? '★' : '☆'}
+                          </S.BookmarkIcon>
+                        </S.BookmarkButton>
+                      )}
+                    </S.StoreName>
+                    {store.address && (
+                      <S.StoreAdress>
+                        <a
+                          href={`https://map.naver.com/v5/search/${encodeURIComponent(store.address)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            textDecoration: (store.move || store.close) ? 'line-through' : 'none',
+                            color: (store.move || store.close) ? '#9999' : 'inherit',
+                          }}
+                        >
+                          {store.address}
+                        </a>
+                      </S.StoreAdress>
                     )}
-                  </S.StoreName>
-                  {store.address && (
-                    <S.StoreAdress>
-                      <a
-                        href={`https://map.naver.com/v5/search/${encodeURIComponent(store.address)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          textDecoration: (store.move || store.close) ? 'line-through' : 'none',
-                          color: (store.move || store.close) ? '#9999' : 'inherit',
-                        }}
-                      >
-                        {store.address}
-                      </a>
-                    </S.StoreAdress>
-                  )}
-                  {store.move && store.move_address && (
-                    <S.StoreAdress>
-                      <a
-                        href={`https://map.naver.com/v5/search/${encodeURIComponent(store.move_address)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {store.move_address}
-                      </a>
-                    </S.StoreAdress>
-                  )}
-
-                  {/* {store.store_industry?.some(industry => industry.industry_types?.name) && (
-                    <S.StoreIndustry>
-                      {store.store_industry
-                        .map(industry => industry.industry_types?.name)
-                        .filter(Boolean)
-                        .join(' • ')}
-                    </S.StoreIndustry>
-                  )} */}
-
-                  <S.StoreTagList>
-                    {store.keyword?.length > 0 && (
-                      <S.StoreTag>
-                        {store.keyword.join(', ')}
-                      </S.StoreTag>
+                    {store.move && store.move_address && (
+                      <S.StoreAdress>
+                        <a
+                          href={`https://map.naver.com/v5/search/${encodeURIComponent(store.move_address)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {store.move_address}
+                        </a>
+                      </S.StoreAdress>
                     )}
-                  </S.StoreTagList>
 
-                  {store.store_capacity?.some(capacity => capacity.capacity_types?.name) && (
-                    <S.StoreCapacity>
-                      {store.store_capacity
-                        .map(capacity => {
-                          const capacityTypeId = capacity.capacity_types?.id;
-                          if (capacityTypeId === '7346574b-f036-4be2-803b-7614a908b53c') {
-                            return '- 개인 • 학생 작업 가능';
-                          }
-                        })
+                    {/* {store.store_industry?.some(industry => industry.industry_types?.name) && (
+                      <S.StoreIndustry>
+                        {store.store_industry
+                          .map(industry => industry.industry_types?.name)
+                          .filter(Boolean)
+                          .join(' • ')}
+                      </S.StoreIndustry>
+                    )} */}
+
+                    <S.StoreTagList>
+                      {store.keyword?.length > 0 && (
+                        <S.StoreTag>
+                          {store.keyword.join(', ')}
+                        </S.StoreTag>
+                      )}
+                    </S.StoreTagList>
+
+                    {store.store_capacity?.some(capacity => capacity.capacity_types?.name) && (
+                      <S.StoreCapacity>
+                        {store.store_capacity
+                          .map(capacity => {
+                            const capacityTypeId = capacity.capacity_types?.id;
+                            if (capacityTypeId === '7346574b-f036-4be2-803b-7614a908b53c') {
+                              return '- 개인 • 학생 작업 가능';
+                            }
+                          })
+                        }
+                      </S.StoreCapacity>
+                    )}
+
+                    {store.description && (
+                      <S.StoreDescription>{store.description}</S.StoreDescription>
+                    )}
+
+
+                    <S.StoreContactList>
+                      {store.store_contacts?.length > 0 &&
+                        [
+                          { key: 'phone', label: 'Phone.', value: store.store_contacts[0]?.phone },
+                          { key: 'fax', label: 'Fax.', value: store.store_contacts[0]?.fax },
+                          { key: 'email', label: 'Mail.', value: store.store_contacts[0]?.email },
+                          { key: 'website', label: 'Website.', value: store.store_contacts[0]?.website }
+                        ]
+                          .filter(contact => contact.value)
+                          .map(contact => {
+                            let content = contact.value;
+
+                            if (contact.key === 'phone' || 'fax') {
+                              content = <a href={`tel:${contact.value}`}>{contact.value}</a>;
+                            } else if (contact.key === 'email') {
+                              content = <a href={`mailto:${contact.value}`}>{contact.value}</a>;
+                            } else if (contact.key === 'website') {
+                              const url = contact.value.startsWith('http') ? contact.value : `https://${contact.value}`;
+                              content = <a href={url} target="_blank" rel="noopener noreferrer">{contact.value}</a>;
+                            }
+
+                            return (
+                              <S.StoreContact key={contact.key}>
+                                <S.StoreContactTxt>{contact.label}</S.StoreContactTxt>
+                                <S.StoreContactContent>{content}</S.StoreContactContent>
+                              </S.StoreContact>
+                            );
+                          })
                       }
-                    </S.StoreCapacity>
-                  )}
-
-                  {store.description && (
-                    <S.StoreDescription>{store.description}</S.StoreDescription>
-                  )}
+                    </S.StoreContactList>
 
 
-                  <S.StoreContactList>
-                    {store.store_contacts?.length > 0 &&
-                      [
-                        { key: 'phone', label: 'Phone.', value: store.store_contacts[0]?.phone },
-                        { key: 'fax', label: 'Fax.', value: store.store_contacts[0]?.fax },
-                        { key: 'email', label: 'Mail.', value: store.store_contacts[0]?.email },
-                        { key: 'website', label: 'Website.', value: store.store_contacts[0]?.website }
-                      ]
-                        .filter(contact => contact.value)
-                        .map(contact => {
-                          let content = contact.value;
+                    {/* 댓글 섹션 - 웹에서만 표시 */}
+                    {!isMobile && (
+                      <S2.CommentsSection>
+                        <S2.CommentsTitle>후기 ({comments.length})</S2.CommentsTitle>
 
-                          if (contact.key === 'phone' || 'fax') {
-                            content = <a href={`tel:${contact.value}`}>{contact.value}</a>;
-                          } else if (contact.key === 'email') {
-                            content = <a href={`mailto:${contact.value}`}>{contact.value}</a>;
-                          } else if (contact.key === 'website') {
-                            const url = contact.value.startsWith('http') ? contact.value : `https://${contact.value}`;
-                            content = <a href={url} target="_blank" rel="noopener noreferrer">{contact.value}</a>;
-                          }
+                        {/* 댓글 작성 폼 */}
+                        <StoreCommentForm
+                          storeId={storeId}
+                          onCommentAdded={handleCommentAdded}
+                        />
 
-                          return (
-                            <S.StoreContact key={contact.key}>
-                              <S.StoreContactTxt>{contact.label}</S.StoreContactTxt>
-                              <S.StoreContactContent>{content}</S.StoreContactContent>
-                            </S.StoreContact>
-                          );
-                        })
-                    }
-                  </S.StoreContactList>
+                        {/* 댓글 목록 */}
+                        <S2.CommentsList>
+                          {comments.length > 0 ? (
+                            comments.map((comment) => (
+                              <StoreComment
+                                key={comment.id}
+                                comment={comment}
+                                onUpdate={handleCommentUpdate}
+                                onDelete={handleCommentDelete}
+                              />
+                            ))
+                          ) : (
+                            <S2.NoComments>아직 후기가 없습니다.</S2.NoComments>
+                          )}
+                        </S2.CommentsList>
+                      </S2.CommentsSection>
+                    )}
+                  </S.StoreDetailSection>
 
-
-                  {/* 댓글 섹션 - 웹에서만 표시 */}
-                  {!isMobile && (
-                    <S2.CommentsSection>
-                      <S2.CommentsTitle>후기 ({comments.length})</S2.CommentsTitle>
-
-                      {/* 댓글 작성 폼 */}
-                      <StoreCommentForm
-                        storeId={storeId}
-                        onCommentAdded={handleCommentAdded}
+                  <S.StoreImgSection>
+                    {store.card_img && (
+                      <S.StoreCardImg
+                        src={`${store.card_img}`}
+                        onClick={() => handleImageClick(store.card_img, '스토어 대표 이미지')}
+                        style={{ cursor: 'pointer' }}
                       />
+                    )}
 
-                      {/* 댓글 목록 */}
-                      <S2.CommentsList>
-                        {comments.length > 0 ? (
-                          comments.map((comment) => (
-                            <StoreComment
-                              key={comment.id}
-                              comment={comment}
-                              onUpdate={handleCommentUpdate}
-                              onDelete={handleCommentDelete}
+                    {store.store_gallery?.length > 0 && (
+                      <S.StoreImgList>
+                        {store.store_gallery
+                          .map(tag => tag?.image_url)
+                          .map((imgURL, index) => (
+                            <S.StoreImg
+                              key={index}
+                              src={`${imgURL}`}
+                              onClick={() => handleImageClick(imgURL, `갤러리 이미지 ${index + 1}`)}
+                              style={{ cursor: 'pointer' }}
                             />
-                          ))
-                        ) : (
-                          <S2.NoComments>아직 후기가 없습니다.</S2.NoComments>
-                        )}
-                      </S2.CommentsList>
-                    </S2.CommentsSection>
-                  )}
-                </S.StoreDetailSection>
+                          ))}
+                      </S.StoreImgList>
+                    )}
+                  </S.StoreImgSection>
+                </S.StoreDetailCard>
+              )}
 
-                <S.StoreImgSection>
-                  {store.card_img && (
-                    <S.StoreCardImg
-                      src={`${store.card_img}`}
-                      onClick={() => handleImageClick(store.card_img, '스토어 대표 이미지')}
-                      style={{ cursor: 'pointer' }}
-                    />
-                  )}
+              {/* 댓글 섹션 - 모바일에서만 표시 */}
+              {isMobile && (
+                <S2.CommentsSection>
+                  <S2.CommentsTitle>후기 ({comments.length})</S2.CommentsTitle>
 
-                  {store.store_gallery?.length > 0 && (
-                    <S.StoreImgList>
-                      {store.store_gallery
-                        .map(tag => tag?.image_url)
-                        .map((imgURL, index) => (
-                          <S.StoreImg
-                            key={index}
-                            src={`${imgURL}`}
-                            onClick={() => handleImageClick(imgURL, `갤러리 이미지 ${index + 1}`)}
-                            style={{ cursor: 'pointer' }}
-                          />
-                        ))}
-                    </S.StoreImgList>
-                  )}
-                </S.StoreImgSection>
-              </S.StoreDetailCard>
-            )}
+                  {/* 댓글 작성 폼 */}
+                  <StoreCommentForm
+                    storeId={storeId}
+                    onCommentAdded={handleCommentAdded}
+                  />
 
-            {/* 댓글 섹션 - 모바일에서만 표시 */}
-            {isMobile && (
-              <S2.CommentsSection>
-                <S2.CommentsTitle>후기 ({comments.length})</S2.CommentsTitle>
+                  {/* 댓글 목록 */}
+                  <S2.CommentsList>
+                    {comments.length > 0 ? (
+                      comments.map((comment) => (
+                        <StoreComment
+                          key={comment.id}
+                          comment={comment}
+                          onUpdate={handleCommentUpdate}
+                          onDelete={handleCommentDelete}
+                        />
+                      ))
+                    ) : (
+                      <S2.NoComments>아직 후기가 없습니다.</S2.NoComments>
+                    )}
+                  </S2.CommentsList>
+                </S2.CommentsSection>
+              )}
+            </>
+          </S.DetailWrapper>
+        )}
+      </AnimatePresence>
 
-                {/* 댓글 작성 폼 */}
-                <StoreCommentForm
-                  storeId={storeId}
-                  onCommentAdded={handleCommentAdded}
-                />
-
-                {/* 댓글 목록 */}
-                <S2.CommentsList>
-                  {comments.length > 0 ? (
-                    comments.map((comment) => (
-                      <StoreComment
-                        key={comment.id}
-                        comment={comment}
-                        onUpdate={handleCommentUpdate}
-                        onDelete={handleCommentDelete}
-                      />
-                    ))
-                  ) : (
-                    <S2.NoComments>아직 후기가 없습니다.</S2.NoComments>
-                  )}
-                </S2.CommentsList>
-              </S2.CommentsSection>
-            )}
-          </>
-        </S.DetailWrapper>
-      )
-      }
-
-      {/* 이미지 모달 */}
+      {/* 이미지 모달 - AnimatePresence 밖으로 이동 */}
       <ImageModal
         isOpen={isModalOpen}
         imageUrl={selectedImage?.publicUrl}
         imageName={selectedImage?.name}
         onClose={handleCloseModal}
       />
-    </AnimatePresence >
+    </>
   );
 }
 

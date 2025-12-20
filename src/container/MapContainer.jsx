@@ -10,18 +10,19 @@ import Error from '@/components/common/Error';
 // Map3D를 dynamic import로 로드하여 ExitStatus 오류 방지
 const Map3D = dynamic(() => import('../components/common/Map3D'), {
   ssr: false,
-  loading: () => <Loader text="지도를 불러오는 중..." />
+  loading: () => <Loader text="지도를 불러오는 중..." baseColor="white" />
 });
 
 // Map2D를 dynamic import로 로드
 const Map2D = dynamic(() => import('../components/common/Map2D'), {
   ssr: false,
-  loading: () => <Loader text="지도를 불러오는 중..." />
+  loading: () => <Loader text="지도를 불러오는 중..." baseColor="white" />
 });
 
 export default function MapContainer() {
   const { stores, isLoading, error } = useStores();
-  const [isMap3D, setIsMap3D] = useState(true); // 기본값은 3D
+  const [isMap3D, setIsMap3D] = useState(false); // 기본값은 2D
+  const [hasMounted3D, setHasMounted3D] = useState(false); // 3D 지도 마운트 여부
   const [hoveredStore, setHoveredStore] = useState(null); // 호버된 store 상태
   const pathname = usePathname();
   const router = useRouter();
@@ -35,7 +36,12 @@ export default function MapContainer() {
 
   // 지도 전환 함수
   const toggleMapView = () => {
-    setIsMap3D(!isMap3D);
+    const newIsMap3D = !isMap3D;
+    setIsMap3D(newIsMap3D);
+    // 3D로 전환될 때 한 번 마운트되면 이후 유지
+    if (newIsMap3D && !hasMounted3D) {
+      setHasMounted3D(true);
+    }
   };
 
   // Store hover 핸들러
@@ -70,7 +76,7 @@ export default function MapContainer() {
   }, [isMap3D]);
 
   if (isLoading) {
-    return <Loader text="지도를 불러오는 중..." />;
+    return <Loader text="지도를 불러오는 중..." baseColor="white" />;
   }
 
   if (error) {
@@ -79,7 +85,7 @@ export default function MapContainer() {
 
   return (
     <>
-      {/* Map2D - z-index로 전환 */}
+      {/* Map2D - 처음에는 2D 지도만 렌더링 */}
       <div style={{
         position: 'fixed',
         top: 0,
@@ -95,22 +101,24 @@ export default function MapContainer() {
         />
       </div>
 
-      {/* Map3D - z-index로 전환 */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100dvw',
-        height: '100dvh',
-        zIndex: isMap3D ? 2 : 1
-      }} onClick={handleMapClick}>
-        <Map3D
-          stores={stores}
-          onStoreHover={handleStoreHover}
-          onStoreLeave={handleStoreLeave}
-          onMapClick={handleMapClick}
-        />
-      </div>
+      {/* Map3D - 한 번 마운트되면 유지하고 z-index로 전환 */}
+      {hasMounted3D && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100dvw',
+          height: '100dvh',
+          zIndex: isMap3D ? 2 : 1
+        }} onClick={handleMapClick}>
+          <Map3D
+            stores={stores}
+            onStoreHover={handleStoreHover}
+            onStoreLeave={handleStoreLeave}
+            onMapClick={handleMapClick}
+          />
+        </div>
+      )}
     </>
   );
 } 

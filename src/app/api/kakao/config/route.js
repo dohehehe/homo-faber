@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server';
  */
 export async function GET() {
   try {
-    const kakaoJsKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
+    const kakaoJsKey = process.env.KAKAO_JS_KEY;
 
     if (!kakaoJsKey) {
       return NextResponse.json(

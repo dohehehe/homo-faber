@@ -1,7 +1,7 @@
 "use client";
 
 import { useStores } from '@/hooks/useStores';
-import { deleteStore } from '@/utils/supabase/stores';
+import { deleteStore } from '@/utils/api/stores-api';
 import AdminPage from '@/components/admin/AdminPage';
 import styled from '@emotion/styled';
 

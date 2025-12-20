@@ -16,7 +16,6 @@ const SignupContainer = lazy(() => import('@/container/SignupContainer'));
 const MypageContainer = lazy(() => import('@/container/MypageContainer'));
 const StoreContainer = lazy(() => import('@/container/StoreContainer'));
 const FnqContainer = lazy(() => import('@/container/FnqContainer'));
-const GalleryContainer = lazy(() => import('@/container/GalleryContainer'));
 
 const SidePanelWrapper = styled(motion.div, {
   shouldForwardProp: (prop) => prop !== 'isMobile' && prop !== 'right' && prop !== 'bottom',
@@ -222,8 +221,6 @@ function AnimatedPanel({
           return StoreContainer;
         case 'fnq':
           return FnqContainer;
-        case 'gallery':
-          return GalleryContainer;
         default:
           return null;
       }

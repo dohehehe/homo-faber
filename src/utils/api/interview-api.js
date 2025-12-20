@@ -36,6 +36,24 @@ export async function getInterviews(storeId = null) {
 }
 
 /**
+ * 특정 스토어의 인터뷰 목록을 가져옵니다.
+ * @param {string} storeId - 스토어 ID
+ * @returns {Promise<Array>} 인터뷰 목록
+ */
+export async function getInterviewsByStore(storeId) {
+  try {
+    if (!storeId) {
+      throw new Error('스토어 ID가 필요합니다.');
+    }
+
+    return await getInterviews(storeId);
+  } catch (error) {
+    console.error('API Error (getInterviewsByStore):', error);
+    throw error;
+  }
+}
+
+/**
  * 특정 인터뷰를 가져옵니다.
  * @param {string} interviewId - 인터뷰 ID
  * @returns {Promise<Object>} 인터뷰 데이터
