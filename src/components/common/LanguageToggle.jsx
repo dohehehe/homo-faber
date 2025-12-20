@@ -6,32 +6,34 @@ import styled from '@emotion/styled';
 
 const ToggleContainer = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 3px;
+  position: fixed;
+  top: 380px;
+  left: 18px;
+  gap: 4px;
+  padding: 6px 5px;
   background: rgba(201, 201, 201, 0.63);
   border: 1px solid rgba(109, 109, 109, 0.1);
-  border-radius: 16px;
+  border-radius: 10px;
   box-shadow: 0 2px 8px rgba(35, 35, 35, 0.4);
   backdrop-filter: saturate(180%) blur(8px);
   transition: all 0.3s ease;
   cursor: pointer;
   user-select: none;
-  z-index: 9;
-  position: relative;
-  width: auto;
-  min-width: 60px;
-  
-  &:hover {
-    background: rgba(220, 220, 220, 0.8);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(35, 35, 35, 0.6);
-  }
+  z-index: 19;
+  width: 80px;
+  // min-width: 110px;
 `;
 
 const LanguageButton = styled.button`
-  padding: 4px 8px;
-  border: none;
+  padding: 5px 6px 4px;
+  width: 100%;
+  border: ${({ isActive, theme }) =>
+    isActive
+      ? '1px solid #ccc'
+      : 'transparent'
+  };
   background: ${({ isActive, theme }) =>
     isActive
       ? 'rgba(240, 240, 240, 0.9)'
@@ -42,7 +44,7 @@ const LanguageButton = styled.button`
       ? '#333'
       : '#555'
   };
-  border-radius: 12px;
+  border-radius: 8px;
   font-size: 11px;
   font-weight: 500;
   cursor: pointer;

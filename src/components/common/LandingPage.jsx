@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
-import { useStores } from '@/hooks/useStores';
 import Image from 'next/image';
 import theme from '@/styles/Theme';
 
@@ -13,7 +12,7 @@ const LandingOverlay = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: black;
-  z-index: 50;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,35 +22,67 @@ const LandingOverlay = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  position: absolute;
-  left: 113px;
-  top: 18px;
+  position:absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 0;
+  justify-content: center;
+  align-items:center;
   z-index: 20;
   color: white;
   opacity: 1;
-
-
-  ${theme.media.mobile} {
-    left: unset;
-    right: 6px;
-    top: 11px;
-  }
+  word-break: keep-all;
 `;
 
 const Title = styled.h1`
-  font-size: 1.98rem;
-  font-weight: 800;
-  text-align: left;
-  margin-bottom: 1rem;
-  font-family: Arial, sans-serif;
+  font-size: 5rem;
+  color: white;
+  text-shadow: 0 0 10px black;
+  // text-stroke: 1px var(--yellow);
+  // -webkit-text-stroke: 1px var(--yellow);
+  font-weight: 900;
+  text-align: center;
+  // margin-bottom: 1rem;
+  font-family: Arial, Helvetica, sans-serif;
   line-height: 1.34;
+  padding-bottom: 50px;
+
+  ${theme.media.mobile} {
+    font-size: 3rem;
+  }
+`;
+
+const SubTitle = styled.h2`
+  font-size: 2rem;
+  font-weight: 800;
+  text-align: center;
+  // margin-bottom: 1rem;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.34;
+  // padding-top: 160px; 
+  color: white;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.9);
+  margin-top: auto;
+
+  ${theme.media.mobile} {
+    font-size: 1.3rem;
+  }
+`;
+
+const Intro = styled.h3`
+  font-size: 2rem;
+  margin-top: auto;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 15px;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.34;
+  color: white;
+  text-shadow: 0 0 5px black;
 
   ${theme.media.mobile} {
     font-size: 1.4rem;
-    margin-bottom: 0.5rem;
-    text-align: right;
-    font-weight: 700;
-    line-height: 1.35;
   }
 `;
 
@@ -62,139 +93,31 @@ const ImgContainer = styled.div`
   width: 100vw;
   height: 100vh;
 `;
+;
 
-const ImageWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 1;
-  animation: fadeOut 25s forwards;
-  animation-delay: ${props => props.num ? `${props.num * 5}s` : '0s'};
-  z-index: ${props => props.num ? `-${props.num}` : '1'};
-  
-  & img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
 
-  @keyframes fadeOut {
-    0% {
-      opacity: 1;
-    }
-    5% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
-
-  &:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(340deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 80%);
-    backdrop-filter: blur(3px);
-  }
-`;
-
-const SpinnerContainer = styled.div`
-  position: fixed;
-  right: 50px;
-  bottom: 30px;
-
-  ${theme.media.mobile} {
-    right: 20px;
-    bottom: 20px;
-  }
-`;
-
-const Spinner = styled.div`
-  width: 3rem;
-  height: 3rem;
-  border: 2px solid transparent;
-  border-bottom: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-`;
 
 const LandingPage = ({ children }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const [isFadingOut, setIsFadingOut] = useState(false);
-  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
-  const { stores, isLoading, error } = useStores();
-
 
   useEffect(() => {
-    // 4초 최소 표시 시간 보장
-    const minTimer = setTimeout(() => {
-      setMinTimeElapsed(true);
-    }, 3000);
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 1000);
 
-    return () => clearTimeout(minTimer);
+    return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    // 최소 시간이 지나고 Map3D 데이터가 로드되었을 때만 사라짐
-    if (minTimeElapsed && !isLoading && !error) {
-      // 페이드아웃 시작
-      setIsFadingOut(true);
-
-      // 페이드아웃 완료 후 컴포넌트 언마운트
-      const fadeOutTimer = setTimeout(() => {
-        setIsVisible(false);
-      }, 800);
-
-      return () => clearTimeout(fadeOutTimer);
-    }
-  }, [minTimeElapsed, isLoading, error]);
-
-  if (!isVisible) {
-    return children;
-  }
 
   return (
     <>
-      <LandingOverlay isVisible={!isFadingOut}>
+      <LandingOverlay isVisible={isVisible}>
         <ContentContainer>
-          <Title>산림동의 만드는 사람들: <br />호모파베르 Homo Faber &nbsp;</Title>
-
-          <SpinnerContainer>
-            <Spinner />
-          </SpinnerContainer>
+          <Intro>을지로의 제조업을 살리다</Intro>
+          <Title>청계천·을지로 기술유통중개소: 호모파베르</Title>
+          <SubTitle>기술유통중개소에서 기술자들을 쉽게 만나보세요</SubTitle>
         </ContentContainer>
         <ImgContainer>
-          <ImageWrapper num={1}>
-            <Image src={`/img/(web)-01.jpg`} alt='호모파베르' fill sizes="100vw" style={{ objectFit: 'cover' }} />
-          </ImageWrapper>
-          <ImageWrapper num={2}>
-            <Image src={`/img/(web)-02.jpg`} alt='호모파베르' fill sizes="100vw" style={{ objectFit: 'cover' }} />
-          </ImageWrapper>
-          <ImageWrapper num={3}>
-            <Image src={`/img/(web)-03.jpg`} alt='호모파베르' fill sizes="100vw" style={{ objectFit: 'cover' }} />
-          </ImageWrapper>
-          <ImageWrapper num={4}>
-            <Image src={`/img/(web)-04.jpg`} alt='호모파베르' fill sizes="100vw" style={{ objectFit: 'cover' }} />
-          </ImageWrapper>
-          <ImageWrapper num={5}>
-            <Image src={`/img/(web)-05.jpg`} alt='호모파베르' fill sizes="100vw" style={{ objectFit: 'cover' }} />
-          </ImageWrapper>
+          <img src={`/img/DSC03100.jpg`} alt='호모파베르' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </ImgContainer>
       </LandingOverlay>
       {children}

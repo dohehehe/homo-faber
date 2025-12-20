@@ -448,10 +448,7 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
                   "weight": "5.46"
                 },
                 {
-                  "hue": "#322F18"
-                },
-                {
-                  "lightness": "-34"
+                  "hue": "#73fca7"
                 }
               ]
             },

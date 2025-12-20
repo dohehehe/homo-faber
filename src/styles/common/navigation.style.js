@@ -8,7 +8,7 @@ export const NavigationIcon = styled.img`
   object-position: center;
   position: fixed;
   top: 18px;
-  left: 20px;
+  left: 24px;
   z-index: 1000;
   transition: all 1s ease-in-out; 
   animation: ${props => props.isOpen ? 'breathe2 2s ease-in-out' : 'breathe 7s ease-in-out infinite'};
@@ -69,7 +69,7 @@ export const NavigationWrapper = styled.nav`
   background: rgba(201, 201, 201, 0.63);
   border: 1px solid rgba(109, 109, 109, 0.1);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(35, 35, 35, 0.59);
+  box-shadow: 0 2px 8px rgba(35, 35, 35, 0.3);
   padding: 8px 6px;
   display: flex;
   flex-direction: column;
@@ -104,7 +104,7 @@ export const NavigationWrapper = styled.nav`
 
 export const NavigationItem = styled.div`
   display: inline-block;
-  padding: 8px 10px;
+  padding: 7px 7px 6px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: ${props => props.active ? 700 : 500};
@@ -154,7 +154,7 @@ export const MapToggleButton = styled.button`
   font-family: var(--font-gothic);
   position: absolute;
   bottom: 20px;
-  left: 30px;
+  left: 28px;
   z-index: 5;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 
@@ -218,28 +218,28 @@ export const SwitchText = styled.span`
   }
 `;
 
-export const LanguageToggleWrapper = styled.div`
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1001;
+// export const LanguageToggleWrapper = styled.div`
+//   position: fixed;
+//   top: 20px;
+//   right: 20px;
+//   z-index: 1001;
   
-  ${theme.media.mobile} {
-    top: 15px;
-    right: 15px;
-    z-index: 1001;
-  }
-`;
+//   ${theme.media.mobile} {
+//     top: 15px;
+//     right: 15px;
+//     z-index: 1001;
+//   }
+// `;
 
-export const LanguageToggleContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 8px;
-  padding: 4px;
+// export const LanguageToggleContainer = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   margin-top: 8px;
+//   padding: 4px;
   
-  ${theme.media.mobile} {
-    margin-top: 6px;
-    padding: 2px;
-  }
-`;
+//   ${theme.media.mobile} {
+//     margin-top: 6px;
+//     padding: 2px;
+//   }
+// `;

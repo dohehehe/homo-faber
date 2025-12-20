@@ -13,7 +13,7 @@ export const translations = {
       fnq: '문의하기',
       word: '용어집',
       info: '정보',
-      mypage: '마이페이지',
+      mypage: '내정보',
       login: '로그인',
       logout: '로그아웃',
       signup: '회원가입',
@@ -84,7 +84,7 @@ export const translations = {
         privacy: '개인정보처리방침',
       },
       mypage: {
-        title: '마이페이지',
+        title: '내정보',
         subtitle: '내 정보 관리',
         profile: '프로필',
         settings: '설정',
@@ -130,8 +130,8 @@ export const translations = {
     // Navigation
     nav: {
       home: 'Home',
-      store: 'Stores',
-      interview: 'Interviews',
+      store: 'Store',
+      interview: 'Interview',
       fnq: 'Contact',
       word: 'Glossary',
       info: 'Info',
@@ -152,7 +152,7 @@ export const translations = {
         learnMore: 'Learn More',
       },
       store: {
-        title: 'Stores',
+        title: 'Store',
         subtitle: 'Find Manufacturing Companies',
         searchPlaceholder: 'Search by store name or location',
         noResults: 'No results found',
@@ -165,7 +165,7 @@ export const translations = {
         reviews: 'Reviews',
       },
       interview: {
-        title: 'Interviews',
+        title: 'Interview',
         subtitle: 'Stories from Makers',
         readMore: 'Read More',
         share: 'Share',
