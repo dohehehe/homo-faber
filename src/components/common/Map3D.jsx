@@ -113,6 +113,13 @@ const Map3D = ({ stores, onStoreHover, onStoreLeave, onMapClick }) => {
         minLevel: 0,
         maxLevel: 15,
       });
+
+      // 마우스 휠 민감도 설정 (값이 낮을수록 민감도가 낮아짐)
+      const control = Module.getControl();
+      if (control && control.setMouseWheelDelta) {
+        // 기본값보다 낮은 값으로 설정하여 민감도 낮춤 (0.3 = 기본값의 30%)
+        control.setMouseWheelDelta(0.1);
+      }
     };
   };
 

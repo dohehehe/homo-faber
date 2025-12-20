@@ -1,7 +1,7 @@
 "use client";
 
 import { useInterviews } from '@/hooks/useInterviews';
-import { deleteInterview } from '@/utils/supabase/interview';
+import { deleteInterview } from '@/utils/api/interview-api';
 import AdminPage from '@/components/admin/AdminPage';
 import styled from '@emotion/styled';
 

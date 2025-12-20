@@ -13,7 +13,7 @@ export async function GET() {
 
     return NextResponse.json({
       scriptUrl,
-      apiKey: apiKey.substring(0, 10) + '...' // 부분적으로만 노출
+      apiKey // 클라이언트에서 사용할 수 있도록 전체 키 반환
     });
   } catch (error) {
     console.error('Error generating Maps API URL:', error);
