@@ -114,12 +114,12 @@ export default function MapContainer() {
             height: '100dvh',
             zIndex: isMap3D ? 2 : 1
           }}
-          onClick={handleMapClick}
         >
           <Map3D
             stores={stores}
             onStoreHover={handleStoreHover}
             onStoreLeave={handleStoreLeave}
+            onMapClick={handleMapClick}
           />
         </div>
       )}

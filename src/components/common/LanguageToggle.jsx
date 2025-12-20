@@ -22,7 +22,7 @@ const ToggleContainer = styled.div`
   transition: all 0.3s ease;
   cursor: pointer;
   user-select: none;
-  z-index: 19;
+  z-index: 3;
   width: 80px;
   // min-width: 110px;
 

@@ -80,7 +80,7 @@ export const NavigationBg = styled.div`
 export const NavigationWrapper = styled.nav`
   position: fixed;
   top: 103px;
-  left: 16px;
+  left: 22px;
   z-index: 5;
   background: rgba(201, 201, 201, 0.63);
   border: 1px solid rgba(109, 109, 109, 0.1);
@@ -114,7 +114,7 @@ export const NavigationWrapper = styled.nav`
     // gap: 3px 4px;
     padding: 6px 6px;
     border-radius: 8px;
-    z-index: 10;
+    z-index: 12;
   }
 `;
 

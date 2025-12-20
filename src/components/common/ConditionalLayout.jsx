@@ -40,32 +40,21 @@ export default function ConditionalLayout() {
     return null;
   }
 
-  // 초기 로딩 시 필요한 패널만 렌더링 (홈 페이지는 home만)
-  const isHomePage = pathname === '/';
-  const shouldLoadHome = isHomePage;
-  const shouldLoadStore = pathname?.startsWith('/store');
-  const shouldLoadInterview = pathname?.startsWith('/interview');
-  const shouldLoadWord = pathname?.startsWith('/word');
-  const shouldLoadInfo = pathname?.startsWith('/info');
-  const shouldLoadLogin = pathname?.startsWith('/login');
-  const shouldLoadSignup = pathname?.startsWith('/signup');
-  const shouldLoadMypage = pathname?.startsWith('/mypage');
-  const shouldLoadFnq = pathname?.startsWith('/fnq');
-
+  // 모든 패널을 항상 렌더링 (AnimatedPanel 내부에서 활성화/비활성화 제어)
   // isReady가 false면 로딩 상태 표시 (하이드레이션 오류 방지)
   if (!isReady) {
     return (
       <>
         <MapContainer />
-        {shouldLoadHome && <AnimatedPanel baseRoute='home' />}
-        {shouldLoadStore && <AnimatedPanel baseRoute='store' />}
-        {shouldLoadInterview && <AnimatedPanel baseRoute='interview' />}
-        {shouldLoadWord && <AnimatedPanel baseRoute='word' />}
-        {shouldLoadInfo && <AnimatedPanel baseRoute='info' />}
-        {shouldLoadLogin && <AnimatedPanel baseRoute='login' />}
-        {shouldLoadSignup && <AnimatedPanel baseRoute='signup' />}
-        {shouldLoadMypage && <AnimatedPanel baseRoute='mypage' />}
-        {shouldLoadFnq && <AnimatedPanel baseRoute='fnq' />}
+        <AnimatedPanel baseRoute='home' />
+        <AnimatedPanel baseRoute='store' />
+        <AnimatedPanel baseRoute='interview' />
+        <AnimatedPanel baseRoute='word' />
+        <AnimatedPanel baseRoute='info' />
+        <AnimatedPanel baseRoute='login' />
+        <AnimatedPanel baseRoute='signup' />
+        <AnimatedPanel baseRoute='mypage' />
+        <AnimatedPanel baseRoute='fnq' />
       </>
     );
   }
@@ -87,15 +76,15 @@ export default function ConditionalLayout() {
           }}
         />
       )}
-      {shouldLoadHome && <AnimatedPanel baseRoute='home' />}
-      {shouldLoadStore && <AnimatedPanel baseRoute='store' />}
-      {shouldLoadInterview && <AnimatedPanel baseRoute='interview' />}
-      {shouldLoadWord && <AnimatedPanel baseRoute='word' />}
-      {shouldLoadInfo && <AnimatedPanel baseRoute='info' />}
-      {shouldLoadLogin && <AnimatedPanel baseRoute='login' />}
-      {shouldLoadSignup && <AnimatedPanel baseRoute='signup' />}
-      {shouldLoadMypage && <AnimatedPanel baseRoute='mypage' />}
-      {shouldLoadFnq && <AnimatedPanel baseRoute='fnq' />}
+      <AnimatedPanel baseRoute='home' />
+      <AnimatedPanel baseRoute='store' />
+      <AnimatedPanel baseRoute='interview' />
+      <AnimatedPanel baseRoute='word' />
+      <AnimatedPanel baseRoute='info' />
+      <AnimatedPanel baseRoute='login' />
+      <AnimatedPanel baseRoute='signup' />
+      <AnimatedPanel baseRoute='mypage' />
+      <AnimatedPanel baseRoute='fnq' />
     </>
   );
 }
