@@ -103,7 +103,7 @@ export const StoreDetailCard = styled.article`
   ${theme.media.tablet} {
     gap: 0px;
     padding-top: 15px;
-    // overflow-y: scroll;
+    overflow-y: scroll;
     display: block;
     -ms-overflow-style: none;
     &::-webkit-scrollbar {

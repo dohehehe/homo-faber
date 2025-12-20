@@ -245,11 +245,16 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
       if (!mapRef.current) return;
 
       try {
-        // 환경변수에서 API 키 가져오기
-        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+        // API 라우트를 통해 API 키 가져오기
+        const response = await fetch('/api/maps/script');
+        if (!response.ok) {
+          throw new Error('Failed to fetch Google Maps API key');
+        }
+        const data = await response.json();
+        const apiKey = data.apiKey;
 
         if (!apiKey) {
-          throw new Error('Google Maps API key not found in environment variables');
+          throw new Error('Google Maps API key not found');
         }
 
         // @googlemaps/js-api-loader 사용
