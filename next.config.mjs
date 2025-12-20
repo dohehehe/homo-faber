@@ -12,7 +12,14 @@ const nextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
     ],
+    // 이미지 최적화 설정
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60,
   },
+  // 성능 최적화
+  compress: true,
+  poweredByHeader: false,
+  reactStrictMode: true,
   async headers() {
     return [
       {

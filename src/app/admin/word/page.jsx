@@ -1,7 +1,7 @@
 "use client";
 
 import { useWords } from '@/hooks/useWord';
-import { deleteWord } from '@/utils/supabase/word';
+import { deleteWord } from '@/utils/api/word-api';
 import AdminPage from '@/components/admin/AdminPage';
 import styled from '@emotion/styled';
 

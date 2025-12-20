@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { useCallback, useState, useEffect } from 'react';
+import { createClientAsync } from '@/utils/supabase/client';
 import { checkAndCompressImage, logImageInfo } from '@/utils/imageCompression';
 import { uploadImage as uploadImageApi, uploadMultipleImages as uploadMultipleImagesApi } from '@/utils/api/image-upload-api';
 
@@ -14,7 +14,11 @@ export const useImageUpload = (options = {}) => {
   const { bucket = 'gallery', maxSizeInMB = 1 } = options;
 
   // Supabase 클라이언트 생성
-  const supabase = createClient();
+  const [supabase, setSupabase] = useState(null);
+
+  useEffect(() => {
+    createClientAsync().then(setSupabase);
+  }, []);
 
   /**
    * 로컬 프리뷰용 이미지 처리 (스토리지 업로드 없음)

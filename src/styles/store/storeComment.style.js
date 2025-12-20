@@ -6,7 +6,7 @@ export const CommentsSection = styled.div`
   margin-top: 140px;
   padding-top: 20px;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     padding: 20px 10px;
     margin-top: 20px;
   }
@@ -30,7 +30,7 @@ export const CommentForm = styled.form`
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding-top: 30px;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     align-items: center;
     padding-top: 20px;
   }
@@ -84,7 +84,7 @@ export const CommentSubmitButton = styled.button`
     cursor: not-allowed;
   }
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     width: 100%;
   }
 `;
@@ -122,7 +122,7 @@ export const CommentContent = styled.div`
   word-break: keep-all;
   text-align: left;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     font-size: 1.1rem;
   }
 `;
@@ -157,7 +157,7 @@ export const CommentInfoWrapper = styled.div`
   flex-wrap: wrap;
   margin-top: 25px;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     padding: 0 2px;
   }
 `;
@@ -168,7 +168,7 @@ export const CommentUser = styled.div`
   color: #666;
   font-weight: 500;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     font-size: 1rem;
   }
 `;
@@ -178,7 +178,7 @@ export const CommentTime = styled.div`
   font-size: 0.8rem;
   color: #999;
 
-  ${theme.media.mobile} {
+  ${theme.media.tablet} {
     font-size: 0.9rem;
   }
 `;

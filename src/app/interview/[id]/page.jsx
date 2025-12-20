@@ -1,12 +1,25 @@
-import { getInterviewById } from '@/utils/supabase/interview';
+import { createServerSupabaseClientSimple } from '@/utils/supabase/server-client';
 
 export async function generateMetadata({ params }) {
   const interviewId = params.id;
   console.log(interviewId);
 
   try {
-    const interview = await getInterviewById(interviewId);
-    if (!interview) {
+    const supabase = createServerSupabaseClientSimple();
+    const { data: interview, error } = await supabase
+      .from('interview')
+      .select(`
+        *,
+        stores(
+          id,
+          name,
+          person
+        )
+      `)
+      .eq('id', interviewId)
+      .single();
+
+    if (error || !interview) {
       return {
         title: '인터뷰를 찾을 수 없습니다',
         description: '요청하신 인터뷰를 찾을 수 없습니다.',

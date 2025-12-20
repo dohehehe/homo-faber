@@ -1,10 +1,10 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import * as S from '@/styles/common/popup.style';
-import { createClient } from '@/utils/supabase/client';
+import { createClientAsync } from '@/utils/supabase/client';
 
 function PasswordPopup() {
   const router = useRouter();
@@ -21,7 +21,11 @@ function PasswordPopup() {
   } = useForm();
 
   const password = watch('password');
-  const supabase = createClient();
+  const [supabase, setSupabase] = useState(null);
+
+  useEffect(() => {
+    createClientAsync().then(setSupabase);
+  }, []);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -35,6 +39,8 @@ function PasswordPopup() {
     setIsLoading(true);
     setMessage('');
 
+    if (!supabase) return;
+    
     try {
       const { error } = await supabase.auth.updateUser({
         password: data.password,

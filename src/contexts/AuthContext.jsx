@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { createClientAsync, initializeSupabase } from '@/utils/supabase/client';
 import { signIn as signInApi, signUp as signUpApi, signOut as signOutApi, refreshUser as refreshUserApi } from '@/utils/api/auth-api';
 
 const AuthContext = createContext({});
@@ -17,28 +17,32 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const [supabase, setSupabase] = useState(null);
 
   useEffect(() => {
-    // 현재 세션 가져오기
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+    // Supabase 클라이언트 초기화
+    const initSupabase = async () => {
+      const client = await initializeSupabase();
+      setSupabase(client);
+
+      // 현재 세션 가져오기
+      const { data: { session } } = await client.auth.getSession();
       setUser(session?.user ?? null);
       setLoading(false);
+
+      // 인증 상태 변경 리스너
+      const { data: { subscription } } = client.auth.onAuthStateChange(
+        async (event, session) => {
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      );
+
+      return () => subscription.unsubscribe();
     };
 
-    getSession();
-
-    // 인증 상태 변경 리스너
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+    initSupabase();
+  }, []);
 
   const signIn = async (email, password) => {
     try {
@@ -47,7 +51,7 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error;
 
       // 성공적인 로그인 후 세션 새로고침
-      if (data?.user) {
+      if (data?.user && supabase) {
         await supabase.auth.refreshSession();
       }
 

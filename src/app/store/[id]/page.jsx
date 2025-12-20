@@ -1,12 +1,40 @@
-import { getStoreById } from '@/utils/supabase/stores';
+import { createServerSupabaseClientSimple } from '@/utils/supabase/server-client';
 
 export async function generateMetadata({ params }) {
   const storeId = params.id;
   console.log(storeId);
 
   try {
-    const store = await getStoreById(storeId);
-    if (!store) {
+    const supabase = createServerSupabaseClientSimple();
+    const { data: store, error } = await supabase
+      .from('stores')
+      .select(`
+        *,
+        store_contacts(
+          phone,
+          telephone,
+          fax,
+          email,
+          website
+        ),
+        store_capacity(
+          capacity_types(id, name)
+        ),
+        store_industry(
+          industry_types(id, name)
+        ),
+        store_material(
+          material_types(id, name)
+        ),
+        store_gallery(
+          image_url,
+          order_num
+        )
+      `)
+      .eq('id', storeId)
+      .single();
+
+    if (error || !store) {
       return {
         title: '스토어를 찾을 수 없습니다',
         description: '요청하신 스토어를 찾을 수 없습니다.',

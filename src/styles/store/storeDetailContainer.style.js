@@ -76,9 +76,6 @@ export const InterviewButton = styled.button`
   text-underline-offset: 5px;
   color: black;
 
-  &:active {
-    transform: translateY(0);
-  }
 
   ${theme.media.mobile} {
     font-size: 1rem;
@@ -106,7 +103,7 @@ export const StoreDetailCard = styled.article`
   ${theme.media.tablet} {
     gap: 0px;
     padding-top: 15px;
-    // overflow-y: scroll;
+    overflow-y: scroll;
     display: block;
     -ms-overflow-style: none;
     &::-webkit-scrollbar {

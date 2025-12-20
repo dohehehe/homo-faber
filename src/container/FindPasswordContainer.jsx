@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import useWindowSize from '@/hooks/useWindowSize';
 import { AnimatePresence } from 'motion/react';
 import * as S from '@/styles/user/userContainer.style';
-import { createClient } from '@/utils/supabase/client';
+import { createClientAsync } from '@/utils/supabase/client';
 import Popup from '@/components/common/Popup';
 
 function FindPasswordContainer({ }) {
@@ -21,8 +21,13 @@ function FindPasswordContainer({ }) {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [supabase, setSupabase] = useState(null);
 
-  const supabase = createClient();
+  useLayoutEffect(() => {
+    createClientAsync().then(setSupabase);
+  }, []);
 
   // 모바일에서 사용할 bottom 위치를 계산하는 함수
   const getMobileBottomPosition = (pathname) => {
@@ -74,7 +79,7 @@ function FindPasswordContainer({ }) {
 
   const handleFindPassword = async (e) => {
     e.preventDefault();
-    if (!formData.email) {
+    if (!formData.email || !supabase) {
       return;
     }
     setIsLoading(true);
