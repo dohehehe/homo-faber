@@ -37,9 +37,11 @@ const abeezee = ABeeZee({
 export const metadata = {
   title: '산림동의 만드는 사람들: 호모파베르',
   description: '을지로의 제조업을 살리다! 기술유통중개소에서 기술자들을 쉽게 만나보세요.',
+  keywords: '산림동의 만드는 사람들, 호모파베르, 기술자, 기술유통중개소, 을지로, 제조업',
   openGraph: {
     title: '산림동의 만드는 사람들: 호모파베르',
     description: '을지로의 제조업을 살리다! 기술유통중개소에서 기술자들을 쉽게 만나보세요.',
+    keywords: '산림동의 만드는 사람들, 호모파베르, 기술자, 기술유통중개소, 을지로, 제조업',
     type: 'website',
     locale: 'ko_KR',
     images: [
@@ -55,6 +57,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: '산림동의 만드는 사람들: 호모파베르',
     description: '을지로의 제조업을 살리다! 기술유통중개소에서 기술자들을 쉽게 만나보세요.',
+    keywords: '산림동의 만드는 사람들, 호모파베르, 기술자, 기술유통중개소, 을지로, 제조업',
     images: ['/img/DSC03100.jpg'],
   },
 };
