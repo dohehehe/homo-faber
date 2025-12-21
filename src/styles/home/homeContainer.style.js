@@ -113,11 +113,13 @@ export const ContentContainer = styled.div`
 export const HomeImage = styled.div`
   width: 100%;
   height: 100%;
-  background-image: url('/img/DSC03100.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  position: relative;
   pointer-events: none;
+  
+  & img {
+    object-fit: cover;
+    object-position: center;
+  }
 `
 
 export const HomeTitle = styled.div`
