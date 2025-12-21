@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { getStores, getStoreById } from '@/utils/api/stores-api';
 
 // 전역 캐시 객체
@@ -11,38 +11,60 @@ const storeDetailCache = new Map();
 const STORE_DETAIL_CACHE_DURATION = 10 * 60 * 1000; // 10분
 
 /**
- * 스토어 목록을 가져오는 훅 (캐시 포함)
- * @returns {Object} stores, isLoading, error, refetch, invalidateCache
+ * 스토어 목록을 가져오는 훅 (무한 스크롤링 지원)
+ * @returns {Object} stores, isLoading, error, loadMore, hasMore, refetch, invalidateCache
  */
 export function useStores() {
   const [stores, setStores] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
+  const offsetRef = useRef(0);
+  const INITIAL_LIMIT = 20;
 
-  const fetchStores = useCallback(async (forceRefresh = false) => {
-    // 캐시가 유효하고 강제 새로고침이 아닌 경우 캐시 사용
-    if (!forceRefresh && storesCache && storesCacheTimestamp &&
+  const fetchStores = useCallback(async (forceRefresh = false, append = false) => {
+    // 첫 로드이고 캐시가 유효하고 강제 새로고침이 아닌 경우 캐시 사용
+    if (!append && !forceRefresh && storesCache && storesCacheTimestamp &&
       (Date.now() - storesCacheTimestamp) < CACHE_DURATION) {
       setStores(storesCache);
       setIsLoading(false);
+      setHasMore(storesCache.length >= INITIAL_LIMIT);
+      offsetRef.current = storesCache.length;
       return;
     }
 
     try {
-      setIsLoading(true);
+      if (append) {
+        setIsLoadingMore(true);
+      } else {
+        setIsLoading(true);
+        offsetRef.current = 0;
+      }
       setError(null);
-      const data = await getStores();
-      const storesArray = Array.isArray(data) ? data : [];
 
-      // 캐시 업데이트
-      storesCache = storesArray;
-      storesCacheTimestamp = Date.now();
+      // 현재 offset 계산
+      const currentOffset = append ? offsetRef.current : 0;
+      const result = await getStores('', INITIAL_LIMIT, currentOffset);
+      const storesArray = Array.isArray(result.data) ? result.data : [];
 
-      setStores(storesArray);
+      if (append) {
+        setStores(prev => [...prev, ...storesArray]);
+        offsetRef.current += storesArray.length;
+      } else {
+        setStores(storesArray);
+        offsetRef.current = storesArray.length;
+        // 캐시 업데이트 (첫 로드만)
+        storesCache = storesArray;
+        storesCacheTimestamp = Date.now();
+      }
+
+      setHasMore(result.pagination?.hasMore || false);
     } catch (err) {
       setError(err);
     } finally {
       setIsLoading(false);
+      setIsLoadingMore(false);
     }
   }, []);
 
@@ -50,17 +72,34 @@ export function useStores() {
     fetchStores();
   }, [fetchStores]);
 
+  // 더 많은 데이터 로드
+  const loadMore = useCallback(() => {
+    if (!isLoadingMore && hasMore && !isLoading) {
+      fetchStores(false, true);
+    }
+  }, [isLoadingMore, hasMore, isLoading, fetchStores]);
+
   // 캐시 무효화 함수
   const invalidateCache = useCallback(() => {
     storesCache = null;
     storesCacheTimestamp = null;
   }, []);
 
+  // 새로고침 함수
+  const refetch = useCallback(() => {
+    offsetRef.current = 0;
+    setHasMore(true);
+    fetchStores(true, false);
+  }, [fetchStores]);
+
   return {
     stores,
     isLoading,
+    isLoadingMore,
     error,
-    refetch: () => fetchStores(true),
+    hasMore,
+    loadMore,
+    refetch,
     invalidateCache
   };
 }
