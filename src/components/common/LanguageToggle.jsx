@@ -10,8 +10,8 @@ const ToggleContainer = styled.div`
   flex-direction: column;
   align-items: center;
   position: fixed;
-  top: 380px;
-  left: 18px;
+  top: 270px;
+  left: -6px;
   gap: 4px;
   padding: 6px 5px;
   background: rgba(201, 201, 201, 0.63);
@@ -28,9 +28,8 @@ const ToggleContainer = styled.div`
 
   ${theme.media.mobile} {
     display: ${props => props.isOpen ? 'flex' : 'none'};
-    top: 10px;
-    left: unset;
-    right: 10px;
+    top: 320px;
+    left: 2px;
   }
 `;
 

@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useStores } from '@/hooks/useStores';
+import { useAllStores } from '@/hooks/useStores';
 import Loader from '@/components/common/Loader';
 import Error from '@/components/common/Error';
 
@@ -20,7 +20,7 @@ const Map2D = dynamic(() => import('../components/common/Map2D'), {
 });
 
 export default function MapContainer() {
-  const { stores, isLoading, error } = useStores();
+  const { stores, isLoading, error } = useAllStores(); // 지도용으로는 모든 스토어 가져오기
   const [isMap3D, setIsMap3D] = useState(false); // 기본값은 2D
   const [hasMounted3D, setHasMounted3D] = useState(false); // 3D 지도 마운트 여부
   const [hoveredStore, setHoveredStore] = useState(null); // 호버된 store 상태
@@ -97,7 +97,6 @@ export default function MapContainer() {
         onClick={handleMapClick}
       >
         <Map2D
-          stores={stores}
           onStoreHover={handleStoreHover}
           onStoreLeave={handleStoreLeave}
         />

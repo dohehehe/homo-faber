@@ -11,7 +11,7 @@ export const translations = {
       store: '업체',
       interview: '인터뷰',
       fnq: '문의',
-      word: '용어집',
+      word: '용어',
       info: '소개',
       mypage: '내정보',
       login: '로그인',
@@ -65,7 +65,7 @@ export const translations = {
         error: '문의 전송 중 오류가 발생했습니다',
       },
       word: {
-        title: '용어집',
+        title: '용어',
         subtitle: '제작 관련 용어 모음',
         search: '검색',
         category: '카테고리',

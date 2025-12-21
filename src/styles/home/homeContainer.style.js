@@ -75,6 +75,7 @@ export const HomePageName = styled.h1`
     transform-origin: top left;
     top: 22px;
     left:10px;
+    z-index:2;
     font-size: 1rem;
   }
 `
@@ -112,11 +113,13 @@ export const ContentContainer = styled.div`
 export const HomeImage = styled.div`
   width: 100%;
   height: 100%;
-  background-image: url('/img/DSC03100.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  position: relative;
   pointer-events: none;
+  
+  & img {
+    object-fit: cover;
+    object-position: center;
+  }
 `
 
 export const HomeTitle = styled.div`
@@ -324,7 +327,7 @@ export const HomeArrow = styled.div`
 export const HomeIntroductionContainer = styled.div`
   width: 100%;
   position: relative;
-  z-index: 2;
+  z-index: 1;
 
   ${theme.media.mobile} {
     // height: 100
