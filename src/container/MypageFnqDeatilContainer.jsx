@@ -166,7 +166,7 @@ function MypageFnqDeatilContainer() {
           initial={isMobile ? { bottom: '-100dvh' } : { right: '-100dvw' }}
           animate={isMobile ? { bottom: bottom } : { right: right }}
           exit={isMobile ? { bottom: '-100dvh' } : { right: '-100dvw' }}
-          transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: 2, ease: [0.4, 0, 0.2, 1] }}
 
         >
           <S.DetailPageName>문의 상세</S.DetailPageName>
