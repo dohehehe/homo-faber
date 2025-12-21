@@ -10,6 +10,11 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5분
 const storeDetailCache = new Map();
 const STORE_DETAIL_CACHE_DURATION = 10 * 60 * 1000; // 10분
 
+// 지도용 캐시 (별도 관리)
+let allStoresCache = null;
+let allStoresCacheTimestamp = null;
+const ALL_STORES_CACHE_DURATION = 5 * 60 * 1000; // 5분
+
 /**
  * 스토어 목록을 가져오는 훅 (무한 스크롤링 지원)
  * @returns {Object} stores, isLoading, error, loadMore, hasMore, refetch, invalidateCache
@@ -176,6 +181,80 @@ export function useStoreDetail(storeId) {
 }
 
 /**
+ * 모든 스토어를 가져오는 훅 (지도용 - 페이지네이션 없음)
+ * @returns {Object} stores, isLoading, error, refetch
+ */
+export function useAllStores() {
+  const [stores, setStores] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchAllStores = useCallback(async (forceRefresh = false) => {
+    // 캐시가 유효하고 강제 새로고침이 아닌 경우 캐시 사용
+    if (!forceRefresh && allStoresCache && allStoresCacheTimestamp &&
+      (Date.now() - allStoresCacheTimestamp) < ALL_STORES_CACHE_DURATION) {
+      setStores(allStoresCache);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // 모든 데이터를 가져오기 위해 큰 limit 사용
+      // 서버에서 모든 데이터를 한 번에 반환하도록 요청
+      const result = await getStores('', 10000, 0); // 충분히 큰 limit
+      let storesArray = Array.isArray(result.data) ? result.data : [];
+
+      // pagination이 있으면 모든 페이지를 가져오기
+      if (result.pagination?.hasMore) {
+        let offset = storesArray.length;
+        let hasMore = result.pagination.hasMore;
+        
+        while (hasMore) {
+          const nextResult = await getStores('', 10000, offset);
+          const nextStores = Array.isArray(nextResult.data) ? nextResult.data : [];
+          
+          if (nextStores.length === 0) break;
+          
+          storesArray = [...storesArray, ...nextStores];
+          offset += nextStores.length;
+          hasMore = nextResult.pagination?.hasMore || false;
+        }
+      }
+
+      // 캐시 업데이트
+      allStoresCache = storesArray;
+      allStoresCacheTimestamp = Date.now();
+
+      setStores(storesArray);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAllStores();
+  }, [fetchAllStores]);
+
+  const refetch = useCallback(() => {
+    allStoresCache = null;
+    allStoresCacheTimestamp = null;
+    fetchAllStores(true);
+  }, [fetchAllStores]);
+
+  return {
+    stores,
+    isLoading,
+    error,
+    refetch
+  };
+}
+
+/**
  * 스토어 목록을 가져오는 간단한 훅 (캐시 없음)
  * @returns {Object} stores, loading, error
  */
@@ -189,8 +268,8 @@ export function useStoreList() {
       try {
         setLoading(true);
         setError(null);
-        const data = await getStores();
-        setStores(data || []);
+        const result = await getStores('', 20, 0);
+        setStores(result.data || []);
       } catch (err) {
         console.error('Store 목록 가져오기 오류:', err);
         setError(err.message);
@@ -281,21 +360,27 @@ export function useStoreFilters(
       case 'recommended':
         // 추천순 정렬 - priority가 true인 스토어를 먼저, 그 다음 keyword가 있는 스토어를 위로
         sortedStores.sort((a, b) => {
+          // priority 체크 (true인 경우만 priority로 간주, null/undefined/false는 false로 처리)
           const aHasPriority = a.priority === true;
           const bHasPriority = b.priority === true;
           const aHasKeyword = Array.isArray(a.keyword) && a.keyword.length > 0;
           const bHasKeyword = Array.isArray(b.keyword) && b.keyword.length > 0;
 
-          // priority가 true인 스토어를 가장 위로
+          // 1순위: priority가 true인 스토어를 가장 위로
           if (aHasPriority && !bHasPriority) return -1;
           if (!aHasPriority && bHasPriority) return 1;
 
-          // 둘 다 priority가 같다면 keyword가 있는 스토어를 위로
+          // 2순위: 둘 다 priority가 같다면 keyword가 있는 스토어를 위로
           if (aHasKeyword && !bHasKeyword) return -1;
           if (!aHasKeyword && bHasKeyword) return 1;
 
-          // 나머지는 이름순으로 정렬
-          return (a.name || '').localeCompare(b.name || '');
+          // 3순위: 나머지는 이름순으로 정렬 (한글과 영어 모두 포함)
+          // 영어와 한글을 구분하지 않고 알파벳 순으로 정렬
+          const nameA = (a.name || '').toLowerCase();
+          const nameB = (b.name || '').toLowerCase();
+          if (nameA < nameB) return -1;
+          if (nameA > nameB) return 1;
+          return 0;
         });
         break;
 
@@ -309,8 +394,12 @@ export function useStoreFilters(
           if (aHasPriority && !bHasPriority) return -1;
           if (!aHasPriority && bHasPriority) return 1;
 
-          // 나머지는 이름 내림차순으로 정렬
-          return (b.name || '').localeCompare(a.name || '');
+          // 나머지는 이름 내림차순으로 정렬 (한글과 영어 모두 포함)
+          const nameA = (a.name || '').toLowerCase();
+          const nameB = (b.name || '').toLowerCase();
+          if (nameB < nameA) return -1;
+          if (nameB > nameA) return 1;
+          return 0;
         });
         break;
 
@@ -325,8 +414,12 @@ export function useStoreFilters(
           if (aHasPriority && !bHasPriority) return -1;
           if (!aHasPriority && bHasPriority) return 1;
 
-          // 나머지는 이름 오름차순으로 정렬
-          return (a.name || '').localeCompare(b.name || '');
+          // 나머지는 이름 오름차순으로 정렬 (한글과 영어 모두 포함)
+          const nameA = (a.name || '').toLowerCase();
+          const nameB = (b.name || '').toLowerCase();
+          if (nameA < nameB) return -1;
+          if (nameA > nameB) return 1;
+          return 0;
         });
         break;
     }

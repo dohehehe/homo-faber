@@ -1,12 +1,12 @@
 'use client';
 
-import { useStores } from '@/hooks/useStores';
+import { useAllStores } from '@/hooks/useStores';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 
 export default function Map2D({ onStoreHover, onStoreLeave }) {
-  const { stores } = useStores();
+  const { stores } = useAllStores(); // 지도용으로는 모든 스토어 가져오기
   const pathname = usePathname();
   const router = useRouter();
   const mapRef = useRef(null);
