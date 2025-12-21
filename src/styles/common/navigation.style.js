@@ -145,8 +145,8 @@ export const CloseButton = styled.button`
   font-family: var(--font-gothic);
   cursor: pointer;
   background: none;
-  top: 330px;
-  left: 40px;
+  top: 410px;
+  left: 32px;
   border: none;
   color: #666;
   z-index: 1001;

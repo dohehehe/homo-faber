@@ -75,6 +75,7 @@ export const HomePageName = styled.h1`
     transform-origin: top left;
     top: 22px;
     left:10px;
+    z-index:2;
     font-size: 1rem;
   }
 `
@@ -324,7 +325,7 @@ export const HomeArrow = styled.div`
 export const HomeIntroductionContainer = styled.div`
   width: 100%;
   position: relative;
-  z-index: 2;
+  z-index: 1;
 
   ${theme.media.mobile} {
     // height: 100
