@@ -261,10 +261,11 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
         }
 
         // @googlemaps/js-api-loader 사용
+        // libraries 최소화하여 초기 로딩 시간 단축
         const loader = new Loader({
           apiKey: apiKey,
           version: "weekly",
-          libraries: ["places"]
+          libraries: [] // places는 필요할 때만 로드
         });
 
         const { Map } = await loader.importLibrary("maps");
@@ -523,11 +524,12 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
         entries.forEach((entry) => {
           if (entry.isIntersecting && isMounted) {
             // 지도가 뷰포트에 보일 때만 초기화
+            // 지연 시간을 줄여서 더 빠르게 로드 (초기 렌더링 완료 후 즉시 로드)
             initTimer = setTimeout(() => {
               if (isMounted) {
                 initMap();
               }
-            }, 200); // 약간의 지연으로 초기 렌더링 완료 후 로드
+            }, 100); // 200ms -> 100ms로 단축하여 더 빠른 로드
             observer.disconnect();
           }
         });
