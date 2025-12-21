@@ -3,6 +3,7 @@
 import * as S from '@/styles/home/homeContainer.style';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 
 function HomeContainer() {
   const router = useRouter();
@@ -149,10 +150,12 @@ function HomeContainer() {
               기술자 찾기
             </S.HomeIntroButton>
             <S.HomeIntroImage>
-              <img src='/img/store.png' />
+              <Image src='/img/store.jpg' alt='store' width={500}
+                height={500}
+                style={{ objectFit: 'cover' }} />
             </S.HomeIntroImage>
             <S.HomeIntroImageSecond>
-              <img src='/img/store-detail.png' />
+              <Image src='/img/store-detail.jpg' alt='store-detail' width={500} height={500} style={{ objectFit: 'cover' }} />
             </S.HomeIntroImageSecond>
           </S.HomeIntroduction>
 
@@ -169,10 +172,10 @@ function HomeContainer() {
               인터뷰 보러가기
             </S.HomeIntroButton>
             <S.HomeIntroImage style={{ marginTop: '30px' }}>
-              <img src='/img/interview.png' />
+              <Image src='/img/interview.jpg' alt='interview' width={500} height={500} style={{ objectFit: 'cover' }} />
             </S.HomeIntroImage>
             <S.HomeIntroImageSecond>
-              <img src='/img/interview-02.png' />
+              <Image src='/img/interview-02.jpg' alt='interview-02' width={500} height={500} style={{ objectFit: 'cover' }} />
             </S.HomeIntroImageSecond>
           </S.HomeIntroduction>
 
@@ -189,10 +192,10 @@ function HomeContainer() {
               용어 공부하러 가기
             </S.HomeIntroButton>
             <S.HomeIntroImage style={{ marginTop: '30px' }}>
-              <img src='/img/word.png' />
+              <Image src='/img/word.jpg' alt='word' width={500} height={500} style={{ objectFit: 'cover' }} />
             </S.HomeIntroImage>
             <S.HomeIntroImageSecond>
-              <img src='/img/word-01.png' />
+              <Image src='/img/word-01.jpg' alt='word-01' width={500} height={500} style={{ objectFit: 'cover' }} />
             </S.HomeIntroImageSecond>
           </S.HomeIntroduction>
 
@@ -209,10 +212,10 @@ function HomeContainer() {
               작품 의뢰하기
             </S.HomeIntroButton>
             <S.HomeIntroImage style={{ marginTop: '30px' }}>
-              <img src='/img/fnq.png' />
+              <Image src='/img/fnq.jpg' alt='fnq' width={500} height={500} style={{ objectFit: 'cover' }} priority />
             </S.HomeIntroImage>
             <S.HomeIntroImageSecond>
-              <img src='/img/fnq-02.png' />
+              <Image src='/img/fnq-02.jpg' alt='fnq-02' width={400} height={400} style={{ objectFit: 'cover' }} priority />
             </S.HomeIntroImageSecond>
           </S.HomeIntroduction>
         </S.HomeIntroductionContainer>
