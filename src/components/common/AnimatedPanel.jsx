@@ -110,6 +110,23 @@ function AnimatedPanel({
     };
   }, [isClient, isActiveRoute]);
 
+  // Detail 패널이 expanded 될 때 해당 Container도 expanded 되도록 이벤트 리스너
+  useEffect(() => {
+    if (!isClient) return;
+
+    const handleExpandPanel = (e) => {
+      // 해당 라우트에 대한 이벤트만 처리
+      if (e.detail?.route === baseRoute && isActiveRoute) {
+        setIsExpanded(true);
+      }
+    };
+
+    window.addEventListener('expandPanel', handleExpandPanel);
+    return () => {
+      window.removeEventListener('expandPanel', handleExpandPanel);
+    };
+  }, [isClient, baseRoute, isActiveRoute]);
+
   // 패널 클릭 핸들러 - 패널 영역 클릭 시 확장
   const handlePanelClick = useCallback((e) => {
     // 현재 활성화된 패널만 확장
