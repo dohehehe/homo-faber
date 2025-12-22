@@ -44,6 +44,8 @@ function MypageFnqDeatilContainer() {
       if (prevFnqIdRef.current !== fnqId) {
         setPanelState('expanded');
         prevFnqIdRef.current = fnqId;
+        // MypageContainer도 expanded 되도록 이벤트 발생
+        window.dispatchEvent(new CustomEvent('expandPanel', { detail: { route: 'mypage' } }));
       }
     } else if (!fnqId) {
       setPanelState('hidden');
@@ -76,6 +78,8 @@ function MypageFnqDeatilContainer() {
       e.stopPropagation();
       if (panelState === 'collapsed') {
         setPanelState('expanded');
+        // MypageContainer도 expanded 되도록 이벤트 발생
+        window.dispatchEvent(new CustomEvent('expandPanel', { detail: { route: 'mypage' } }));
       }
     }
   };

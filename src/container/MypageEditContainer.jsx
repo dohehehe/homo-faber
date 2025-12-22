@@ -38,6 +38,8 @@ function MypageEditContainer({ }) {
       if (prevEditIdRef.current !== pathname) {
         setPanelState('expanded');
         prevEditIdRef.current = pathname;
+        // MypageContainer도 expanded 되도록 이벤트 발생
+        window.dispatchEvent(new CustomEvent('expandPanel', { detail: { route: 'mypage' } }));
       }
     } else if (!isEditPage) {
       setPanelState('hidden');
@@ -70,6 +72,8 @@ function MypageEditContainer({ }) {
       e.stopPropagation();
       if (panelState === 'collapsed') {
         setPanelState('expanded');
+        // MypageContainer도 expanded 되도록 이벤트 발생
+        window.dispatchEvent(new CustomEvent('expandPanel', { detail: { route: 'mypage' } }));
       }
     }
   };

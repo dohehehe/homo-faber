@@ -98,6 +98,8 @@ function StoreDetailContainer({ }) {
       if (prevStoreIdRef.current !== storeId) {
         setPanelState('expanded');
         prevStoreIdRef.current = storeId;
+        // StoreContainer도 expanded 되도록 이벤트 발생
+        window.dispatchEvent(new CustomEvent('expandPanel', { detail: { route: 'store' } }));
       }
     } else if (!storeId) {
       setPanelState('hidden');
@@ -130,6 +132,8 @@ function StoreDetailContainer({ }) {
       e.stopPropagation();
       if (panelState === 'collapsed') {
         setPanelState('expanded');
+        // StoreContainer도 expanded 되도록 이벤트 발생
+        window.dispatchEvent(new CustomEvent('expandPanel', { detail: { route: 'store' } }));
       }
     }
   };

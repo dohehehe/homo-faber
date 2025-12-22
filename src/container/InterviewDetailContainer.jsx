@@ -30,6 +30,8 @@ function InterviewDetailContainer({ }) {
       if (prevInterviewIdRef.current !== interviewId) {
         setPanelState('expanded');
         prevInterviewIdRef.current = interviewId;
+        // InterviewContainer도 expanded 되도록 이벤트 발생
+        window.dispatchEvent(new CustomEvent('expandPanel', { detail: { route: 'interview' } }));
       }
     } else if (!interviewId) {
       setPanelState('hidden');
@@ -62,6 +64,8 @@ function InterviewDetailContainer({ }) {
       e.stopPropagation();
       if (panelState === 'collapsed') {
         setPanelState('expanded');
+        // InterviewContainer도 expanded 되도록 이벤트 발생
+        window.dispatchEvent(new CustomEvent('expandPanel', { detail: { route: 'interview' } }));
       }
     }
   };

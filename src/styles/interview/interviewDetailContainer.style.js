@@ -14,7 +14,7 @@ export const DetailWrapper = styled(motion.main, {
   right: ${(props) => props.isMobile ? 'unset' : '0px'};
   bottom: ${(props) => props.isMobile ? '0px' : 'unset'};
   top: ${(props) => props.isMobile ? 'unset' : '0px'};
-  z-index: 3;
+  z-index: 6;
   box-shadow: -2px 0 4px 0 rgba(84,84,84,0.57);
   display: flex;
   flex-direction: column;
