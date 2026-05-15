@@ -6,8 +6,20 @@ import { useCallback, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const OSM_ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+/** 예전 Google 2D 톤: 연녹 지면 · #42ff89 도로 · #322F18 라벨 */
+const BRAND_MAP = {
+  baseUrl:
+    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+  labelsUrl:
+    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png',
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  colors: {
+    brown: '#322F18',
+    neonGreen: '#42ff89',
+    cream: '#eef5f0',
+  },
+};
 
 function getInitialView() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
@@ -29,8 +41,8 @@ function createMarkerIcon(fillColor) {
   });
 }
 
-const defaultMarkerIcon = createMarkerIcon('#322F18');
-const hoverMarkerIcon = createMarkerIcon('#42ff89');
+const defaultMarkerIcon = createMarkerIcon(BRAND_MAP.colors.brown);
+const hoverMarkerIcon = createMarkerIcon(BRAND_MAP.colors.neonGreen);
 
 function buildTooltipHtml(store) {
   const hasImage = store.thumbnail_img;
@@ -43,7 +55,7 @@ function buildTooltipHtml(store) {
         border-radius: 8px;
         font-size: 14px;
         font-weight: 500;
-        color: #333;
+        color: ${BRAND_MAP.colors.brown};
         flex-direction: column;
         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         display: flex;
@@ -93,7 +105,7 @@ function buildTooltipHtml(store) {
       border-radius: 4px;
       font-size: 1rem;
       font-weight: 600;
-      color: #333;
+      color: ${BRAND_MAP.colors.brown};
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       margin-bottom: 15px;
       max-width: 300px;
@@ -128,7 +140,7 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
-  const tileLayerRef = useRef(null);
+  const tileLayersRef = useRef([]);
 
   const handlePOIClick = useCallback(
     (storeId) => {
@@ -204,13 +216,25 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
           attributionControl: true,
         });
 
-        tileLayerRef.current = L.tileLayer(
-          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          {
-            maxZoom: 19,
-            attribution: OSM_ATTRIBUTION,
-          },
-        ).addTo(map);
+        const tileOptions = {
+          maxZoom: 20,
+          subdomains: 'abcd',
+          attribution: BRAND_MAP.attribution,
+        };
+
+        const baseLayer = L.tileLayer(BRAND_MAP.baseUrl, {
+          ...tileOptions,
+          className: 'hf-map-tiles-base',
+        });
+
+        const labelsLayer = L.tileLayer(BRAND_MAP.labelsUrl, {
+          ...tileOptions,
+          className: 'hf-map-tiles-labels',
+        });
+
+        baseLayer.addTo(map);
+        labelsLayer.addTo(map);
+        tileLayersRef.current = [baseLayer, labelsLayer];
 
         mapInstanceRef.current = map;
 
@@ -278,10 +302,8 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
       markersRef.current.forEach((marker) => marker.remove());
       markersRef.current = [];
 
-      if (tileLayerRef.current) {
-        tileLayerRef.current.remove();
-        tileLayerRef.current = null;
-      }
+      tileLayersRef.current.forEach((layer) => layer.remove());
+      tileLayersRef.current = [];
 
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
@@ -293,11 +315,13 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
   return (
     <div
       ref={mapRef}
+      className="hf-map-2d"
       style={{
         width: '100%',
         height: '100%',
         cursor: 'pointer',
         position: 'relative',
+        background: BRAND_MAP.colors.cream,
       }}
     />
   );
