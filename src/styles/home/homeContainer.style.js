@@ -42,7 +42,7 @@ export const HomeWrapper = styled.main`
     &:hover{
       transform: unset;
     }
-  }
+  } 
 `;
 
 export const HomeDecoration = styled.div`
