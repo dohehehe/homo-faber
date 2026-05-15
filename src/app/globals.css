@@ -99,3 +99,20 @@ div[style*="background-image"][style*="google"],
 div[style*="background"][style*="google"] {
   display: none !important;
 }
+
+/* Leaflet Map2D — custom markers & tooltips (styling TBD) */
+.hf-map-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.leaflet-store-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.leaflet-store-tooltip::before {
+  display: none !important;
+}
