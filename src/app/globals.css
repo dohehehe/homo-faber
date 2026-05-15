@@ -99,3 +99,45 @@ div[style*="background-image"][style*="google"],
 div[style*="background"][style*="google"] {
   display: none !important;
 }
+
+/* Leaflet Map2D — brand tiles (Google 2D 톤 근사) */
+.hf-map-2d {
+  background: #eef5f0;
+}
+
+/* 베이스: 연녹 지면 + 초록 계열 도로 */
+.hf-map-2d .hf-map-tiles-base {
+  filter: hue-rotate(62deg) saturate(1.28) brightness(1.07) contrast(0.9);
+}
+
+/* 라벨: #322F18 계열 */
+.hf-map-2d .hf-map-tiles-labels {
+  filter: sepia(0.4) saturate(0.65) hue-rotate(8deg) brightness(0.82) contrast(1.15);
+  opacity: 0.9;
+}
+
+.hf-map-2d .leaflet-control-attribution {
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.8) !important;
+  color: #322f18;
+}
+
+.hf-map-2d .leaflet-control-attribution a {
+  color: #322f18;
+}
+
+.hf-map-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.leaflet-store-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.leaflet-store-tooltip::before {
+  display: none !important;
+}
