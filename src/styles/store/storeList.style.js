@@ -4,9 +4,10 @@ import { captionText } from '@/styles/typography';
 
 export const ListLabelBar = styled.div`
   display: grid;
-  grid-template-columns: 70px 190px minmax(80px, 1fr) minmax(180px, 2.4fr) 80px;
+  grid-template-columns: 78px 160px 90px minmax(0, 1fr) 64px;
+  gap: 10px;
   width: 100%;
-  padding: 8px 20px;
+  padding: 10px 20px;
   color: #a0a0a0;
   background-color: #ffffff;
   box-sizing: border-box;
@@ -14,17 +15,15 @@ export const ListLabelBar = styled.div`
 
   ${theme.media.mobile} {
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 10px;
     padding: 8px 10px;
   }
 `;
 
-export const ListLabel = styled.span`
+export const ListLabel = styled('span', {
+  shouldForwardProp: (prop) => prop !== '$active',
+})`
   min-width: 0;
-
-  &:nth-of-type(2) {
-    color: #000;
-  }
+  color: ${(props) => (props.$active ? '#000' : '#a0a0a0')};
 
   ${theme.media.mobile} {
     &:nth-of-type(1) {
@@ -61,11 +60,7 @@ export const StoreTable = styled.table`
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-
-  ${theme.media.mobile} {
-    display: block;
-    width: 100%;
-  }
+  display: block;
 `;
 
 export const TableHeader = styled.thead`
@@ -97,12 +92,13 @@ export const SortButton = styled.button`
 `;
 
 export const SortIcon = styled('img', {
-  shouldForwardProp: (prop) => prop !== '$asc',
+  shouldForwardProp: (prop) => prop !== '$asc' && prop !== '$active',
 })`
   width: 6.3px;
   height: 7px;
   display: block;
   transform: ${(props) => (props.$asc ? 'none' : 'rotate(180deg)')};
+  opacity: ${(props) => (props.$active === false ? 0.35 : 1)};
 `;
 
 export const TableHeaderCellBookmark = styled.th`
@@ -115,26 +111,28 @@ export const TableHeaderCellBookmark = styled.th`
 `;
 
 export const TableBody = styled.tbody`
-  ${theme.media.mobile} {
-    display: block;
-  }
+  display: block;
 `;
 
 export const StatusRow = styled.tr`
-  ${theme.media.mobile} {
-    display: block;
-    padding: 20px 10px;
+  display: block;
+  padding: 20px 10px;
 
-    td {
-      display: block;
-      width: 100%;
-    }
+  td {
+    display: block;
+    width: 100%;
   }
 `;
 
 export const TableRow = styled('tr', {
   shouldForwardProp: (prop) => prop !== 'isHovered',
 })`
+  display: grid;
+  grid-template-columns: 78px 160px 90px minmax(0, 1fr) 64px;
+  gap: 10px;
+  padding: 10px 20px;
+  align-items: start;
+  position: relative;
   border-top: 0.5px solid #efefef;
   background-color: ${(props) => (props.isHovered ? '#f9f9f9' : 'transparent')};
   cursor: pointer;
@@ -144,40 +142,38 @@ export const TableRow = styled('tr', {
   }
 
   ${theme.media.mobile} {
-    display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 10px;
     padding: 10px;
-    align-items: start;
     min-height: 52px;
   }
 `;
 
 export const TableCell = styled.td`
-  padding: 10px 20px;
+  padding: 0;
   vertical-align: top;
   color: #000;
+  min-width: 0;
 
   ${theme.media.mobile} {
     display: block;
-    padding: 0;
     width: auto;
   }
 `;
 
 export const LabelCell = styled(TableCell)`
-  width: 70px;
   ${captionText}
 
   ${theme.media.mobile} {
-    width: auto;
     grid-column: 1;
   }
 `;
 
 export const BookmarkCell = styled(TableCell)`
-  width: 28px;
-  padding: 10px 0 10px 12px;
+  position: absolute;
+  left: 4px;
+  top: 10px;
+  width: auto;
+  padding: 0;
 
   ${theme.media.mobile} {
     display: none;
@@ -196,12 +192,8 @@ export const BookmarkIcon = styled.span`
 `;
 
 export const TitleCell = styled(TableCell)`
-  width: 190px;
-
   ${theme.media.mobile} {
-    width: auto;
     grid-column: 2;
-    min-width: 0;
   }
 `;
 
@@ -229,7 +221,6 @@ export const Line = styled.div`
 `;
 
 export const KeywordCell = styled(TableCell)`
-  max-width: 420px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -246,7 +237,8 @@ export const KeywordCell = styled(TableCell)`
 `;
 
 export const ContactCell = styled(TableCell)`
-  width: 80px;
+  color: #a0a0a0;
+  ${captionText}
 
   ${theme.media.mobile} {
     width: auto;

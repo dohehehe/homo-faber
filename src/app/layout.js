@@ -35,13 +35,13 @@ const abeezee = ABeeZee({
 
 
 export const metadata = {
-  title: '산림동의 만드는 사람들: 호모파베르',
+  title: '청계천을지로 기술유통중개소',
   description: '을지로의 제조업을 살리다! 기술유통중개소에서 기술자들을 쉽게 만나보세요.',
-  keywords: '산림동의 만드는 사람들, 호모파베르, 기술자, 기술유통중개소, 을지로, 제조업',
+  keywords: '청계천을지로 기술유통중개소, 기술자, 을지로, 제조업',
   openGraph: {
-    title: '산림동의 만드는 사람들: 호모파베르',
+    title: '청계천을지로 기술유통중개소',
     description: '을지로의 제조업을 살리다! 기술유통중개소에서 기술자들을 쉽게 만나보세요.',
-    keywords: '산림동의 만드는 사람들, 호모파베르, 기술자, 기술유통중개소, 을지로, 제조업',
+    keywords: '청계천을지로 기술유통중개소, 기술자, 을지로, 제조업',
     type: 'website',
     locale: 'ko_KR',
     images: [
@@ -49,15 +49,15 @@ export const metadata = {
         url: '/img/DSC03100.jpg',
         width: 1200,
         height: 630,
-        alt: '산림동의 만드는 사람들: 호모파베르',
+        alt: '청계천을지로 기술유통중개소',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '산림동의 만드는 사람들: 호모파베르',
+    title: '청계천을지로 기술유통중개소',
     description: '을지로의 제조업을 살리다! 기술유통중개소에서 기술자들을 쉽게 만나보세요.',
-    keywords: '산림동의 만드는 사람들, 호모파베르, 기술자, 기술유통중개소, 을지로, 제조업',
+    keywords: '청계천을지로 기술유통중개소, 기술자, 을지로, 제조업',
     images: ['/img/DSC03100.jpg'],
   },
 };

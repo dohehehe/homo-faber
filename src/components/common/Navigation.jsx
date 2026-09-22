@@ -17,9 +17,10 @@ function isActive(pathname, href) {
 }
 
 const ARCHIVE_LINKS = [
+  { href: '/info', key: 'info' },
   { href: '/interview', key: 'interview' },
   { href: '/word', key: 'word' },
-  { href: '/info', key: 'info' },
+  { href: '/map', key: 'map' },
 ];
 
 function ProfileIcon() {
@@ -95,12 +96,21 @@ export default function Navigation() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (archiveRef.current && !archiveRef.current.contains(event.target)) {
+      if (
+        archiveRef.current &&
+        !archiveRef.current.contains(event.target) &&
+        !event.target.closest('[data-archive-tabs]')
+      ) {
         setArchiveOpen(false);
       }
     };
+    const openLogin = () => setLoginOpen(true);
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    window.addEventListener('openLogin', openLogin);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('openLogin', openLogin);
+    };
   }, []);
 
   if (!isClient || isAdminRoute) {
@@ -117,10 +127,10 @@ export default function Navigation() {
 
   return (
     <>
-      <S.HeaderBar opaque={pathname?.startsWith('/store')}>
+      <S.HeaderBar opaque={pathname?.startsWith('/store') || isArchiveActive}>
         <S.HeaderLeft>
           <Link href="/" style={{ textDecoration: 'none' }}>
-            <S.Brand>Home Faber</S.Brand>
+            <S.Brand>{language === 'ko' ? '청계천을지로 기술유통중개소' : 'Home Faber'}</S.Brand>
           </Link>
 
           <S.NavGroup>
@@ -136,21 +146,22 @@ export default function Navigation() {
                 type="button"
                 active={isArchiveActive}
                 onClick={() => setArchiveOpen((open) => !open)}
-                aria-expanded={archiveOpen}
+                aria-expanded={archiveOpen || isArchiveActive}
               >
                 {t('nav.archive')}
               </S.NavLink>
-              {archiveOpen && (
-                <S.ArchiveMenu>
-                  {ARCHIVE_LINKS.map(({ href, key }) => (
-                    <Link key={href} href={href} style={{ textDecoration: 'none' }}>
-                      <S.ArchiveItem active={isActive(pathname, href)}>{t(`nav.${key}`)}</S.ArchiveItem>
-                    </Link>
-                  ))}
-                </S.ArchiveMenu>
-              )}
             </S.ArchiveWrap>
           </S.NavGroup>
+
+          {(archiveOpen || isArchiveActive) && (
+            <S.NavGroup data-archive-tabs>
+              {ARCHIVE_LINKS.map(({ href, key }) => (
+                <Link key={href} href={href} style={{ textDecoration: 'none', height: '100%' }}>
+                  <S.NavLink active={isActive(pathname, href)}>{t(`nav.${key}`)}</S.NavLink>
+                </Link>
+              ))}
+            </S.NavGroup>
+          )}
         </S.HeaderLeft>
 
         <S.HeaderRight>
@@ -182,11 +193,13 @@ export default function Navigation() {
           <S.MobileLink active={isActive(pathname, '/fnq')}>{t('nav.fnq')}</S.MobileLink>
         </Link>
         <S.MobileLink active={isArchiveActive}>{t('nav.archive')}</S.MobileLink>
-        {ARCHIVE_LINKS.map(({ href, key }) => (
-          <Link key={href} href={href} style={{ textDecoration: 'none' }}>
-            <S.MobileSubLink active={isActive(pathname, href)}>{t(`nav.${key}`)}</S.MobileSubLink>
-          </Link>
-        ))}
+        <S.MobileArchiveRow>
+          {ARCHIVE_LINKS.map(({ href, key }) => (
+            <Link key={href} href={href} style={{ textDecoration: 'none' }}>
+              <S.MobileSubLink active={isActive(pathname, href)}>{t(`nav.${key}`)}</S.MobileSubLink>
+            </Link>
+          ))}
+        </S.MobileArchiveRow>
       </S.MobilePanel>
 
       <LoginOverlay open={loginOpen && !user} onClose={closeLogin} />

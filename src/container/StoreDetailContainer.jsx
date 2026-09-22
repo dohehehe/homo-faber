@@ -238,7 +238,6 @@ function StoreDetailContainer({ }) {
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{
-                            textDecoration: (store.move || store.close) ? 'line-through' : 'none',
                             color: (store.move || store.close) ? '#9999' : 'inherit',
                           }}
                         >
@@ -276,34 +275,63 @@ function StoreDetailContainer({ }) {
                     )}
 
                     <S.StoreContactList>
-                      {store.store_contacts?.length > 0 &&
-                        [
+                      {(() => {
+                        const contacts = [
                           { key: 'phone', label: 'Phone.', value: store.store_contacts[0]?.phone },
                           { key: 'fax', label: 'Fax.', value: store.store_contacts[0]?.fax },
                           { key: 'email', label: 'Mail.', value: store.store_contacts[0]?.email },
-                          { key: 'website', label: 'Website.', value: store.store_contacts[0]?.website }
-                        ]
-                          .filter(contact => contact.value)
-                          .map(contact => {
-                            let content = contact.value;
+                          { key: 'website', label: 'Website.', value: store.store_contacts[0]?.website },
+                        ].filter((contact) => contact.value);
+                        const hiddenKeys = ['phone', 'fax', 'email'];
+                        const lockedContacts = !user
+                          ? contacts.filter((contact) => hiddenKeys.includes(contact.key))
+                          : [];
+                        const openContacts = !user
+                          ? contacts.filter((contact) => !hiddenKeys.includes(contact.key))
+                          : contacts;
 
-                            if (contact.key === 'phone' || 'fax') {
-                              content = <a href={`tel:${contact.value}`}>{contact.value}</a>;
-                            } else if (contact.key === 'email') {
-                              content = <a href={`mailto:${contact.value}`}>{contact.value}</a>;
-                            } else if (contact.key === 'website') {
-                              const url = contact.value.startsWith('http') ? contact.value : `https://${contact.value}`;
-                              content = <a href={url} target="_blank" rel="noopener noreferrer">{contact.value}</a>;
-                            }
+                        const renderContact = (contact) => {
+                          let content = contact.value;
+                          if (contact.key === 'phone' || contact.key === 'fax') {
+                            content = <a href={`tel:${contact.value}`}>{contact.value}</a>;
+                          } else if (contact.key === 'email') {
+                            content = <a href={`mailto:${contact.value}`}>{contact.value}</a>;
+                          } else if (contact.key === 'website') {
+                            const url = contact.value.startsWith('http') ? contact.value : `https://${contact.value}`;
+                            content = <a href={url} target="_blank" rel="noopener noreferrer">{contact.value}</a>;
+                          }
+                          return (
+                            <S.StoreContact key={contact.key}>
+                              <S.StoreContactTxt>{contact.label}</S.StoreContactTxt>
+                              <S.StoreContactContent>{content}</S.StoreContactContent>
+                            </S.StoreContact>
+                          );
+                        };
 
-                            return (
-                              <S.StoreContact key={contact.key}>
-                                <S.StoreContactTxt>{contact.label}</S.StoreContactTxt>
-                                <S.StoreContactContent>{content}</S.StoreContactContent>
-                              </S.StoreContact>
-                            );
-                          })
-                      }
+                        return (
+                          <>
+                            {lockedContacts.length > 0 && (
+                              <S.LockedContactGroup
+                                type="button"
+                                onClick={() => window.dispatchEvent(new Event('openLogin'))}
+                              >
+                                {lockedContacts.map((contact) => (
+                                  <S.StoreContact key={contact.key}>
+                                    <S.StoreContactTxt>{contact.label}</S.StoreContactTxt>
+                                    <S.StoreContactContent>로그인 후 확인 가능</S.StoreContactContent>
+                                  </S.StoreContact>
+                                ))}
+                              </S.LockedContactGroup>
+                            )}
+                            {openContacts.map(renderContact)}
+                          </>
+                        );
+                      })()}
+                      {!user && (
+                        <S.SignupHint>
+                          업체 문의는 <a href="/signup">회원가입</a> 후 가능합니다.
+                        </S.SignupHint>
+                      )}
                     </S.StoreContactList>
                     </S.InfoBlock>
                     </S.InfoGroup>

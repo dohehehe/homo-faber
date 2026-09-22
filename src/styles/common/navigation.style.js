@@ -40,8 +40,16 @@ export const Brand = styled.span`
   font-weight: 700;
   color: #000;
   letter-spacing: -0.01em;
-  white-space: nowrap;
   line-height: 1.6;
+  white-space: nowrap;
+
+  ${theme.media.mobile} {
+    font-size: 0.8rem;
+    padding: 0 4px;
+    max-width: 46vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
 
 export const NavGroup = styled.nav`
@@ -105,32 +113,39 @@ export const ArchiveWrap = styled.div`
 `;
 
 export const ArchiveMenu = styled.div`
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  min-width: 120px;
-  padding: 6px;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 3px;
+  height: 30px;
+  padding: 3px;
+  border-radius: 5px;
+  background: rgba(227, 227, 227, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 `;
 
 export const ArchiveItem = styled('span', {
   shouldForwardProp: (prop) => prop !== 'active',
 })`
-  padding: 8px 10px;
-  border-radius: 4px;
-  font-weight: ${(props) => (props.active ? 600 : 400)};
-  color: ${(props) => (props.active ? '#111' : '#555')};
-  background: ${(props) => (props.active ? '#f3f3f3' : 'transparent')};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 3px;
+  background: ${(props) => (props.active ? '#ffffff' : 'transparent')};
+  font-weight: 400;
+  color: ${(props) => (props.active ? '#000000' : '#a0a0a0')};
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease, background-color 0.2s ease;
 
   &:hover {
-    background: #f6f6f6;
-    color: #111;
+    color: #000000;
+    background: rgba(227, 227, 227, 0.55);
   }
 `;
 
@@ -207,9 +222,26 @@ export const MobileLink = styled.span`
 `;
 
 export const MobileSubLink = styled.span`
-  padding: 8px 4px 8px 16px;
-  font-weight: ${(props) => (props.active ? 700 : 400)};
-  color: ${(props) => (props.active ? '#111' : '#777')};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 3px;
+  font-weight: 400;
+  color: ${(props) => (props.active ? '#000' : '#a0a0a0')};
+  background: ${(props) => (props.active ? '#ffffff' : 'transparent')};
+`;
+
+export const MobileArchiveRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 5px;
+  background: rgba(227, 227, 227, 0.3);
 `;
 
 export const MapToggleButton = styled.button`

@@ -51,6 +51,7 @@ export default function ConditionalLayout() {
     pathname === '/' || pathname === '/login' || pathname === '/signup';
   const showStore = pathname?.startsWith('/store');
   const showFnq = pathname === '/fnq' || pathname?.startsWith('/fnq/');
+  const showMap = pathname === '/map' || pathname?.startsWith('/map/');
 
   if (isAdminRoute || !isReady) {
     return null;
@@ -58,11 +59,11 @@ export default function ConditionalLayout() {
 
   return (
     <>
-      {MAP_FEATURE_ENABLED && <MapContainer />}
+      {(MAP_FEATURE_ENABLED || showMap) && <MapContainer />}
       {showHome && <HomeContainer />}
       {showStore && <StoreContainer />}
       {showFnq && <FnqContainer />}
-      {isMobile && pathname !== '/' && pathname !== '/login' && !showStore && !showFnq && (
+      {isMobile && pathname !== '/' && pathname !== '/login' && !showStore && !showFnq && !showMap && (
         <MobileBg
           pathname={pathname}
           isVisible={pathname !== '/'}

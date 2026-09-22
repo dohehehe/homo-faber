@@ -84,8 +84,11 @@ function HomeContainer() {
 
       <S.Footer>
         <S.FooterBrand>
-          <S.FooterLogo>Home Faber 
-          <br/>청계천을지로 기술유통중개소</S.FooterLogo>
+          <S.FooterLogo>
+            청계천을지로 기술유통중개소
+            <br />
+            Home Faber
+          </S.FooterLogo>
           <S.FooterCopy>{t('pages.home.footerCopy')}</S.FooterCopy>
         </S.FooterBrand>
         <S.FooterLinks>

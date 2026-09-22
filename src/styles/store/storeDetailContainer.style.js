@@ -265,6 +265,40 @@ export const StoreContactContent = styled.div`
   }
 `;
 
+export const LockedContactGroup = styled.button`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: #a0a0a0;
+
+  ${StoreContactTxt},
+  ${StoreContactContent} {
+    color: inherit;
+  }
+
+  &:hover {
+    color: #000;
+  }
+`;
+
+export const SignupHint = styled.p`
+  margin: 8px 0 0;
+  color: #a0a0a0;
+
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+`;
+
 export const StoreDescription = styled.div`
   color: #333;
 `;

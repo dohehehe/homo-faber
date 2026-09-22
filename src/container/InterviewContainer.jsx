@@ -86,7 +86,7 @@ function InterviewContainer({ onLoadComplete }) {
 
         <S.InterviewList>
           {isLoading ? (
-            <Loader style={{ marginTop: '-15px', marginLeft: '-10px' }} baseColor="rgb(224, 224, 224)" />
+            <Loader style={{ marginTop: '8px' }} baseColor="#efefef" />
           ) :
             error ? (
               <Error style={{ marginTop: '-15px', marginLeft: '-10px', position: 'relative', zIndex: '2' }} />

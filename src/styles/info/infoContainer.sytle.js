@@ -7,31 +7,24 @@ export const InfoWrapper = styled(motion.main, {
 })`
   width: 100%;
   height: 100dvh;
-  padding-left: 70px;
-  padding-top: 57px;
+  padding: 50px 20px 0;
   z-index: 3;
-  background:rgb(255, 255, 255);
-  background: ${(props) => props.gradientCss};
-  background-size: 200% 200%;
-  background-position: -100% -100%;
+  background: #ffffff;
   cursor: ${(props) => (props.pathname && (props.pathname === '/' || props.pathname.startsWith('/info/'))) ? 'pointer' : 'default'};
   display: flex;
   flex-direction: column;
-  border-left: solid 3px #DADADA;
-  box-shadow: -8px 4px 10px 0 rgba(0,0,0,0.25);
-  font-family: var(--font-gothic);
+  border-left: 0.5px solid #efefef;
+  color: #000;
+  overflow-y: hidden;
   pointer-events: auto;
   position: relative;
-  color: #333;
-  overflow-y: hidden;
 
   ${theme.media.mobile} { 
-    padding: 0px 15px 20px 15px;
+    padding: 50px 16px 20px;
     overflow-x: hidden;
     position: relative;
-    border-top: solid 2px #DADADA;
-    box-shadow: 0px -4px 10px 3px rgba(0,0,0,0.3);
     border-left: none;
+    border-top: 0.5px solid #efefef;
     width: 100dvw;
     word-break: keep-all;
   }
@@ -39,33 +32,14 @@ export const InfoWrapper = styled(motion.main, {
 
 
 export const InfoPageName = styled.div`
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.3rem;
-  position: absolute;
-  transform: rotate(90deg);
-  transform-origin: top left;
-  top: 17px;
-  left: 25px;
-
-  ${theme.media.mobile} { 
-    transform: rotate(0deg);
-    transform-origin: top left;
-    position: sticky;
-    top: 10px;
-    left: 10px;
-    font-size: 1rem;
-    margin-bottom: 40px;
-    z-index: 3;
-  }
-`
+  display: none;
+`;
 
 export const InfoPageContent = styled.div`
-  height: 100dvh; 
+  height: 100%; 
   overflow-y: scroll;
-  padding-right: 70px;
-  margin-top: -65px;
-  padding-top: 65px;
+  padding-right: 20px;
+  padding-top: 20px;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -78,37 +52,40 @@ export const InfoPageContent = styled.div`
     padding-right: 0px;
     overflow-x: hidden;
   }
-`
+`;
 
 
 export const Infoh1 = styled.h1`
-  font-size: 3.3rem;
-  font-weight: 800;
+  font-size: 1.8rem;
+  font-weight: 700;
   margin-bottom: 10px;
   line-height: 1.4;
   word-break: keep-all;
+  letter-spacing: -0.01em;
+  color: #000;
 
   ${theme.media.mobile} {
-    font-size: 2.1rem;
+    font-size: 1.4rem;
     width: 100%;
   }
-`
+`;
 
 
 export const Infoh3 = styled.h3`
-  font-size: 1.1rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 400;
   margin-bottom: 10px;
-  line-height: 1.8;
+  line-height: 1.6;
   font-style: italic;
   width: 100%;
   max-width: 450px;
   margin-left: auto;
   margin-right: 20px;
-  color: #888;
+  color: #a0a0a0;
   text-indent: -170px;
   margin-bottom: 200px;
   word-break: keep-all;
+  letter-spacing: -0.01em;
 
   ${theme.media.tablet} {
     text-indent: 0px;
@@ -118,23 +95,25 @@ export const Infoh3 = styled.h3`
     margin-bottom: 130px;
     text-align: left;
   }
-`
+`;
 
 export const Infoh2 = styled.h2`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 30px;
   line-height: 1.6;
+  letter-spacing: -0.01em;
+  color: #000;
 
   ${theme.media.mobile} {
-    font-size: 1.3rem;
+    font-size: 1rem;
     width: 100%;
     margin: 0 auto;
     text-align: center;
     margin-bottom: 50px;
-    font-weight: 800;
+    font-weight: 700;
   }
-`
+`;
 
 export const InfoArticle = styled.article`
   max-width: 700px;
@@ -152,11 +131,13 @@ export const InfoArticle = styled.article`
 `
 
 export const InfoSubTitle = styled.h4`
-  font-size: 1.2rem;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 700;
   margin-bottom: 30px;
   margin-top: 160px;
   margin-left: 100px;
+  letter-spacing: -0.01em;
+  color: #000;
 
   &:first-of-type {
     margin-top: 0px;
@@ -171,40 +152,42 @@ export const InfoSubTitle = styled.h4`
   }
 
   ${theme.media.mobile} {
-    font-size: 1.15rem;
+    font-size: 1rem;
     margin-left: 0;
     font-weight: 700;
   }
 `
 
 export const InfoPara = styled.p`
-  font-size: 1.23rem;
+  font-size: 1rem;
   font-weight: 400;
-  line-height: 1.88;
-  letter-spacing: 0.01rem;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
   margin-bottom:40px;
-  color: black;
+  color: #000;
   word-break: keep-all;
 
   ${theme.media.mobile} {
-    font-size: 1.15rem;
+    font-size: 1rem;
     margin-left: 0;
-    line-height: 1.85;
+    line-height: 1.6;
   }
-`
+`;
 export const InfoParaLink = styled.div`
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 400;
   margin-top: 120px;
   margin-bottom: 20px;
   text-align: right;
-  color: black;
-  line-height: 1.7;
+  color: #a0a0a0;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
   span {
     text-decoration: underline wavy 1px;
     text-underline-offset: 5px;
     cursor: pointer;
-    font-weight: 900;
+    font-weight: 400;
+    color: #000;
   }
 
   ${theme.media.mobile} {
@@ -280,7 +263,7 @@ export const InfoTimelineTableTd = styled.td`
   padding: 12px;
   vertical-align: top;
   line-height: 1.5;
-  font-size: 1.1rem;
+  font-size: 1rem;
   border-top: ${(props) => props.isFirstOfYear ? 'none' : '1px dotted rgb(167, 167, 167)'};
 
   ${theme.media.tablet} {
@@ -293,7 +276,7 @@ export const InfoTimelineTableTdYear = styled(InfoTimelineTableTd)`
   text-align: center;
   border-bottom: none;
   flex-shrink: 0;
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 800;
   font-family: var(--font-abeezee);
   background-color: rgb(248, 248, 248);
@@ -311,7 +294,7 @@ export const InfoTimelineTableTdMonth = styled(InfoTimelineTableTd)`
   text-align: right;
   font-weight: 500;
   font-family: var(--font-abeezee);
-  font-size: 1.15rem;
+  font-size: 1rem;
   background-color: rgb(248, 248, 248);
   padding-right: 13px;
   padding-left: 5px;
@@ -349,7 +332,7 @@ export const InfoTimelineTableTdTitle = styled.div`
   padding-left: 18px;
   vertical-align: top;
   line-height: 1.5;
-  font-size: 1.1rem;
+  font-size: 1rem;
   border-top: ${(props) => props.isFirstOfYear ? 'none' : '1px dotted rgb(167, 167, 167)'};
 
   ${theme.media.tablet} {
@@ -431,7 +414,7 @@ export const InfoCreditsTable = styled.table`
   max-width: 800px;
   border-collapse: collapse;
   margin: 0 auto;
-  font-size: 1.1rem;
+  font-size: 1rem;
   line-height: 1.6;
   margin-bottom: 250px;
 

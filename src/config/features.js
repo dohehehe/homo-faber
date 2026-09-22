@@ -1,13 +1,7 @@
 /**
  * 기능 플래그.
  *
- * 지도 UI는 사이트에서 숨기지만, 복구용 코드는 그대로 둔다.
- * true로 바꾸면 ConditionalLayout이 지도를 다시 렌더한다.
- *
- * 관련 파일:
- * - src/container/MapContainer.jsx
- * - src/components/common/Map2D.jsx
- * - src/components/common/Map3D.jsx
- * - src/hooks/usePOI.js
+ * 지도는 아카이브 > 지도(`/map`)에서 연다.
+ * MAP_FEATURE_ENABLED를 true로 두면 예전처럼 전 페이지 배경 지도가 다시 켜진다.
  */
 export const MAP_FEATURE_ENABLED = false;

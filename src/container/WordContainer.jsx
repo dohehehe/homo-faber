@@ -128,15 +128,15 @@ function WordContainer({ onLoadComplete, selectedWordId: initialSelectedWordId }
           onSearch={handleSearch}
           onClear={handleClearSearch}
           isExiting={isExiting}
-          backgroundColor="rgba(253, 253, 253, 0.82)"
-          textColor="#2E5BBA"
-          inputBackgroundColor="rgba(255, 255, 255, 0)"
-          focusOutlineColor="rgba(255, 255, 255, 0.8)"
+          backgroundColor="rgba(227, 227, 227, 0.3)"
+          textColor="#000"
+          inputBackgroundColor="transparent"
+          focusOutlineColor="#a0a0a0"
         />
       </S.WordSearchWrapper>
 
       {loading && (
-        <Loader baseColor="rgb(255, 255, 255)" style={{ marginTop: isMobile ? '-32px' : '-30px', marginLeft: isMobile ? '46px' : '-19px', transform: isMobile ? 'none' : 'rotate(90deg)', transformOrigin: isMobile ? 'none' : 'top left', mixBlendMode: 'multiply' }} />
+        <Loader baseColor="#efefef" style={{ marginTop: isMobile ? '8px' : '8px' }} />
       )}
       {error && (
         <Error style={{ marginLeft: isMobile ? '-8px' : '-23px', marginTop: isMobile ? '20px' : '24px', zIndex: '3' }} />

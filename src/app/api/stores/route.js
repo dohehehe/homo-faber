@@ -25,10 +25,9 @@ export async function GET(request) {
         ),
         store_material(
           material_types(id, name)
-        )
+        ),
+        comments(count)
       `, { count: 'exact' })
-      .order('priority', { ascending: false })
-      .order('name')
       .range(offset, offset + limit - 1);
 
     // 검색 키워드가 있는 경우

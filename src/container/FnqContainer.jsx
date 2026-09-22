@@ -75,7 +75,9 @@ function FnqContainer() {
   } = useForm({
     mode: 'onChange',
     defaultValues: {
-      files: []
+      files: [],
+      client_name: '',
+      affiliation: '',
     }
   });
 
@@ -347,6 +349,20 @@ function FnqContainer() {
         outputData = editorSaveData.blocks || [];
       }
 
+      if (formData.client_name || formData.affiliation) {
+        outputData = [
+          {
+            type: 'paragraph',
+            data: { text: `의뢰인: ${formData.client_name || '-'}` },
+          },
+          {
+            type: 'paragraph',
+            data: { text: `소속: ${formData.affiliation || '-'}` },
+          },
+          ...(Array.isArray(outputData) ? outputData : []),
+        ];
+      }
+
       if (selectedServices.length > 0) {
         outputData = [
           {
@@ -471,6 +487,30 @@ function FnqContainer() {
               A. 확인중 단계라면 <Link href="/mypage" style={{ textDecoration: 'underline' }}>내정보</Link> 페이지에서 직접 문의 수정이 가능합니다. 관련 요청 사항이 있으실 경우 플랫폼으로 직접 연락해주세요.
             </S.FnqContextItem>
           </S.FnqContext>
+
+          <S.FormGroup>
+            <S.Label><span style={{ color: 'red' }}>*</span> 의뢰인 이름</S.Label>
+            <S.Input
+              type="text"
+              placeholder="이름을 입력해주세요"
+              {...register('client_name', {
+                required: '의뢰인 이름을 입력해주세요',
+              })}
+            />
+            {errors.client_name && <S.ErrorMessage>{errors.client_name.message}</S.ErrorMessage>}
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label><span style={{ color: 'red' }}>*</span> 소속</S.Label>
+            <S.Input
+              type="text"
+              placeholder="소속(학교, 회사 등)을 입력해주세요"
+              {...register('affiliation', {
+                required: '소속을 입력해주세요',
+              })}
+            />
+            {errors.affiliation && <S.ErrorMessage>{errors.affiliation.message}</S.ErrorMessage>}
+          </S.FormGroup>
 
           <S.FormGroup>
             <S.Label><span style={{ color: 'red' }}>*</span> 프로젝트 이름</S.Label>

@@ -14,6 +14,7 @@ export const translations = {
       word: '용어',
       info: '소개',
       archive: '아카이브',
+      map: '지도',
       mypage: '내정보',
       login: '로그인',
       logout: '로그아웃',
@@ -23,14 +24,14 @@ export const translations = {
     // 페이지별 번역
     pages: {
       home: {
-        title: '호모파베르',
+        title: '청계천을지로 기술유통중개소',
         subtitle: '제작자의 공간',
         description: '창작자와 제작자들을 위한 플랫폼',
         welcome: '환영합니다',
         getStarted: '시작하기',
         learnMore: '더 알아보기',
         headline: '아직 세상에 없던 것을 만들고 있나요?',
-        subhead: '을지로 기술자 네트워크, "산업용재 네트워크"가 당신의 제작 여정에 함께합니다.',
+        subhead: '을지로 기술자 네트워크, 산업용재 네트워크가 당신의 제작 여정에 함께합니다.',
         vision: 'Our Vision',
         noticeTitle: 'Notice',
         noticeBody: '웹사이트를 업데이트하는 중입니다. 일시적으로 이용이 어려울 수 있으니 페이지를 새로고침해 주세요.',
@@ -40,7 +41,7 @@ export const translations = {
         askTitle: 'Ask',
         askBody: '내 작업에 맞는 청계천, 을지로 기술자들을 직접 찾아볼 수 있습니다. 나에게 맞는 키워드를 선택하거나 검색하며 내 작업에 꼭 맞는 기술자를 만나보세요!',
         askCta: '작업 의뢰하기',
-        footerCopy: 'ⓒ 2026 Homo Faber / Listen to the City. All rights reserved.',
+        footerCopy: 'ⓒ 2026 청계천을지로 기술유통중개소 / Homo Faber / Listen to the City. All rights reserved.',
       },
       store: {
         title: '업체',
@@ -53,7 +54,7 @@ export const translations = {
         contact: '연락하기',
         location: '위치',
         rating: '평점',
-        reviews: '리뷰',
+        reviews: '후기',
       },
       interview: {
         title: '인터뷰',
@@ -149,6 +150,7 @@ export const translations = {
       word: 'Glossary',
       info: 'Info',
       archive: 'Archive',
+      map: 'Map',
       mypage: 'My Page',
       login: 'Login',
       logout: 'Logout',
@@ -175,7 +177,7 @@ export const translations = {
         askTitle: 'Ask',
         askBody: 'Share your project and we will connect you with the right technician.',
         askCta: 'Request work',
-        footerCopy: 'ⓒ 2026 Homo Faber / Listen to the City. All rights reserved.',
+        footerCopy: 'ⓒ 2026 청계천을지로 기술유통중개소 / Homo Faber / Listen to the City. All rights reserved.',
       },
       store: {
         title: 'Store',

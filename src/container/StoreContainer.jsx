@@ -6,6 +6,7 @@ import StoreList from '@/components/store/StoreList';
 import { useStores, useStoreFilters } from '@/hooks/useStores';
 import { getStoreTypes } from '@/utils/api/stores-api';
 import { convertIndustryNameToKorean, convertMaterialNameToKorean } from '@/utils/converters';
+import { STORE_CATEGORIES } from '@/config/storeCategories';
 import * as S from '@/styles/store/storeContainer.style';
 import * as ListS from '@/styles/store/storeList.style';
 
@@ -17,8 +18,9 @@ function StoreContainer() {
     industry: [],
     capacity: [],
     material: [],
+    category: [],
   });
-  const [sortBy, setSortBy] = useState('recommended');
+  const [sortBy, setSortBy] = useState('labelAsc');
   const [allTags, setAllTags] = useState({
     industry: [],
     capacity: [],
@@ -96,19 +98,39 @@ function StoreContainer() {
     }));
   };
 
-  const toggleCapacity = () => {
-    handleTagClick('capacity', '소량 생산');
+  const clearCategoryTags = () => {
+    setSelectedTags((prev) => ({
+      ...prev,
+      category: [],
+    }));
   };
 
   const handleSortChange = (newSortBy) => {
     setSortBy(newSortBy);
   };
 
+  const isLabelSort = sortBy === 'labelAsc' || sortBy === 'labelDesc' || sortBy === 'recommended';
+  const isNameSort = sortBy === 'nameAsc' || sortBy === 'nameDesc';
+  const isReviewSort = sortBy === 'reviews';
+
+  const handleLabelSort = () => {
+    setSortBy(sortBy === 'labelAsc' || sortBy === 'recommended' ? 'labelDesc' : 'labelAsc');
+  };
+
+  const handleNameSort = () => {
+    setSortBy(sortBy === 'nameAsc' ? 'nameDesc' : 'nameAsc');
+  };
+
+  const handleReviewSort = () => {
+    setSortBy(sortBy === 'reviews' ? 'labelAsc' : 'reviews');
+  };
+
   const shouldUseInfiniteScroll =
     !searchKeyword &&
     selectedTags.industry.length === 0 &&
     selectedTags.capacity.length === 0 &&
-    selectedTags.material.length === 0;
+    selectedTags.material.length === 0 &&
+    selectedTags.category.length === 0;
 
   return (
     <S.StoreWrapper hasDetail={hasDetail}>
@@ -156,13 +178,6 @@ function StoreContainer() {
                   {convertMaterialNameToKorean(tag)}
                 </S.Tag>
               ))}
-              <S.CapacityNote
-                type="button"
-                active={selectedTags.capacity.includes('소량 생산')}
-                onClick={toggleCapacity}
-              >
-                개인 및 학생 작업 가능
-              </S.CapacityNote>
             </S.TagItems>
             {selectedTags.material.length > 0 && (
               <S.TagClearButton
@@ -176,26 +191,71 @@ function StoreContainer() {
               </S.TagClearButton>
             )}
           </S.TagRow>
+          <S.TagRow>
+            <S.TagItems>
+              <S.TagLegend>카테고리:</S.TagLegend>
+              {STORE_CATEGORIES.map((tag) => (
+                <S.Tag
+                  key={tag}
+                  type="button"
+                  active={selectedTags.category.includes(tag)}
+                  onClick={() => handleTagClick('category', tag)}
+                >
+                  {tag}
+                </S.Tag>
+              ))}
+            </S.TagItems>
+            {selectedTags.category.length > 0 && (
+              <S.TagClearButton
+                type="button"
+                aria-label="카테고리 필터 초기화"
+                onClick={clearCategoryTags}
+              >
+                <svg viewBox="0 0 11 11" fill="none" aria-hidden="true">
+                  <path d="M1.5 1.5l8 8M9.5 1.5l-8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                </svg>
+              </S.TagClearButton>
+            )}
+          </S.TagRow>
         </S.TagPanel>
       </S.StoreToolbar>
       <ListS.ListLabelBar>
-        <ListS.ListLabel>라벨</ListS.ListLabel>
-        <ListS.ListLabel>
-          <ListS.SortButton
-            type="button"
-            onClick={() => handleSortChange(sortBy === 'nameAsc' ? 'nameDesc' : 'nameAsc')}
-          >
+        <ListS.ListLabel $active={isLabelSort}>
+          <ListS.SortButton type="button" onClick={handleLabelSort}>
+            라벨
+            <ListS.SortIcon
+              src="/img/icons/icon-sort.svg"
+              alt=""
+              $asc={sortBy !== 'labelDesc'}
+              $active={isLabelSort}
+            />
+          </ListS.SortButton>
+        </ListS.ListLabel>
+        <ListS.ListLabel $active={isNameSort}>
+          <ListS.SortButton type="button" onClick={handleNameSort}>
             이름
             <ListS.SortIcon
               src="/img/icons/icon-sort.svg"
               alt=""
-              $asc={sortBy === 'nameAsc'}
+              $asc={sortBy !== 'nameDesc'}
+              $active={isNameSort}
             />
           </ListS.SortButton>
         </ListS.ListLabel>
         <ListS.ListLabel>분야</ListS.ListLabel>
         <ListS.ListLabel>취급 품목</ListS.ListLabel>
-        <ListS.ListLabel>리뷰</ListS.ListLabel>
+        <ListS.ListLabel $active={isReviewSort}>
+          <ListS.SortButton type="button" onClick={handleReviewSort}>
+            후기
+            {isReviewSort && (
+              <ListS.SortIcon
+                src="/img/icons/icon-sort.svg"
+                alt=""
+                $asc
+              />
+            )}
+          </ListS.SortButton>
+        </ListS.ListLabel>
       </ListS.ListLabelBar>
       </S.StoreChrome>
 

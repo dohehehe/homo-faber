@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { getStores, getStoreById } from '@/utils/api/stores-api';
+import { storeMatchesCategory } from '@/config/storeCategories';
 
 // 전역 캐시 객체
 let storesCache = null;
@@ -31,6 +32,7 @@ export function useStores() {
   const fetchStores = useCallback(async (forceRefresh = false, append = false) => {
     // 첫 로드이고 캐시가 유효하고 강제 새로고침이 아닌 경우 캐시 사용
     if (!append && !forceRefresh && storesCache && storesCacheTimestamp &&
+      storesCache[0]?.labelNumber &&
       (Date.now() - storesCacheTimestamp) < CACHE_DURATION) {
       setStores(storesCache);
       setIsLoading(false);
@@ -51,7 +53,10 @@ export function useStores() {
       // 현재 offset 계산
       const currentOffset = append ? offsetRef.current : 0;
       const result = await getStores('', INITIAL_LIMIT, currentOffset);
-      const storesArray = Array.isArray(result.data) ? result.data : [];
+      const storesArray = (Array.isArray(result.data) ? result.data : []).map((store, i) => ({
+        ...store,
+        labelNumber: currentOffset + i + 1,
+      }));
 
       if (append) {
         setStores(prev => [...prev, ...storesArray]);
@@ -284,19 +289,28 @@ export function useStoreList() {
   return { stores, loading, error };
 }
 
+function getReviewCount(store) {
+  if (Array.isArray(store?.comments)) {
+    return typeof store.comments[0]?.count === 'number'
+      ? store.comments[0].count
+      : store.comments.length;
+  }
+  return store?.comment_count ?? 0;
+}
+
 /**
  * 스토어 검색, 태그 필터링, 정렬 기능을 제공하는 훅
  * @param {Array} stores - 필터링할 스토어 목록
  * @param {string} searchKeyword - 검색 키워드
  * @param {Object} selectedTags - 선택된 태그들 {industry: [], capacity: [], material: []}
- * @param {string} sortBy - 정렬 방식 ('recommended', 'nameAsc', 'nameDesc')
+ * @param {string} sortBy - 정렬 방식 ('labelAsc', 'labelDesc', 'nameAsc', 'nameDesc', 'reviews')
  * @returns {Array} - 필터링 및 정렬된 스토어 목록
  */
 export function useStoreFilters(
   stores,
   searchKeyword,
   selectedTags = null,
-  sortBy = 'nameAsc',
+  sortBy = 'labelAsc',
 ) {
   return useMemo(() => {
     // 1. 검색어 필터링
@@ -314,14 +328,15 @@ export function useStoreFilters(
 
     // 2. 태그 필터링 (selectedTags가 제공된 경우에만)
     if (selectedTags) {
-      const { industry, capacity, material } = selectedTags;
+      const { industry, capacity, material, category } = selectedTags;
 
       // 선택된 태그가 있는 경우에만 필터링
       const hasIndustryFilter = industry?.length > 0;
       const hasCapacityFilter = capacity?.length > 0;
       const hasMaterialFilter = material?.length > 0;
+      const hasCategoryFilter = category?.length > 0;
 
-      if (hasIndustryFilter || hasCapacityFilter || hasMaterialFilter) {
+      if (hasIndustryFilter || hasCapacityFilter || hasMaterialFilter || hasCategoryFilter) {
         filteredStores = filteredStores.filter((store) => {
           // 각 카테고리 내에서는 OR 조건, 카테고리 간에는 AND 조건
           const matchesIndustry =
@@ -348,7 +363,11 @@ export function useStoreFilters(
                 material.includes(item.material_types.name),
             );
 
-          return matchesIndustry && matchesCapacity && matchesMaterial;
+          const matchesCategory =
+            !hasCategoryFilter ||
+            category.some((label) => storeMatchesCategory(store, label));
+
+          return matchesIndustry && matchesCapacity && matchesMaterial && matchesCategory;
         });
       }
     }
@@ -356,45 +375,23 @@ export function useStoreFilters(
     // 3. 정렬
     const sortedStores = [...filteredStores];
 
+    const byLabel = (direction) => {
+      sortedStores.sort((a, b) => {
+        const aNo = a.labelNumber;
+        const bNo = b.labelNumber;
+        if (aNo != null && bNo != null && aNo !== bNo) {
+          return direction * (aNo - bNo);
+        }
+        const aTime = new Date(a.created_at).getTime() || 0;
+        const bTime = new Date(b.created_at).getTime() || 0;
+        if (aTime !== bTime) return direction * (aTime - bTime);
+        return direction * String(a.id || '').localeCompare(String(b.id || ''));
+      });
+    };
+
     switch (sortBy) {
-      case 'recommended':
-        // 추천순 정렬 - priority가 true인 스토어를 먼저, 그 다음 keyword가 있는 스토어를 위로
-        sortedStores.sort((a, b) => {
-          // priority 체크 (true인 경우만 priority로 간주, null/undefined/false는 false로 처리)
-          const aHasPriority = a.priority === true;
-          const bHasPriority = b.priority === true;
-          const aHasKeyword = Array.isArray(a.keyword) && a.keyword.length > 0;
-          const bHasKeyword = Array.isArray(b.keyword) && b.keyword.length > 0;
-
-          // 1순위: priority가 true인 스토어를 가장 위로
-          if (aHasPriority && !bHasPriority) return -1;
-          if (!aHasPriority && bHasPriority) return 1;
-
-          // 2순위: 둘 다 priority가 같다면 keyword가 있는 스토어를 위로
-          if (aHasKeyword && !bHasKeyword) return -1;
-          if (!aHasKeyword && bHasKeyword) return 1;
-
-          // 3순위: 나머지는 이름순으로 정렬 (한글과 영어 모두 포함)
-          // 영어와 한글을 구분하지 않고 알파벳 순으로 정렬
-          const nameA = (a.name || '').toLowerCase();
-          const nameB = (b.name || '').toLowerCase();
-          if (nameA < nameB) return -1;
-          if (nameA > nameB) return 1;
-          return 0;
-        });
-        break;
-
       case 'nameDesc':
-        // 이름 내림차순 정렬 - priority가 true인 스토어를 먼저
         sortedStores.sort((a, b) => {
-          const aHasPriority = a.priority === true;
-          const bHasPriority = b.priority === true;
-
-          // priority가 true인 스토어를 위로
-          if (aHasPriority && !bHasPriority) return -1;
-          if (!aHasPriority && bHasPriority) return 1;
-
-          // 나머지는 이름 내림차순으로 정렬 (한글과 영어 모두 포함)
           const nameA = (a.name || '').toLowerCase();
           const nameB = (b.name || '').toLowerCase();
           if (nameB < nameA) return -1;
@@ -404,23 +401,27 @@ export function useStoreFilters(
         break;
 
       case 'nameAsc':
-      default:
-        // 이름 오름차순 정렬 (기본값) - priority가 true인 스토어를 먼저
         sortedStores.sort((a, b) => {
-          const aHasPriority = a.priority === true;
-          const bHasPriority = b.priority === true;
-
-          // priority가 true인 스토어를 위로
-          if (aHasPriority && !bHasPriority) return -1;
-          if (!aHasPriority && bHasPriority) return 1;
-
-          // 나머지는 이름 오름차순으로 정렬 (한글과 영어 모두 포함)
           const nameA = (a.name || '').toLowerCase();
           const nameB = (b.name || '').toLowerCase();
           if (nameA < nameB) return -1;
           if (nameA > nameB) return 1;
           return 0;
         });
+        break;
+
+      case 'labelDesc':
+        byLabel(-1);
+        break;
+
+      case 'reviews':
+        sortedStores.sort((a, b) => getReviewCount(b) - getReviewCount(a));
+        break;
+
+      case 'labelAsc':
+      case 'recommended':
+      default:
+        byLabel(1);
         break;
     }
 
