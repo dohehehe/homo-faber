@@ -4,21 +4,19 @@ import theme from '@/styles/Theme';
 
 export const WordWrapper = styled.main`
   width: 100%;
-  height: 100%;
-  padding: 50px 20px 20px;
+  min-height: 100vh;
+  padding: calc(var(--header-height, 50px) + 30px) 20px 40px;
   position: relative;
   background: #ffffff;
-  cursor: ${(props) => (props.pathname && (props.pathname === '/' || props.pathname.startsWith('/word/'))) ? 'pointer' : 'default'};
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   flex-direction: column;
-  border-left: 0.5px solid #efefef;
+  align-items: center;
   color: #000;
 
   ${theme.media.mobile} {
-    padding: 50px 16px 20px;
-    border-left: 0;
-    border-top: 0.5px solid #efefef;
+    padding: calc(var(--header-height, 50px) + 20px) 16px 60px;
+    align-items: stretch;
   }
 `;
 
@@ -27,24 +25,51 @@ export const WordPageName = styled.h1`
 `;
 
 export const WordSearchWrapper = styled.div`
+  width: 100%;
   display: flex;
-  justify-content: flex-end;
-  padding-top: 0;
+  justify-content: flex-start;
   z-index: 3;
+  margin-bottom: 8px;
+  align-self: center;
+`;
+
+export const SearchField = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 300px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 5px;
+  background: rgba(227, 227, 227, 0.3);
+  color: #000;
 
   ${theme.media.mobile} {
-      position: fixed;
+    width: 100%;
+  }
+`;
+
+export const SearchLabel = styled.span`
+  flex-shrink: 0;
+  color: #000;
+`;
+
+export const SearchInput = styled.input`
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: #000;
+
+  &::placeholder {
+    color: #c7c7c7;
   }
 `;
 
 export const WordItemWrapper = styled.section`
-  display:flex;
-  gap: 5%;
-  // overflow-y: visible;
-
-  ${theme.media.mobile} {
-    gap: 0px;
-  }
+  display: flex;
+  width: 100%;
 `;
 
 export const WordList = styled.ul`
@@ -52,20 +77,12 @@ export const WordList = styled.ul`
   margin-top: 0;
   padding-top: 20px;
   z-index: 2;
-  overflow-y: auto;
-  height: 100%;
-  min-width: 220px;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  width: 100%;
+  text-align: left;
 
   ${theme.media.mobile} {
-    margin-top: 0;
     padding-top: 20px;
-    min-width: 140px;
+    text-align: left;
   }
 `;
 
@@ -103,19 +120,17 @@ export const WordTitle = styled.h2`
 `;
 
 export const WordMeaningsContainer = styled.section`
+  position: fixed;
+  top: calc(var(--header-height, 50px) + 20px);
+  right: 20px;
+  width: min(420px, calc(100vw - 40px));
+  max-height: calc(100dvh - var(--header-height, 50px) - 40px);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  flex-grow: 1;
-  margin-right: 0;
   overflow-x: hidden;
-  height: 100%;
-  margin-top: 0;
-  padding-top: 10px;
-  overflow-y: auto;
-  padding-bottom: 20px;
-  max-width: 500px;
-  margin-left: auto;
+  z-index: 50;
+  pointer-events: none;
 
   &::-webkit-scrollbar {
     display: none;
@@ -124,10 +139,11 @@ export const WordMeaningsContainer = styled.section`
   scrollbar-width: none;
   
   ${theme.media.mobile} {
-      margin-right: 0px;
-      margin-top: 0;
-      padding-top: 10px;
-      padding-bottom: 100px;
+    top: calc(var(--header-height, 50px) + 10px);
+    right: 16px;
+    left: 16px;
+    width: auto;
+    max-height: calc(100dvh - var(--header-height, 50px) - 30px);
   }
 `;
 
@@ -147,6 +163,7 @@ export const WordMeaning = styled.div`
   color: #000;
   z-index: 2;
   position: relative;
+  pointer-events: auto;
   animation: slideIn 0.4s ease-out;
   margin: 0 0 10px;
   
@@ -198,14 +215,6 @@ export const WordMeaningImage = styled.img`
   border-radius: 4px;
   display: block;
   margin-top: 10px;
-  margin-left: 3px;
-  // margin-right: 15px;
-
-  ${theme.media.mobile} {
-    width: 100%;
-    height: auto;
-    max-width: unset;
-  }
 `;
 
 export const WordMeaningCloseButton = styled.button`

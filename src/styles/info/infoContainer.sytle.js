@@ -6,26 +6,21 @@ export const InfoWrapper = styled(motion.main, {
   shouldForwardProp: (prop) => prop !== 'gradientCss' && prop !== 'pathname',
 })`
   width: 100%;
-  height: 100dvh;
-  padding: 50px 20px 0;
+  min-height: 100vh;
+  padding: calc(var(--header-height, 50px) + 30px) 20px 80px;
   z-index: 3;
   background: #ffffff;
-  cursor: ${(props) => (props.pathname && (props.pathname === '/' || props.pathname.startsWith('/info/'))) ? 'pointer' : 'default'};
   display: flex;
   flex-direction: column;
-  border-left: 0.5px solid #efefef;
+  align-items: center;
   color: #000;
-  overflow-y: hidden;
+  overflow: visible;
   pointer-events: auto;
   position: relative;
 
   ${theme.media.mobile} { 
-    padding: 50px 16px 20px;
+    padding: calc(var(--header-height, 50px) + 20px) 16px 60px;
     overflow-x: hidden;
-    position: relative;
-    border-left: none;
-    border-top: 0.5px solid #efefef;
-    width: 100dvw;
     word-break: keep-all;
   }
 `;
@@ -36,21 +31,14 @@ export const InfoPageName = styled.div`
 `;
 
 export const InfoPageContent = styled.div`
-  height: 100%; 
-  overflow-y: scroll;
-  padding-right: 20px;
-  padding-top: 20px;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  overflow: visible;
+  padding: 0;
 
   ${theme.media.mobile} {
-    height: 100%;
-    padding-bottom: 100px;
-    padding-right: 0px;
-    overflow-x: hidden;
+    padding-bottom: 40px;
   }
 `;
 
@@ -74,26 +62,17 @@ export const Infoh1 = styled.h1`
 export const Infoh3 = styled.h3`
   font-size: 1rem;
   font-weight: 400;
-  margin-bottom: 10px;
+  margin-bottom: 48px;
   line-height: 1.6;
   font-style: italic;
   width: 100%;
-  max-width: 450px;
-  margin-left: auto;
-  margin-right: 20px;
   color: #a0a0a0;
-  text-indent: -170px;
-  margin-bottom: 200px;
   word-break: keep-all;
   letter-spacing: -0.01em;
 
   ${theme.media.tablet} {
-    text-indent: 0px;
     font-size: 0.9rem;
-    width: 90%;
-    margin-left: 0;
-    margin-bottom: 130px;
-    text-align: left;
+    margin-bottom: 40px;
   }
 `;
 
@@ -116,26 +95,22 @@ export const Infoh2 = styled.h2`
 `;
 
 export const InfoArticle = styled.article`
-  max-width: 700px;
-  margin-left: 100px;
+  width: 100%;
   margin-top: 20px;
-  margin-bottom: 260px;
+  margin-bottom: 80px;
   word-break: keep-all;
-  margin-left: auto;
 
   ${theme.media.mobile} {
-    margin-left: 0;
     margin-top: 0px;
-    margin-bottom: 200px;
+    margin-bottom: 60px;
   }
 `
 
 export const InfoSubTitle = styled.h4`
   font-size: 1rem;
   font-weight: 700;
-  margin-bottom: 30px;
-  margin-top: 160px;
-  margin-left: 100px;
+  margin-bottom: 20px;
+  margin-top: 48px;
   letter-spacing: -0.01em;
   color: #000;
 
@@ -143,17 +118,8 @@ export const InfoSubTitle = styled.h4`
     margin-top: 0px;
   }
 
-  & + p {
-    text-indent: 100px;
-
-    ${theme.media.mobile} {
-      text-indent: 80px;
-    }
-  }
-
   ${theme.media.mobile} {
     font-size: 1rem;
-    margin-left: 0;
     font-weight: 700;
   }
 `
@@ -207,56 +173,30 @@ export const InfoTimelineTable = styled.table`
   // max-width: 800px;
   border-collapse: collapse;
   border: none;
-  margin-bottom: 250px;
+  margin-bottom: 80px;
 `
 
 export const InfoTimelineTableHead = styled.thead`
   display: none;
 `
 export const InfoTimelineTableBody = styled.tbody`
-  width: calc(100% - 23dvw);  
-
-  ${theme.media.tablet} {
-    width: 100%;
-  }
+  width: 100%;
 `
 
 export const InfoTimelineTableTr = styled.tr`
   border-top: ${(props) => props.isFirstOfYear ? '1.2px solid #000' : 'none'};
   display: flex;
   position: relative;
-  width: calc(100% - 23dvw);  
+  width: 100%;
 
   &:hover {
     background-color: var(--yellow);
-
-    &::after {
-      display: ${(props) => props.isImg ? 'block' : 'none'};
-      pointer-events: none;
-      content: '';
-      position: absolute;
-      top: 0;
-      right: -24vw;
-      width: 24vw;
-      height: 100%;
-      background-color: var(--yellow);
-    }
 
     .timeline-img {
       height: auto;
       z-index: 2;
     }
   }
-
-  ${theme.media.tablet} {
-    width: 100%;
-
-    &:hover {
-      &::after {
-        display: none;
-      }    
-    }
-}  
 `
 
 export const InfoTimelineTableTd = styled.td`
@@ -359,51 +299,22 @@ export const InfoTimelineInfo = styled.div`
 `
 
 export const InfoTimelineTableTdImg = styled.div`
-  width: 24dvw;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  top: -1px;
-  right: -24dvw;
-  transition: all .4s ;
+  width: 100%;
+  display: block;
+  position: static;
+  height: auto;
+  padding-left: 7px;
+  padding-right: 20px;
+  margin-bottom: 15px;
 
   img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: cover;
     vertical-align: top;
-    margin-top: 1px;
-    border-top: 1px dotted rgb(167, 167, 167);
-    padding-left: 7dvw;
-  }
-
-  &:hover {
-    height: auto;
-    z-index: 2;
-  }
-
-  ${theme.media.tablet} {
-    width: 100%;
-    display: block;
-    position: static;
-    right: unset;
-    top: unset;
-    height: auto;
-    padding-left: 7px;
-    padding-right: 20px;
-    margin-bottom: 15px;
-
-    img {
-      margin-left: 5px;
-      padding-left: 0px;
-      border-top: none;
-      height: auto;
-    }
-
-    &:hover {
-      height: auto;
-      right: 0;
-    }
+    margin-left: 5px;
+    padding-left: 0px;
+    border-top: none;
   }
 `
 
@@ -416,10 +327,10 @@ export const InfoCreditsTable = styled.table`
   margin: 0 auto;
   font-size: 1rem;
   line-height: 1.6;
-  margin-bottom: 250px;
+  margin-bottom: 80px;
 
   ${theme.media.mobile} {
-    margin-bottom: 100px;
+    margin-bottom: 40px;
   }
 `
 

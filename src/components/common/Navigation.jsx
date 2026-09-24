@@ -62,9 +62,15 @@ export default function Navigation() {
   const [loginOpen, setLoginOpen] = useState(false);
   const { t, language, toggleLanguage } = useLanguage();
   const archiveRef = useRef(null);
+  const headerRef = useRef(null);
   const { isMobile } = useWindowSize();
 
   const isAdminRoute = pathname?.startsWith('/admin');
+  const isHomeLanding =
+    pathname === '/' ||
+    pathname === '/home' ||
+    pathname === '/login' ||
+    pathname === '/signup';
   const isArchiveActive = ARCHIVE_LINKS.some(({ href }) => isActive(pathname, href));
   const isLoginRoute = pathname === '/login';
 
@@ -96,22 +102,39 @@ export default function Navigation() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        archiveRef.current &&
-        !archiveRef.current.contains(event.target) &&
-        !event.target.closest('[data-archive-tabs]')
-      ) {
+      if (archiveRef.current && !archiveRef.current.contains(event.target)) {
         setArchiveOpen(false);
       }
     };
     const openLogin = () => setLoginOpen(true);
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
     window.addEventListener('openLogin', openLogin);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
       window.removeEventListener('openLogin', openLogin);
     };
   }, []);
+
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return undefined;
+
+    const updateHeaderHeight = () => {
+      document.documentElement.style.setProperty(
+        '--header-height',
+        `${Math.round(el.getBoundingClientRect().height)}px`,
+      );
+    };
+
+    updateHeaderHeight();
+    const observer = new ResizeObserver(updateHeaderHeight);
+    observer.observe(el);
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateHeaderHeight);
+    };
+  }, [archiveOpen, isArchiveActive, pathname, isClient]);
 
   if (!isClient || isAdminRoute) {
     return null;
@@ -127,41 +150,54 @@ export default function Navigation() {
 
   return (
     <>
-      <S.HeaderBar opaque={pathname?.startsWith('/store') || isArchiveActive}>
+      <S.HeaderBar
+        ref={headerRef}
+        opaque={pathname?.startsWith('/store') || isArchiveActive}
+      >
         <S.HeaderLeft>
           <Link href="/" style={{ textDecoration: 'none' }}>
-            <S.Brand>{language === 'ko' ? '청계천을지로 기술유통중개소' : 'Home Faber'}</S.Brand>
+            <S.Brand $light={isHomeLanding}>
+              <S.BrandLine>HomoFaber 호모파베르</S.BrandLine>
+              <S.BrandLine>청계천을지로 기술유통중개소</S.BrandLine>
+            </S.Brand>
           </Link>
 
-          <S.NavGroup>
-            <Link href="/store" style={{ textDecoration: 'none', height: '100%' }}>
-              <S.NavLink active={isActive(pathname, '/store')}>{t('nav.store')}</S.NavLink>
-            </Link>
-            <Link href="/fnq" style={{ textDecoration: 'none', height: '100%' }}>
-              <S.NavLink active={isActive(pathname, '/fnq')}>{t('nav.fnq')}</S.NavLink>
-            </Link>
-            <S.ArchiveWrap ref={archiveRef}>
+          <S.ArchiveCluster ref={archiveRef}>
+            <S.NavGroup>
+              <Link href="/store" style={{ textDecoration: 'none', height: '100%' }}>
+                <S.NavLink active={isActive(pathname, '/store')}>{t('nav.store')}</S.NavLink>
+              </Link>
+              <Link href="/fnq" style={{ textDecoration: 'none', height: '100%' }}>
+                <S.NavLink active={isActive(pathname, '/fnq')}>{t('nav.fnq')}</S.NavLink>
+              </Link>
               <S.NavLink
                 as="button"
                 type="button"
                 active={isArchiveActive}
-                onClick={() => setArchiveOpen((open) => !open)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setArchiveOpen((open) => !open);
+                }}
                 aria-expanded={archiveOpen || isArchiveActive}
               >
                 {t('nav.archive')}
               </S.NavLink>
-            </S.ArchiveWrap>
-          </S.NavGroup>
-
-          {(archiveOpen || isArchiveActive) && (
-            <S.NavGroup data-archive-tabs>
-              {ARCHIVE_LINKS.map(({ href, key }) => (
-                <Link key={href} href={href} style={{ textDecoration: 'none', height: '100%' }}>
-                  <S.NavLink active={isActive(pathname, href)}>{t(`nav.${key}`)}</S.NavLink>
-                </Link>
-              ))}
             </S.NavGroup>
-          )}
+
+            {(archiveOpen || isArchiveActive) && (
+              <S.NavGroup $sub>
+                {ARCHIVE_LINKS.map(({ href, key }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    style={{ textDecoration: 'none', height: '100%' }}
+                  >
+                    <S.NavLink active={isActive(pathname, href)}>{t(`nav.${key}`)}</S.NavLink>
+                  </Link>
+                ))}
+              </S.NavGroup>
+            )}
+          </S.ArchiveCluster>
         </S.HeaderLeft>
 
         <S.HeaderRight>

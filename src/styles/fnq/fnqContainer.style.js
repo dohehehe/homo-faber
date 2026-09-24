@@ -8,7 +8,7 @@ import { captionText } from '@/styles/typography';
 export const FnqWrapper = styled(motion.main)`
   width: 100%;
   min-height: 100vh;
-  padding: 80px 20px 80px;
+  padding: calc(var(--header-height, 50px) + 30px) 20px 80px;
   z-index: 3;
   background: #ffffff;
   display: flex;
@@ -19,7 +19,7 @@ export const FnqWrapper = styled(motion.main)`
   overflow: visible;
 
   ${theme.media.mobile} {
-    padding: 70px 16px 60px;
+    padding: calc(var(--header-height, 50px) + 20px) 16px 60px;
   }
 `;
 
@@ -175,6 +175,15 @@ export const FormGroup = styled.div`
 export const Label = styled.label`
   font-weight: 700;
   color: #000;
+`;
+
+export const InputRow = styled.div`
+  display: flex;
+  gap: 8px;
+
+  ${theme.media.mobile} {
+    flex-direction: column;
+  }
 `;
 
 export const Caption = styled.p`

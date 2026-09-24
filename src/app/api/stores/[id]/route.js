@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClientSimple } from '@/utils/supabase/server-client';
+import { createServerSupabaseClient, createServerSupabaseClientSimple } from '@/utils/supabase/server-client';
+import { lockStoreForGuest } from '@/utils/lockStoreSecrets';
 
 // GET /api/stores/[id] - 특정 스토어 조회
 export async function GET(request, { params }) {
   try {
-    const supabase = createServerSupabaseClientSimple();
+    const supabase = createServerSupabaseClient();
     const { id } = params;
 
     if (!id) {
@@ -37,12 +38,49 @@ export async function GET(request, { params }) {
         store_gallery(
           image_url,
           order_num
+        ),
+        store_category(
+          category_types(id, name)
         )
       `)
       .eq('id', id)
       .single();
 
     if (error) {
+      if (/store_category|category_types/.test(error.message || '')) {
+        const fallback = await supabase
+          .from('stores')
+          .select(`
+            *,
+            store_contacts(
+              phone,
+              telephone,
+              fax,
+              email,
+              website
+            ),
+            store_capacity(
+              capacity_types(id, name)
+            ),
+            store_industry(
+              industry_types(id, name)
+            ),
+            store_material(
+              material_types(id, name)
+            ),
+            store_gallery(
+              image_url,
+              order_num
+            )
+          `)
+          .eq('id', id)
+          .single();
+        if (!fallback.error) {
+          const { data: { user } } = await supabase.auth.getUser();
+          const payload = user ? fallback.data : lockStoreForGuest(fallback.data);
+          return NextResponse.json({ data: payload });
+        }
+      }
       console.error('Supabase error:', error);
       if (error.code === 'PGRST116') {
         return NextResponse.json(
@@ -56,7 +94,10 @@ export async function GET(request, { params }) {
       );
     }
 
-    return NextResponse.json({ data });
+    const { data: { user } } = await supabase.auth.getUser();
+    const payload = user ? data : lockStoreForGuest(data);
+
+    return NextResponse.json({ data: payload });
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(
@@ -100,6 +141,7 @@ export async function PUT(request, { params }) {
       capacities,
       industries,
       materials,
+      categories,
       gallery
     } = body;
 
@@ -259,6 +301,32 @@ export async function PUT(request, { params }) {
       }
     }
 
+    if (categories) {
+      await supabase
+        .from('store_category')
+        .delete()
+        .eq('store_id', id);
+
+      if (categories.length > 0) {
+        const categoryInserts = categories.map((categoryId) => ({
+          store_id: id,
+          category_type_id: categoryId,
+        }));
+
+        const { error: categoryError } = await supabase
+          .from('store_category')
+          .insert(categoryInserts);
+
+        if (categoryError) {
+          console.error('Category update error:', categoryError);
+          return NextResponse.json(
+            { error: '카테고리 정보 업데이트 중 오류가 발생했습니다.' },
+            { status: 500 }
+          );
+        }
+      }
+    }
+
     // 6. 갤러리 정보 업데이트
     if (gallery) {
       // 기존 갤러리 삭제
@@ -368,6 +436,11 @@ export async function DELETE(request, { params }) {
         { status: 500 }
       );
     }
+
+    await supabase
+      .from('store_category')
+      .delete()
+      .eq('store_id', id);
 
     // 5. store_contacts 삭제
     const { error: contactsError } = await supabase

@@ -59,6 +59,7 @@ export async function getStoreById(storeId) {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
     });
 
     if (!response.ok) {

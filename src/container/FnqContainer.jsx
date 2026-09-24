@@ -7,7 +7,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import Editor from '@/components/interview/Editor';
 import Popup from '@/components/common/Popup';
-import Link from 'next/link';
 import { getStoreTypes } from '@/utils/api/stores-api';
 import { convertMaterialNameToKorean } from '@/utils/converters';
 
@@ -76,8 +75,12 @@ function FnqContainer() {
     mode: 'onChange',
     defaultValues: {
       files: [],
+      title: '',
       client_name: '',
       affiliation: '',
+      phone: '',
+      purpose: '',
+      production_plan: '',
     }
   });
 
@@ -137,6 +140,11 @@ function FnqContainer() {
     try {
       const dataToSave = {
         title: formData.title || '',
+        client_name: formData.client_name || '',
+        affiliation: formData.affiliation || '',
+        phone: formData.phone || '',
+        purpose: formData.purpose || '',
+        production_plan: formData.production_plan || '',
         count: formData.count || '',
         budget: formData.budget || '',
         due_date: formData.due_date || '',
@@ -349,26 +357,40 @@ function FnqContainer() {
         outputData = editorSaveData.blocks || [];
       }
 
+      const extraBlocks = [];
       if (formData.client_name || formData.affiliation) {
-        outputData = [
-          {
-            type: 'paragraph',
-            data: { text: `의뢰인: ${formData.client_name || '-'}` },
-          },
-          {
-            type: 'paragraph',
-            data: { text: `소속: ${formData.affiliation || '-'}` },
-          },
-          ...(Array.isArray(outputData) ? outputData : []),
-        ];
+        extraBlocks.push({
+          type: 'paragraph',
+          data: { text: `의뢰인 성함/소속: ${[formData.client_name, formData.affiliation].filter(Boolean).join(', ') || '-'}` },
+        });
       }
-
+      if (formData.phone) {
+        extraBlocks.push({
+          type: 'paragraph',
+          data: { text: `주문자 전화번호: ${formData.phone}` },
+        });
+      }
       if (selectedServices.length > 0) {
+        extraBlocks.push({
+          type: 'paragraph',
+          data: { text: `원하는 제조 서비스: ${selectedServices.map(convertMaterialNameToKorean).join(', ')}` },
+        });
+      }
+      if (formData.purpose) {
+        extraBlocks.push({
+          type: 'paragraph',
+          data: { text: `제품용도: ${formData.purpose}` },
+        });
+      }
+      if (formData.production_plan) {
+        extraBlocks.push({
+          type: 'paragraph',
+          data: { text: `양산계획: ${formData.production_plan}` },
+        });
+      }
+      if (extraBlocks.length > 0) {
         outputData = [
-          {
-            type: 'paragraph',
-            data: { text: `제조 서비스: ${selectedServices.map(convertMaterialNameToKorean).join(', ')}` },
-          },
+          ...extraBlocks,
           ...(Array.isArray(outputData) ? outputData : []),
         ];
       }
@@ -473,44 +495,9 @@ function FnqContainer() {
             <S.FnqContextItem>
               Q. 문의 후 답변까지 얼마나 걸리나요?
               <br /><br />
-              A. 프로젝트 문의가 접수되면 내용을 확인한 뒤, 답변까지 보통 영업일 기준 3일~5일 정도 소요됩니다.
-            </S.FnqContextItem>
-            <S.FnqContextItem>
-              Q. 문의 진행은 어떤 순서로 이뤄지나요?
-              <br /><br />
-              A. 프로젝트 문의는 확인중 → 중개중 → 답변완료 순서로 진행됩니다.
-              <br />(주의) 중개중 단계에 들어가면 문의 수정이나 삭제가 불가능합니다.
-            </S.FnqContextItem>
-            <S.FnqContextItem>
-              Q. 문의 내용을 변경하고 싶을 때는 어떻게 하나요?
-              <br /><br />
-              A. 확인중 단계라면 <Link href="/mypage" style={{ textDecoration: 'underline' }}>내정보</Link> 페이지에서 직접 문의 수정이 가능합니다. 관련 요청 사항이 있으실 경우 플랫폼으로 직접 연락해주세요.
+              A. 프로젝트 문의가 홈페이지 및 카카오채널로 접수되면 내용을 확인한 뒤, 답변까지 보통 10분 이내 답변 드립니다. 급한 작업은 전화 상담이 가능합니다.
             </S.FnqContextItem>
           </S.FnqContext>
-
-          <S.FormGroup>
-            <S.Label><span style={{ color: 'red' }}>*</span> 의뢰인 이름</S.Label>
-            <S.Input
-              type="text"
-              placeholder="이름을 입력해주세요"
-              {...register('client_name', {
-                required: '의뢰인 이름을 입력해주세요',
-              })}
-            />
-            {errors.client_name && <S.ErrorMessage>{errors.client_name.message}</S.ErrorMessage>}
-          </S.FormGroup>
-
-          <S.FormGroup>
-            <S.Label><span style={{ color: 'red' }}>*</span> 소속</S.Label>
-            <S.Input
-              type="text"
-              placeholder="소속(학교, 회사 등)을 입력해주세요"
-              {...register('affiliation', {
-                required: '소속을 입력해주세요',
-              })}
-            />
-            {errors.affiliation && <S.ErrorMessage>{errors.affiliation.message}</S.ErrorMessage>}
-          </S.FormGroup>
 
           <S.FormGroup>
             <S.Label><span style={{ color: 'red' }}>*</span> 프로젝트 이름</S.Label>
@@ -529,8 +516,43 @@ function FnqContainer() {
           </S.FormGroup>
 
           <S.FormGroup>
-            <S.Label>제조 서비스</S.Label>
-            <S.Caption>요청하는 제조 서비스를 아래에서 선택해주세요. 해당사항이 없다면 아래 상세내용에 기입해주세요.</S.Caption>
+            <S.Label><span style={{ color: 'red' }}>*</span> 의뢰하시는 분 성함, 소속 (개인 혹은 업체명)</S.Label>
+            <S.InputRow>
+              <S.Input
+                type="text"
+                placeholder="성함"
+                {...register('client_name', {
+                  required: '성함을 입력해주세요',
+                })}
+              />
+              <S.Input
+                type="text"
+                placeholder="소속 (개인 혹은 업체명)"
+                {...register('affiliation', {
+                  required: '소속을 입력해주세요',
+                })}
+              />
+            </S.InputRow>
+            {(errors.client_name || errors.affiliation) && (
+              <S.ErrorMessage>{errors.client_name?.message || errors.affiliation?.message}</S.ErrorMessage>
+            )}
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label><span style={{ color: 'red' }}>*</span> 주문자 전화번호</S.Label>
+            <S.Input
+              type="tel"
+              placeholder="010-0000-0000"
+              {...register('phone', {
+                required: '전화번호를 입력해주세요',
+              })}
+            />
+            {errors.phone && <S.ErrorMessage>{errors.phone.message}</S.ErrorMessage>}
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label>원하는 제조 서비스 (밀링/선반/용접 등)</S.Label>
+            <S.Caption>요청하는 제조 서비스를 아래에서 선택해주세요. 해당사항이 없다면 아래 작업 상세 내용에 기입해주세요.</S.Caption>
             <S.ServiceTagRow>
               {serviceTags.map((tag) => (
                 <S.ServiceTag
@@ -555,10 +577,10 @@ function FnqContainer() {
           </S.FormGroup>
 
           <S.FormGroup>
-            <S.Label>수량</S.Label>
+            <S.Label>총 수량</S.Label>
             <S.Input
               type="number"
-              placeholder="수량을 입력해주세요 (선택)"
+              placeholder="수량을 입력해주세요"
               {...register('count', {
                 min: {
                   value: 1,
@@ -570,17 +592,7 @@ function FnqContainer() {
           </S.FormGroup>
 
           <S.FormGroup>
-            <S.Label>예산</S.Label>
-            <S.Input
-              type="text"
-              placeholder="예산을 입력해주세요 (선택)"
-              {...register('budget')}
-              onChange={handleBudgetChange}
-            />
-          </S.FormGroup>
-
-          <S.FormGroup>
-            <S.Label>납기일</S.Label>
+            <S.Label>희망 납기일</S.Label>
             <S.Input
               type="date"
               {...register('due_date')}
@@ -588,14 +600,41 @@ function FnqContainer() {
           </S.FormGroup>
 
           <S.FormGroup>
-            <S.Label><span style={{ color: 'red' }}>*</span> 상세내용</S.Label>
+            <S.Label>제품용도 (예, 자동차 부품)</S.Label>
+            <S.Input
+              type="text"
+              placeholder="제품용도를 입력해주세요"
+              {...register('purpose')}
+            />
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label>추정 예산</S.Label>
+            <S.Input
+              type="text"
+              placeholder="추정 예산을 입력해주세요"
+              {...register('budget')}
+              onChange={handleBudgetChange}
+            />
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label>양산계획</S.Label>
+            <S.Input
+              type="text"
+              placeholder="양산계획을 입력해주세요"
+              {...register('production_plan')}
+            />
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label><span style={{ color: 'red' }}>*</span> 작업 상세 내용</S.Label>
             <S.InputInfo style={{ color: '#444' }}>제작 목적 및 동작 시나리오를 설명해주세요. <br />상세하게 작성할수록 기술자가 프로젝트를 이해하는데 도움이 됩니다</S.InputInfo>
             <Editor ref={editorRef} data={editorData} />
           </S.FormGroup>
 
-          {/* 파일 업로드 갤러리 */}
           <S.FormGroup>
-            <S.Label>첨부파일</S.Label>
+            <S.Label>도면 파일 (선택)</S.Label>
             <S.InputInfo style={{ color: '#444' }}>프로젝트를 이해하는데 도움이 되는 도면 또는 스케치를 전달해주세요</S.InputInfo>
             <S.InputInfo>
               *5MB 이상의 파일은 아래의 이메일로 &apos;프로젝트 이름&apos;과 함께 전달해주세요.<br />

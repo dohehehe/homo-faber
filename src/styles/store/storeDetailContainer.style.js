@@ -8,12 +8,12 @@ export const DetailWrapper = styled(motion.main, {
 })`
   width: calc(100% * 4 / 12);
   min-width: 500px;
-  height: calc(100dvh - 50px);
+  height: calc(100dvh - var(--header-height, 50px));
   padding: 15px;
   background-color: #fbfbfb;
   position: fixed;
   right: 0;
-  top: 50px;
+  top: var(--header-height, 50px);
   z-index: 40;
   display: flex;
   flex-direction: column;
@@ -23,8 +23,8 @@ export const DetailWrapper = styled(motion.main, {
   ${theme.media.mobile} {
     width: 100%;
     min-width: 0;
-    top: 50px;
-    height: calc(100dvh - 50px);
+    top: var(--header-height, 50px);
+    height: calc(100dvh - var(--header-height, 50px));
     left: 0;
     right: 0;
     border-left: none;
@@ -258,10 +258,33 @@ export const StoreContactTxt = styled.div`
   white-space: nowrap;
 `;
 
-export const StoreContactContent = styled.div`
+export const StoreContactContent = styled('div', {
+  shouldForwardProp: (prop) => prop !== '$blurred',
+})`
+  ${(props) => props.$blurred && `
+    filter: blur(5px);
+    user-select: none;
+    pointer-events: none;
+  `}
+
   a {
     color: inherit;
     text-decoration: none;
+  }
+`;
+
+export const SignupHint = styled.button`
+  margin: 8px 0 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #a0a0a0;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+
+  &:hover {
+    color: #000;
   }
 `;
 
@@ -284,18 +307,17 @@ export const LockedContactGroup = styled.button`
     color: inherit;
   }
 
+  ${SignupHint} {
+    color: inherit;
+    margin-top: 8px;
+  }
+
   &:hover {
     color: #000;
   }
-`;
 
-export const SignupHint = styled.p`
-  margin: 8px 0 0;
-  color: #a0a0a0;
-
-  a {
+  &:hover ${SignupHint} {
     color: #000;
-    text-decoration: underline;
   }
 `;
 
@@ -303,12 +325,19 @@ export const StoreDescription = styled.div`
   color: #333;
 `;
 
-export const StoreCardImg = styled.img`
-  width: 48%;
-  min-width: 140px;
-  height: 220px;
-  object-fit: cover;
+export const StoreCardImgWrap = styled('button', {
+  shouldForwardProp: (prop) => prop !== '$locked',
+})`
+  position: relative;
+  display: block;
+  width: 50%;
+  min-width: 160px;
+  height: 200px;
+  padding: 0;
+  border: none;
+  background: none;
   border-radius: 8px;
+  overflow: hidden;
   cursor: pointer;
 
   ${theme.media.mobile} {
@@ -321,6 +350,32 @@ export const StoreCardImg = styled.img`
   }
 `;
 
+export const StoreCardImg = styled('img', {
+  shouldForwardProp: (prop) => prop !== '$locked',
+})`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+  filter: ${(props) => (props.$locked ? 'blur(16px)' : 'none')};
+  transform: ${(props) => (props.$locked ? 'scale(1.12)' : 'none')};
+`;
+
+export const LockedMediaHint = styled.span`
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #000;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  pointer-events: none;
+`;
+
 export const StoreImgList = styled.div`
   display: flex;
   gap: 8px;
@@ -328,9 +383,9 @@ export const StoreImgList = styled.div`
 `;
 
 export const StoreImg = styled.img`
-  width: 48%;
-  min-width: 140px;
-  height: 220px;
+  width: 50%;
+  min-width: 160px;
+  height: 200px;
   object-fit: cover;
   border-radius: 8px;
   cursor: pointer;

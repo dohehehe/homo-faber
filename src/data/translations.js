@@ -41,7 +41,7 @@ export const translations = {
         askTitle: 'Ask',
         askBody: '내 작업에 맞는 청계천, 을지로 기술자들을 직접 찾아볼 수 있습니다. 나에게 맞는 키워드를 선택하거나 검색하며 내 작업에 꼭 맞는 기술자를 만나보세요!',
         askCta: '작업 의뢰하기',
-        footerCopy: 'ⓒ 2026 청계천을지로 기술유통중개소 / Homo Faber / Listen to the City. All rights reserved.',
+        footerCopy: 'ⓒ 2026 HomoFaber 호모파베르 / 청계천을지로 기술유통중개소 / Listen to the City. All rights reserved.',
       },
       store: {
         title: '업체',
@@ -177,7 +177,7 @@ export const translations = {
         askTitle: 'Ask',
         askBody: 'Share your project and we will connect you with the right technician.',
         askCta: 'Request work',
-        footerCopy: 'ⓒ 2026 청계천을지로 기술유통중개소 / Homo Faber / Listen to the City. All rights reserved.',
+        footerCopy: 'ⓒ 2026 HomoFaber 호모파베르 / 청계천을지로 기술유통중개소 / Listen to the City. All rights reserved.',
       },
       store: {
         title: 'Store',

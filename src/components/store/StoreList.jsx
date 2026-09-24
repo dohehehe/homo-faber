@@ -70,7 +70,7 @@ const StoreList = ({ stores, isLoading, isLoadingMore, error, hasMore, onLoadMor
             <S.TableHeaderCell>라벨</S.TableHeaderCell>
             <S.TableHeaderCell>이름</S.TableHeaderCell>
             <S.TableHeaderCell>분야</S.TableHeaderCell>
-            <S.TableHeaderCell>취급 품목</S.TableHeaderCell>
+            <S.TableHeaderCell>공정</S.TableHeaderCell>
             <S.TableHeaderCell>후기</S.TableHeaderCell>
           </tr>
         </S.TableHeader>

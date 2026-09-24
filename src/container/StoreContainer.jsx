@@ -5,8 +5,8 @@ import { usePathname } from 'next/navigation';
 import StoreList from '@/components/store/StoreList';
 import { useStores, useStoreFilters } from '@/hooks/useStores';
 import { getStoreTypes } from '@/utils/api/stores-api';
-import { convertIndustryNameToKorean, convertMaterialNameToKorean } from '@/utils/converters';
-import { STORE_CATEGORIES } from '@/config/storeCategories';
+import { convertIndustryNameToKorean } from '@/utils/converters';
+import { STORE_PRODUCT_CATEGORIES, STORE_PROCESSES } from '@/config/storeCategories';
 import * as S from '@/styles/store/storeContainer.style';
 import * as ListS from '@/styles/store/storeList.style';
 
@@ -24,7 +24,8 @@ function StoreContainer() {
   const [allTags, setAllTags] = useState({
     industry: [],
     capacity: [],
-    material: [],
+    material: STORE_PROCESSES,
+    category: STORE_PRODUCT_CATEGORIES,
   });
 
   const filteredStores = useStoreFilters(stores, searchKeyword, selectedTags, sortBy);
@@ -57,7 +58,8 @@ function StoreContainer() {
         setAllTags({
           industry: types.industryTypes?.map((t) => t.name) || [],
           capacity: types.capacityTypes?.map((t) => t.name) || [],
-          material: types.materialTypes?.map((t) => t.name) || [],
+          material: STORE_PROCESSES,
+          category: STORE_PRODUCT_CATEGORIES,
         });
       } catch (err) {
         console.error('태그 목록 가져오기 실패:', err);
@@ -80,9 +82,6 @@ function StoreContainer() {
 
   const handleTagClick = (tagType, tagName) => {
     setSelectedTags((prev) => {
-      if (tagType === 'material' && prev.material.includes(tagName)) {
-        return prev;
-      }
       const current = prev[tagType];
       const next = current.includes(tagName)
         ? current.filter((tag) => tag !== tagName)
@@ -167,34 +166,8 @@ function StoreContainer() {
         <S.TagPanel>
           <S.TagRow>
             <S.TagItems>
-              <S.TagLegend>취급 품목:</S.TagLegend>
-              {allTags.material.map((tag) => (
-                <S.Tag
-                  key={tag}
-                  type="button"
-                  active={selectedTags.material.includes(tag)}
-                  onClick={() => handleTagClick('material', tag)}
-                >
-                  {convertMaterialNameToKorean(tag)}
-                </S.Tag>
-              ))}
-            </S.TagItems>
-            {selectedTags.material.length > 0 && (
-              <S.TagClearButton
-                type="button"
-                aria-label="취급 품목 필터 초기화"
-                onClick={clearMaterialTags}
-              >
-                <svg viewBox="0 0 11 11" fill="none" aria-hidden="true">
-                  <path d="M1.5 1.5l8 8M9.5 1.5l-8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                </svg>
-              </S.TagClearButton>
-            )}
-          </S.TagRow>
-          <S.TagRow>
-            <S.TagItems>
-              <S.TagLegend>카테고리:</S.TagLegend>
-              {STORE_CATEGORIES.map((tag) => (
+              <S.TagLegend>제품개발/부품제조:</S.TagLegend>
+              {allTags.category.map((tag) => (
                 <S.Tag
                   key={tag}
                   type="button"
@@ -208,8 +181,34 @@ function StoreContainer() {
             {selectedTags.category.length > 0 && (
               <S.TagClearButton
                 type="button"
-                aria-label="카테고리 필터 초기화"
+                aria-label="제품개발/부품제조 필터 초기화"
                 onClick={clearCategoryTags}
+              >
+                <svg viewBox="0 0 11 11" fill="none" aria-hidden="true">
+                  <path d="M1.5 1.5l8 8M9.5 1.5l-8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                </svg>
+              </S.TagClearButton>
+            )}
+          </S.TagRow>
+          <S.TagRow>
+            <S.TagItems>
+              <S.TagLegend>공정:</S.TagLegend>
+              {allTags.material.map((tag) => (
+                <S.Tag
+                  key={tag}
+                  type="button"
+                  active={selectedTags.material.includes(tag)}
+                  onClick={() => handleTagClick('material', tag)}
+                >
+                  {tag}
+                </S.Tag>
+              ))}
+            </S.TagItems>
+            {selectedTags.material.length > 0 && (
+              <S.TagClearButton
+                type="button"
+                aria-label="공정 필터 초기화"
+                onClick={clearMaterialTags}
               >
                 <svg viewBox="0 0 11 11" fill="none" aria-hidden="true">
                   <path d="M1.5 1.5l8 8M9.5 1.5l-8 8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
@@ -243,7 +242,7 @@ function StoreContainer() {
           </ListS.SortButton>
         </ListS.ListLabel>
         <ListS.ListLabel>분야</ListS.ListLabel>
-        <ListS.ListLabel>취급 품목</ListS.ListLabel>
+        <ListS.ListLabel>공정</ListS.ListLabel>
         <ListS.ListLabel $active={isReviewSort}>
           <ListS.SortButton type="button" onClick={handleReviewSort}>
             후기

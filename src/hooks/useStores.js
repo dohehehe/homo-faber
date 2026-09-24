@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { getStores, getStoreById } from '@/utils/api/stores-api';
-import { storeMatchesCategory } from '@/config/storeCategories';
+import { storeMatchesCategory, storeMatchesProcess } from '@/config/storeCategories';
 
 // 전역 캐시 객체
 let storesCache = null;
@@ -357,11 +357,7 @@ export function useStoreFilters(
 
           const matchesMaterial =
             !hasMaterialFilter ||
-            store.store_material?.some(
-              (item) =>
-                item.material_types?.name &&
-                material.includes(item.material_types.name),
-            );
+            material.some((label) => storeMatchesProcess(store, label));
 
           const matchesCategory =
             !hasCategoryFilter ||

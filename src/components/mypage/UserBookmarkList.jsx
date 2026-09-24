@@ -26,7 +26,7 @@ function UserBookmarkList() {
           <S2.TableHeader>
             <tr style={{ display: 'flex' }}>
               <S.BookmarkTableHeaderCell style={{ width: isReady && isMobile ? '120px' : '200px' }}>이름</S.BookmarkTableHeaderCell>
-              <S.BookmarkTableHeaderCell style={{ width: isReady && isMobile ? '300px' : '572px' }}>취급 품목</S.BookmarkTableHeaderCell>
+              <S.BookmarkTableHeaderCell style={{ width: isReady && isMobile ? '300px' : '572px' }}>공정</S.BookmarkTableHeaderCell>
               {isReady && !isMobile && (
                 <>
                   <S.BookmarkTableHeaderCell style={{ width: '148px' }}>연락처</S.BookmarkTableHeaderCell>

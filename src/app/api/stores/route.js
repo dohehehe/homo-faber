@@ -14,9 +14,6 @@ export async function GET(request) {
       .from('stores')
       .select(`
         *,
-        store_contacts(
-          phone
-        ),
         store_capacity(
           capacity_types(id, name)
         ),
@@ -25,6 +22,9 @@ export async function GET(request) {
         ),
         store_material(
           material_types(id, name)
+        ),
+        store_category(
+          category_types(id, name)
         ),
         comments(count)
       `, { count: 'exact' })
@@ -36,6 +36,36 @@ export async function GET(request) {
     }
 
     const { data, error, count } = await query;
+
+    if (error && /store_category|category_types/.test(error.message || '')) {
+      const fallback = await supabase
+        .from('stores')
+        .select(`
+          *,
+          store_capacity(
+            capacity_types(id, name)
+          ),
+          store_industry(
+            industry_types(id, name)
+          ),
+          store_material(
+            material_types(id, name)
+          ),
+          comments(count)
+        `, { count: 'exact' })
+        .range(offset, offset + limit - 1);
+      if (!fallback.error) {
+        return NextResponse.json({
+          data: fallback.data || [],
+          pagination: {
+            total: fallback.count || 0,
+            limit,
+            offset,
+            hasMore: fallback.count ? offset + limit < fallback.count : false
+          }
+        });
+      }
+    }
 
     if (error) {
       console.error('Supabase error:', error);
@@ -89,6 +119,7 @@ export async function POST(request) {
       capacities,
       industries,
       materials,
+      categories,
       gallery
     } = body;
 
@@ -210,6 +241,25 @@ export async function POST(request) {
         console.error('Material creation error:', materialError);
         return NextResponse.json(
           { error: '재료 타입 정보 생성 중 오류가 발생했습니다.' },
+          { status: 500 }
+        );
+      }
+    }
+
+    if (categories && categories.length > 0) {
+      const categoryInserts = categories.map((categoryId) => ({
+        store_id: storeId,
+        category_type_id: categoryId,
+      }));
+
+      const { error: categoryError } = await supabase
+        .from('store_category')
+        .insert(categoryInserts);
+
+      if (categoryError) {
+        console.error('Category creation error:', categoryError);
+        return NextResponse.json(
+          { error: '카테고리 정보 생성 중 오류가 발생했습니다.' },
           { status: 500 }
         );
       }

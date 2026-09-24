@@ -35,7 +35,16 @@ function StoreDetailContainer({ }) {
 
   const { user } = useAuth();
   const { toggleBookmark, isStoreBookmarked, loading } = useBookmarks();
-  const { store, isLoading, error } = useStoreDetail(storeId);
+  const { store, isLoading, error, refetch, invalidateCache } = useStoreDetail(storeId);
+  const prevUserIdRef = useRef(user?.id);
+
+  useEffect(() => {
+    if (prevUserIdRef.current === user?.id) return;
+    prevUserIdRef.current = user?.id;
+    if (!storeId) return;
+    invalidateCache();
+    refetch();
+  }, [user?.id, storeId, invalidateCache, refetch]);
 
   // 이미지 클릭 핸들러
   const handleImageClick = (imageUrl, imageName) => {
@@ -276,6 +285,7 @@ function StoreDetailContainer({ }) {
 
                     <S.StoreContactList>
                       {(() => {
+                        const contactsLocked = !user || store.contacts_locked;
                         const contacts = [
                           { key: 'phone', label: 'Phone.', value: store.store_contacts[0]?.phone },
                           { key: 'fax', label: 'Fax.', value: store.store_contacts[0]?.fax },
@@ -283,10 +293,10 @@ function StoreDetailContainer({ }) {
                           { key: 'website', label: 'Website.', value: store.store_contacts[0]?.website },
                         ].filter((contact) => contact.value);
                         const hiddenKeys = ['phone', 'fax', 'email'];
-                        const lockedContacts = !user
+                        const lockedContacts = contactsLocked
                           ? contacts.filter((contact) => hiddenKeys.includes(contact.key))
                           : [];
-                        const openContacts = !user
+                        const openContacts = contactsLocked
                           ? contacts.filter((contact) => !hiddenKeys.includes(contact.key))
                           : contacts;
 
@@ -310,7 +320,7 @@ function StoreDetailContainer({ }) {
 
                         return (
                           <>
-                            {lockedContacts.length > 0 && (
+                            {lockedContacts.length > 0 ? (
                               <S.LockedContactGroup
                                 type="button"
                                 onClick={() => window.dispatchEvent(new Event('openLogin'))}
@@ -318,20 +328,25 @@ function StoreDetailContainer({ }) {
                                 {lockedContacts.map((contact) => (
                                   <S.StoreContact key={contact.key}>
                                     <S.StoreContactTxt>{contact.label}</S.StoreContactTxt>
-                                    <S.StoreContactContent>로그인 후 확인 가능</S.StoreContactContent>
+                                    <S.StoreContactContent $blurred>
+                                      {contact.value}
+                                    </S.StoreContactContent>
                                   </S.StoreContact>
                                 ))}
+                                <S.SignupHint as="span">로그인 후 확인이 가능합니다</S.SignupHint>
                               </S.LockedContactGroup>
-                            )}
+                            ) : !user ? (
+                              <S.SignupHint
+                                type="button"
+                                onClick={() => window.dispatchEvent(new Event('openLogin'))}
+                              >
+                                로그인 후 확인이 가능합니다
+                              </S.SignupHint>
+                            ) : null}
                             {openContacts.map(renderContact)}
                           </>
                         );
                       })()}
-                      {!user && (
-                        <S.SignupHint>
-                          업체 문의는 <a href="/signup">회원가입</a> 후 가능합니다.
-                        </S.SignupHint>
-                      )}
                     </S.StoreContactList>
                     </S.InfoBlock>
                     </S.InfoGroup>
@@ -349,10 +364,27 @@ function StoreDetailContainer({ }) {
 
                     <S.StoreImgSection>
                       {store.card_img && (
-                        <S.StoreCardImg
-                          src={`${store.card_img}`}
-                          onClick={() => handleImageClick(store.card_img, '스토어 대표 이미지')}
-                        />
+                        <S.StoreCardImgWrap
+                          type="button"
+                          $locked={!user || store.card_img_locked}
+                          onClick={() => {
+                            if (!user || store.card_img_locked) {
+                              window.dispatchEvent(new Event('openLogin'));
+                              return;
+                            }
+                            handleImageClick(store.card_img, '스토어 대표 이미지');
+                          }}
+                        >
+                          <S.StoreCardImg
+                            src={`${store.card_img}`}
+                            $locked={!user || store.card_img_locked}
+                            alt=""
+                            draggable={false}
+                          />
+                          {(!user || store.card_img_locked) && (
+                            <S.LockedMediaHint>로그인 후 확인이 가능합니다</S.LockedMediaHint>
+                          )}
+                        </S.StoreCardImgWrap>
                       )}
                       {store.store_gallery?.length > 0 &&
                         store.store_gallery

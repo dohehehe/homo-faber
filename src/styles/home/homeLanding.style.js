@@ -10,9 +10,13 @@ export const Landing = styled.main`
   color: #111;
 `;
 
+export const Stack = styled.div`
+  position: relative;
+`;
+
 export const NoticeCard = styled.aside`
   position: fixed;
-  top: 50px;
+  top: var(--header-height, 50px);
   left: 20px;
   z-index: 20;
   width: 320px;
@@ -87,15 +91,71 @@ export const NoticeBody = styled.p`
   word-break: keep-all;
 `;
 
-export const Hero = styled.section`
+export const Hero = styled('section', {
+  shouldForwardProp: (prop) => prop !== '$layer',
+})`
+  position: sticky;
+  top: 0;
+  z-index: ${(props) => props.$layer || 1};
+  isolation: isolate;
+  overflow: hidden;
+  height: 100dvh;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 50px;
-  padding: 80px 24px 40px;
+  padding: calc(var(--header-height, 50px) + 30px) 24px 40px;
   text-align: center;
+  background: #111;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+
+  @media (prefers-reduced-motion: reduce) {
+    position: relative;
+  }
+`;
+
+export const HeroVideo = styled.video`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+`;
+
+export const HeroImage = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'src',
+})`
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url(${(props) => props.src});
+  background-size: cover;
+  background-position: center;
+`;
+
+export const HeroOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+`;
+
+export const HeroContent = styled.div`
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
 `;
 
 export const Headline = styled.h1`
@@ -107,7 +167,7 @@ export const Headline = styled.h1`
   color: #111;
   max-width: 831px;
   word-break: keep-all;
-  background: linear-gradient(180deg, #000 9.46%, rgba(0, 0, 0, 0) 143.92%);
+  background: linear-gradient(180deg, #fff 9.46%, rgba(255, 255, 255, 0) 143.92%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -154,15 +214,25 @@ export const VisionPlus = styled.span`
   color: #000;
 `;
 
-export const Banner = styled.section`
-  position: relative;
+export const Banner = styled('section', {
+  shouldForwardProp: (prop) => prop !== '$layer',
+})`
+  position: sticky;
+  top: 0;
+  z-index: ${(props) => props.$layer || 2};
   width: 100%;
-  height: 100vh;
-  min-height: 560px;
+  height: 100dvh;
+  min-height: 100vh;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #111;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+
+  @media (prefers-reduced-motion: reduce) {
+    position: relative;
+  }
 `;
 
 export const BannerImage = styled('div', {
@@ -186,6 +256,27 @@ export const BannerImage = styled('div', {
   ${(props) => props.grayscale && `
     filter: grayscale(1) contrast(1.15);
   `}
+`;
+
+export const BannerVideo = styled('video', {
+  shouldForwardProp: (prop) => prop !== 'grayscale',
+})`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  ${(props) => props.grayscale && `
+    filter: grayscale(1) contrast(1.15);
+  `}
+`;
+
+export const BannerTint = styled.div`
+  position: absolute;
+  inset: 0;
+  background: #ffea00;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 `;
 
 export const GlassCard = styled.div`
@@ -257,12 +348,14 @@ export const GlassButtonPlus = styled.span`
 `;
 
 export const Footer = styled.footer`
+  position: relative;
+  z-index: 10;
   display: flex;
   align-items: flex-start;
   gap: 5px;
   width: 100%;
   padding: 20px 10px 30px;
-  background: rgba(227, 227, 227, 0.3);
+  background: #f4f4f4;
   color: #000;
 
   ${theme.media.mobile} {

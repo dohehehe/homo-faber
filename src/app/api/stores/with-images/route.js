@@ -190,6 +190,25 @@ export async function POST(request) {
       }
     }
 
+    if (finalStoreData.categories && finalStoreData.categories.length > 0) {
+      const categoryInserts = finalStoreData.categories.map((categoryId) => ({
+        store_id: storeId,
+        category_type_id: categoryId,
+      }));
+
+      const { error: categoryError } = await supabase
+        .from('store_category')
+        .insert(categoryInserts);
+
+      if (categoryError) {
+        console.error('Category creation error:', categoryError);
+        return NextResponse.json(
+          { error: '카테고리 정보 생성 중 오류가 발생했습니다.' },
+          { status: 500 }
+        );
+      }
+    }
+
     // 6. 갤러리 정보 생성
     if (finalStoreData.gallery && finalStoreData.gallery.length > 0) {
       const galleryInserts = finalStoreData.gallery.map((image, index) => ({

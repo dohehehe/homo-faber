@@ -28,6 +28,21 @@ const FnqContainer = dynamic(() => import('@/container/FnqContainer'), {
   loading: () => null,
 });
 
+const InfoContainer = dynamic(() => import('@/container/InfoContainer'), {
+  ssr: false,
+  loading: () => null,
+});
+
+const InterviewContainer = dynamic(() => import('@/container/InterviewContainer'), {
+  ssr: false,
+  loading: () => null,
+});
+
+const WordContainer = dynamic(() => import('@/container/WordContainer'), {
+  ssr: false,
+  loading: () => null,
+});
+
 const MobileBg = styled(motion.div, {
   shouldForwardProp: (prop) => prop !== 'isVisible' && prop !== 'pathname',
 })`
@@ -52,6 +67,9 @@ export default function ConditionalLayout() {
   const showStore = pathname?.startsWith('/store');
   const showFnq = pathname === '/fnq' || pathname?.startsWith('/fnq/');
   const showMap = pathname === '/map' || pathname?.startsWith('/map/');
+  const showInfo = pathname === '/info' || pathname?.startsWith('/info/');
+  const showInterview = pathname === '/interview' || pathname?.startsWith('/interview/');
+  const showWord = pathname === '/word' || pathname?.startsWith('/word/');
 
   if (isAdminRoute || !isReady) {
     return null;
@@ -63,7 +81,10 @@ export default function ConditionalLayout() {
       {showHome && <HomeContainer />}
       {showStore && <StoreContainer />}
       {showFnq && <FnqContainer />}
-      {isMobile && pathname !== '/' && pathname !== '/login' && !showStore && !showFnq && !showMap && (
+      {showInfo && <InfoContainer />}
+      {showInterview && <InterviewContainer />}
+      {showWord && <WordContainer />}
+      {isMobile && pathname !== '/' && pathname !== '/login' && !showStore && !showFnq && !showMap && !showInfo && !showInterview && !showWord && (
         <MobileBg
           pathname={pathname}
           isVisible={pathname !== '/'}
@@ -77,9 +98,6 @@ export default function ConditionalLayout() {
           }}
         />
       )}
-      <AnimatedPanel baseRoute='interview' />
-      <AnimatedPanel baseRoute='word' />
-      <AnimatedPanel baseRoute='info' />
       <AnimatedPanel baseRoute='signup' />
       <AnimatedPanel baseRoute='mypage' />
     </>

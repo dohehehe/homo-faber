@@ -3,25 +3,26 @@ import styled from '@emotion/styled';
 import { motion } from 'motion/react';
 import theme from '@/styles/Theme';
 
-export const InterviewWrapper = styled(motion.main, {
-  shouldForwardProp: (prop) => prop !== 'gradientCss' && prop !== 'pathname',
+export const InterviewWrapper = styled('main', {
+  shouldForwardProp: (prop) => prop !== 'hasDetail' && prop !== 'gradientCss' && prop !== 'pathname',
 })`
   width: 100%;
-  height: 100%;
-  padding: 50px 20px 20px;
+  min-height: 100vh;
+  padding: calc(var(--header-height, 50px) + 30px) 20px 40px;
   z-index: 3;
   background: #ffffff;
-  cursor: ${(props) => (props.pathname && (props.pathname === '/' || props.pathname.startsWith('/interview/'))) ? 'pointer' : 'default'};
   display: flex;
   flex-direction: column;
-  border-left: 0.5px solid #efefef;
   position: relative;
   color: #000;
+  overflow: visible;
+  padding-right: ${(props) =>
+    props.hasDetail ? 'max(500px, calc(100% * 4 / 12 + 20px))' : '20px'};
+  transition: padding-right 0.35s ease;
 
   ${theme.media.mobile} { 
-    padding: 50px 16px 20px;
-    border-left: unset;
-    border-top: 0.5px solid #efefef;
+    padding: calc(var(--header-height, 50px) + 20px) 16px 60px;
+    padding-right: 16px;
   }
 `;
 
@@ -31,22 +32,11 @@ export const InterviwPageName = styled.h1`
 
 export const InterviewList = styled.ul`
   width: 100%;
-  height: 100%;
   color: #000;
   padding-top: 10px;
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 
   ${theme.media.mobile} { 
     padding-top: 10px;
-    overflow-y: auto;
-    height: 100%;
-    margin-top: 0;
   }
 `;
 

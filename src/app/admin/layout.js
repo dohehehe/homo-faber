@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import styled from '@emotion/styled';
 import Button from '@/components/admin/Button';
@@ -23,6 +22,7 @@ const ButtonGroup = styled.div`
   display: flex;
   gap: 1rem;
   justify-content: center;
+  flex-wrap: wrap;
   margin-bottom: 2rem;
 `;
 
@@ -53,10 +53,11 @@ const ContentArea = styled.div`
 export default function AdminLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [activeTab, setActiveTab] = useState('');
+
+  const isActive = (tab) =>
+    pathname === `/admin/${tab}` || pathname?.startsWith(`/admin/${tab}/`);
 
   const handleTabClick = (tab) => {
-    setActiveTab(tab);
     router.push(`/admin/${tab}`);
   };
 
@@ -66,28 +67,34 @@ export default function AdminLayout({ children }) {
 
       <ButtonGroup>
         <Button
-          active={activeTab === 'store'}
+          active={isActive('store')}
           onClick={() => handleTabClick('store')}
         >
           가게 관리
         </Button>
         <Button
-          active={activeTab === 'interview'}
+          active={isActive('interview')}
           onClick={() => handleTabClick('interview')}
         >
           인터뷰 관리
         </Button>
         <Button
-          active={activeTab === 'word'}
+          active={isActive('word')}
           onClick={() => handleTabClick('word')}
         >
           단어 관리
         </Button>
         <Button
-          active={activeTab === 'fnq'}
+          active={isActive('fnq')}
           onClick={() => handleTabClick('fnq')}
         >
           문의 관리
+        </Button>
+        <Button
+          active={isActive('landing')}
+          onClick={() => handleTabClick('landing')}
+        >
+          랜딩페이지 관리
         </Button>
       </ButtonGroup>
 

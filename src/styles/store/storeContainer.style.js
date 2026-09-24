@@ -6,7 +6,7 @@ export const StoreWrapper = styled('main', {
 })`
   width: 100%;
   min-height: 100vh;
-  padding: 50px 0 0;
+  padding: var(--header-height, 50px) 0 0;
   position: relative;
   z-index: 2;
   background: #ffffff;
@@ -30,7 +30,7 @@ export const StorePageName = styled.h1`
 
 export const StoreChrome = styled.div`
   position: sticky;
-  top: 50px;
+  top: var(--header-height, 50px);
   z-index: 20;
   background-color: #ffffff;
   isolation: isolate;

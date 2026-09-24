@@ -2,10 +2,9 @@ import theme from '@/styles/Theme';
 import { css } from '@emotion/react';
 
 const globalStyle = css`
-  /* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
+  :root {
+    --header-height: 53px;
+  }
 
   html,
   body,

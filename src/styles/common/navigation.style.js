@@ -8,16 +8,21 @@ export const HeaderBar = styled('header', {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1300;
+  z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 50px;
+  height: 53px;
   padding: 10px 20px;
   background-color: ${(props) => (props.opaque ? '#ffffff' : 'transparent')};
   pointer-events: auto;
+  isolation: isolate;
 
   ${theme.media.mobile} {
+    height: auto;
+    min-height: 53px;
+    align-items: flex-start;
+    flex-wrap: nowrap;
     padding: 10px 10px;
     gap: 4px;
   }
@@ -28,40 +33,79 @@ export const HeaderLeft = styled.div`
   align-items: center;
   gap: 5px;
   min-width: 0;
-`;
-
-export const Brand = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 30px;
-  padding: 0 8px;
-  border-radius: 5px;
-  font-weight: 700;
-  color: #000;
-  letter-spacing: -0.01em;
-  line-height: 1.6;
-  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+  flex: 1;
 
   ${theme.media.mobile} {
-    font-size: 0.8rem;
-    padding: 0 4px;
-    max-width: 46vw;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    flex-wrap: nowrap;
+    align-items: flex-start;
   }
 `;
 
-export const NavGroup = styled.nav`
+export const ArchiveCluster = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+
+  ${theme.media.mobile} {
+    flex: 0 1 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    row-gap: 4px;
+  }
+`;
+
+export const Brand = styled('span', {
+  shouldForwardProp: (prop) => prop !== '$light',
+})`
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  height: 33px;
+  min-height: 33px;
+  padding: 0 8px;
+  border-radius: 5px;
+  color: ${(props) => (props.$light ? '#a0a0a0' : '#000')};
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+
+  ${theme.media.mobile} {
+    padding: 0 4px;
+    white-space: normal;
+    max-width: 46vw;
+  }
+`;
+
+export const BrandLine = styled.span`
+  display: block;
+  font-size: 0.9rem;
+  }
+`;
+
+export const NavGroup = styled('nav', {
+  shouldForwardProp: (prop) => prop !== '$sub',
+})`
   display: flex;
   align-items: center;
   gap: 3px;
-  height: 30px;
+  height: 33px;
   padding: 3px;
   border-radius: 5px;
   background: rgba(227, 227, 227, 0.3);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
+
+  ${theme.media.mobile} {
+    height: 33px;
+    flex-wrap: nowrap;
+    flex: none;
+    width: max-content;
+  }
 `;
 
 export const NavList = styled.nav`
@@ -81,7 +125,7 @@ export const NavLink = styled('span', {
   align-items: center;
   justify-content: center;
   height: 100%;
-  min-height: 24px;
+  min-height: 27px;
   padding: 0 8px;
   border-radius: 3px;
   background: ${(props) => (props.active ? '#ffffff' : 'transparent')};
@@ -93,9 +137,14 @@ export const NavLink = styled('span', {
   border: none;
   font-family: inherit;
   white-space: nowrap;
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
   transition: color 0.2s ease, background-color 0.2s ease;
 
   ${theme.media.mobile} {
+    height: 27px;
+    min-height: 27px;
     padding: 0 6px;
   }
 
@@ -116,7 +165,7 @@ export const ArchiveMenu = styled.div`
   display: flex;
   align-items: center;
   gap: 3px;
-  height: 30px;
+  height: 33px;
   padding: 3px;
   border-radius: 5px;
   background: rgba(227, 227, 227, 0.3);
@@ -153,13 +202,14 @@ export const HeaderRight = styled.div`
   display: flex;
   align-items: center;
   gap: 3px;
+  flex-shrink: 0;
 `;
 
 export const LangButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 30px;
+  height: 33px;
   min-width: 36px;
   padding: 0 8px;
   border: none;
@@ -181,8 +231,8 @@ export const LangButton = styled.button`
 `;
 
 export const IconButton = styled.button`
-  width: 30px;
-  height: 30px;
+  width: 33px;
+  height: 33px;
   padding: 5px;
   border: none;
   border-radius: 5px;

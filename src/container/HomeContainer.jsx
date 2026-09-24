@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/hooks/useLanguage';
+import { getLandingSections } from '@/utils/api/landing-api';
+import { DEFAULT_LANDING_SECTIONS, isLandingVideo } from '@/config/landingSections';
 import * as S from '@/styles/home/homeLanding.style';
 
 const NOTICE_KEY = 'hf-notice-dismissed';
@@ -11,6 +13,12 @@ function HomeContainer() {
   const router = useRouter();
   const { t } = useLanguage();
   const [noticeOpen, setNoticeOpen] = useState(false);
+  const [sections, setSections] = useState(DEFAULT_LANDING_SECTIONS);
+  const videoRef = useRef(null);
+
+  const hero = sections.find((item) => item.id === 'hero') || DEFAULT_LANDING_SECTIONS[0];
+  const find = sections.find((item) => item.id === 'find') || DEFAULT_LANDING_SECTIONS[1];
+  const ask = sections.find((item) => item.id === 'ask') || DEFAULT_LANDING_SECTIONS[2];
 
   useEffect(() => {
     try {
@@ -20,6 +28,36 @@ function HomeContainer() {
     }
   }, []);
 
+  useEffect(() => {
+    getLandingSections()
+      .then(setSections)
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    video.muted = true;
+
+    const tryPlay = () => {
+      if (reduceMotion.matches) {
+        video.pause();
+        return;
+      }
+      video.play().catch(() => {});
+    };
+
+    tryPlay();
+    video.addEventListener('canplay', tryPlay);
+    reduceMotion.addEventListener('change', tryPlay);
+    return () => {
+      video.removeEventListener('canplay', tryPlay);
+      reduceMotion.removeEventListener('change', tryPlay);
+    };
+  }, [hero.media_url]);
+
   const dismissNotice = () => {
     setNoticeOpen(false);
     try {
@@ -27,6 +65,27 @@ function HomeContainer() {
     } catch {
       /* ignore */
     }
+  };
+
+  const go = (href) => {
+    if (!href) return;
+    if (href.startsWith('http')) {
+      window.open(href, '_blank', 'noreferrer');
+      return;
+    }
+    router.push(href);
+  };
+
+  const renderBannerMedia = (section, { yellow, grayscale } = {}) => {
+    if (isLandingVideo(section)) {
+      return (
+        <>
+          <S.BannerVideo src={section.media_url} autoPlay muted loop playsInline grayscale={grayscale} />
+          {yellow && <S.BannerTint />}
+        </>
+      );
+    }
+    return <S.BannerImage src={section.media_url} yellow={yellow} grayscale={grayscale} />;
   };
 
   return (
@@ -42,52 +101,76 @@ function HomeContainer() {
         </S.NoticeCard>
       )}
 
-      <S.Hero>
-        <S.Headline>
-          {t('pages.home.headline')}
-          <br />
-          {t('pages.home.subhead')}
-        </S.Headline>
-        <S.VisionButton type="button" onClick={() => router.push('/info')}>
-          <S.VisionLabel>{t('pages.home.vision')}</S.VisionLabel>
-          <S.VisionPlus>+</S.VisionPlus>
-        </S.VisionButton>
+      <S.Stack>
+      <S.Hero $layer={1}>
+        {isLandingVideo(hero) ? (
+          <S.HeroVideo
+            key={hero.media_url}
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            src={hero.media_url}
+          />
+        ) : (
+          <S.HeroImage src={hero.media_url} />
+        )}
+        <S.HeroOverlay />
+        <S.HeroContent>
+          <S.Headline>
+            {hero.title || t('pages.home.headline')}
+            {hero.body && (
+              <>
+                <br />
+                {hero.body}
+              </>
+            )}
+          </S.Headline>
+          <S.VisionButton type="button" onClick={() => go(hero.button_href || '/info')}>
+            <S.VisionLabel>{hero.button_label || t('pages.home.vision')}</S.VisionLabel>
+            <S.VisionPlus>+</S.VisionPlus>
+          </S.VisionButton>
+        </S.HeroContent>
       </S.Hero>
 
-      <S.Banner>
-        <S.BannerImage src="/img/landing-find.png" yellow />
+      <S.Banner $layer={2}>
+        {renderBannerMedia(find, { yellow: true })}
         <S.GlassCard>
           <div>
-            <S.GlassTitle>{t('pages.home.findTitle')}</S.GlassTitle>
-            <S.GlassBody>{t('pages.home.findBody')}</S.GlassBody>
+            <S.GlassTitle>{find.title || t('pages.home.findTitle')}</S.GlassTitle>
+            <S.GlassBody>{find.body || t('pages.home.findBody')}</S.GlassBody>
           </div>
-          <S.GlassButton type="button" onClick={() => router.push('/store')}>
-            <S.GlassButtonLabel>{t('pages.home.findCta')}</S.GlassButtonLabel>
+          <S.GlassButton type="button" onClick={() => go(find.button_href || '/store')}>
+            <S.GlassButtonLabel>{find.button_label || t('pages.home.findCta')}</S.GlassButtonLabel>
             <S.GlassButtonPlus>+</S.GlassButtonPlus>
           </S.GlassButton>
         </S.GlassCard>
       </S.Banner>
 
-      <S.Banner>
-        <S.BannerImage src="/img/landing-ask.jpg" grayscale />
+      <S.Banner $layer={3}>
+        {renderBannerMedia(ask, { grayscale: true })}
         <S.GlassCard>
           <div>
-            <S.GlassTitle>{t('pages.home.askTitle')}</S.GlassTitle>
-            <S.GlassBody>{t('pages.home.askBody')}</S.GlassBody>
+            <S.GlassTitle>{ask.title || t('pages.home.askTitle')}</S.GlassTitle>
+            <S.GlassBody>{ask.body || t('pages.home.askBody')}</S.GlassBody>
           </div>
-          <S.GlassButton type="button" onClick={() => router.push('/fnq')}>
-            <S.GlassButtonLabel>{t('pages.home.askCta')}</S.GlassButtonLabel>
+          <S.GlassButton type="button" onClick={() => go(ask.button_href || '/fnq')}>
+            <S.GlassButtonLabel>{ask.button_label || t('pages.home.askCta')}</S.GlassButtonLabel>
             <S.GlassButtonPlus>+</S.GlassButtonPlus>
           </S.GlassButton>
         </S.GlassCard>
       </S.Banner>
+      </S.Stack>
 
       <S.Footer>
         <S.FooterBrand>
           <S.FooterLogo>
-            청계천을지로 기술유통중개소
+            HomoFaber 호모파베르
             <br />
-            Home Faber
+            청계천을지로 기술유통중개소
           </S.FooterLogo>
           <S.FooterCopy>{t('pages.home.footerCopy')}</S.FooterCopy>
         </S.FooterBrand>
