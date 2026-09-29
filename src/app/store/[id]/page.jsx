@@ -49,11 +49,11 @@ export async function generateMetadata({ params }) {
     ].join(', ');
 
     return {
-      title: `${store.name} - 산림동의 만드는 사람들: 호모파베르`,
+      title: `${store.name} - 청계천을지로 기술유통중개소`,
       description: store.description || `${store.name}의 상세 정보와 연락처를 확인하세요. ${store.address || ''}`,
       keywords: keywords,
       openGraph: {
-        title: `${store.name} - 산림동의 만드는 사람들: 호모파베르`,
+        title: `${store.name} - 청계천을지로 기술유통중개소`,
         description: store.description || `${store.name}의 상세 정보를 확인하세요.`,
         images: store.card_img ? [
           {
@@ -68,7 +68,7 @@ export async function generateMetadata({ params }) {
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${store.name} - 산림동의 만드는 사람들: 호모파베르`,
+        title: `${store.name} - 청계천을지로 기술유통중개소`,
         description: store.description || `${store.name}의 상세 정보를 확인하세요.`,
         images: store.card_img ? [store.card_img] : [],
       },

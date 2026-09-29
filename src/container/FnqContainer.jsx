@@ -7,7 +7,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import Editor from '@/components/interview/Editor';
 import Popup from '@/components/common/Popup';
-import Link from 'next/link';
+import { getStoreTypes } from '@/utils/api/stores-api';
+import { convertMaterialNameToKorean } from '@/utils/converters';
 
 function FnqContainer() {
   const { user } = useAuth();
@@ -16,6 +17,8 @@ function FnqContainer() {
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [showLoginRequiredPopup, setShowLoginRequiredPopup] = useState(false);
   const [isDataRestored, setIsDataRestored] = useState(false);
+  const [serviceTags, setServiceTags] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
   const router = useRouter();
 
   // localStorage 키
@@ -29,6 +32,17 @@ function FnqContainer() {
   // 에디터 관련 상태
   const editorRef = useRef(null);
   const [editorData, setEditorData] = useState({ blocks: [] });
+
+  useEffect(() => {
+    const toTop = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    toTop();
+    const timers = [setTimeout(toTop, 100), setTimeout(toTop, 500)];
+    return () => timers.forEach(clearTimeout);
+  }, []);
 
   // 예산 포맷팅 함수
   const formatNumber = (value) => {
@@ -60,7 +74,13 @@ function FnqContainer() {
   } = useForm({
     mode: 'onChange',
     defaultValues: {
-      files: []
+      files: [],
+      title: '',
+      client_name: '',
+      affiliation: '',
+      phone: '',
+      purpose: '',
+      production_plan: '',
     }
   });
 
@@ -72,6 +92,25 @@ function FnqContainer() {
     control,
     name: 'files',
   });
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const types = await getStoreTypes();
+        const materials = types.materialTypes?.map((t) => t.name) || [];
+        setServiceTags(materials.length ? materials : ['그외']);
+      } catch (err) {
+        console.error('제조 서비스 태그 가져오기 실패:', err);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  const toggleService = (name) => {
+    setSelectedServices((prev) =>
+      prev.includes(name) ? prev.filter((item) => item !== name) : [...prev, name]
+    );
+  };
 
   // 파일을 Base64로 변환하는 함수
   const fileToBase64 = (file) => {
@@ -101,11 +140,17 @@ function FnqContainer() {
     try {
       const dataToSave = {
         title: formData.title || '',
+        client_name: formData.client_name || '',
+        affiliation: formData.affiliation || '',
+        phone: formData.phone || '',
+        purpose: formData.purpose || '',
+        production_plan: formData.production_plan || '',
         count: formData.count || '',
         budget: formData.budget || '',
         due_date: formData.due_date || '',
         status_id: formData.status_id || null,
-        editorData: editorData.blocks || editorData
+        editorData: editorData.blocks || editorData,
+        selectedServices,
       };
 
       // 파일 데이터 저장
@@ -144,7 +189,7 @@ function FnqContainer() {
       if (savedData) {
         const data = JSON.parse(savedData);
         Object.keys(data).forEach(key => {
-          if (data[key] && key !== 'editorData') {
+          if (data[key] && key !== 'editorData' && key !== 'selectedServices') {
             // 예산 필드는 포맷팅 적용
             if (key === 'budget' && typeof data[key] === 'number') {
               setValue(key, formatNumber(data[key].toString()));
@@ -153,6 +198,10 @@ function FnqContainer() {
             }
           }
         });
+
+        if (Array.isArray(data.selectedServices)) {
+          setSelectedServices(data.selectedServices);
+        }
 
         // 에디터 데이터 복원
         if (data.editorData) {
@@ -305,8 +354,45 @@ function FnqContainer() {
       let outputData = editorData;
       if (editorRef.current?.isReady()) {
         const editorSaveData = await editorRef.current.save();
-        // blocks 배열만 추출
         outputData = editorSaveData.blocks || [];
+      }
+
+      const extraBlocks = [];
+      if (formData.client_name || formData.affiliation) {
+        extraBlocks.push({
+          type: 'paragraph',
+          data: { text: `의뢰인 성함/소속: ${[formData.client_name, formData.affiliation].filter(Boolean).join(', ') || '-'}` },
+        });
+      }
+      if (formData.phone) {
+        extraBlocks.push({
+          type: 'paragraph',
+          data: { text: `주문자 전화번호: ${formData.phone}` },
+        });
+      }
+      if (selectedServices.length > 0) {
+        extraBlocks.push({
+          type: 'paragraph',
+          data: { text: `원하는 제조 서비스: ${selectedServices.map(convertMaterialNameToKorean).join(', ')}` },
+        });
+      }
+      if (formData.purpose) {
+        extraBlocks.push({
+          type: 'paragraph',
+          data: { text: `제품용도: ${formData.purpose}` },
+        });
+      }
+      if (formData.production_plan) {
+        extraBlocks.push({
+          type: 'paragraph',
+          data: { text: `양산계획: ${formData.production_plan}` },
+        });
+      }
+      if (extraBlocks.length > 0) {
+        outputData = [
+          ...extraBlocks,
+          ...(Array.isArray(outputData) ? outputData : []),
+        ];
       }
 
       // 업로드된 파일들 처리 (URL과 파일명을 함께 저장)
@@ -391,27 +477,26 @@ function FnqContainer() {
   return (
     <>
       <S.FnqWrapper>
-        <S.FnqPageName>프로젝트 문의</S.FnqPageName>
+        <S.FnqCard>
+        <S.FnqTitle>의뢰하기</S.FnqTitle>
         <S.FnqUserForm onSubmit={handleSubmit(onSubmit)}>
           <S.FnqContext>
-            Q. 프로젝트를 어떻게 의뢰하나요?
-            <S.FnqContextItem>A. 진행 예정인 프로젝트 내용을 플랫폼에 문의해 주시면 저희가 세부 사항을 확인한 뒤 적합한 기술자를 찾아 연결해 드립니다. 복잡한 과정을 직접 거치실 필요 없이 필요한 기술자를 편리하게 만나보세요.</S.FnqContextItem>
-
-            Q. 기술자는 어떤 방식으로 연결되나요?
-            <S.FnqContextItem>A. 접수된 문의를 검토한 후 프로젝트의 성격과 필요 조건에 맞는 기술자를 선별해 안내해 드립니다. 프로젝트 특성에 따라 가장 적합한 분을 추천해 드리니 안심하고 맡겨주세요.</S.FnqContextItem>
-
-            Q. 프로젝트를 어떻게 의뢰하나요?
-            <S.FnqContextItem>A. 프로젝트 문의가 접수되면 내용을 확인한 뒤, 답변까지 보통 영업일 기준 3일~5일 정도 소요됩니다.</S.FnqContextItem>
-
-            Q. 문의 후 답변까지 얼마나 걸리나요?
-            <S.FnqContextItem>A. 진행 예정인 프로젝트 내용을 플랫폼에 문의해 주시면 저희가 세부 사항을 확인한 뒤 적합한 기술자를 찾아 연결해 드립니다. 복잡한 과정을 직접 거치실 필요 없이 필요한 기술자를 편리하게 만나보세요.</S.FnqContextItem>
-
-            Q. 문의 진행은 어떤 순서로 이뤄지나요?
-            <S.FnqContextItem>A. 프로젝트 문의는 확인중 → 중개중 → 답변완료 순서로 진행됩니다.<br /><span style={{ fontWeight: '600', color: 'red' }}>(주의) 중개중 단계에 들어가면 문의 수정이나 삭제가 불가능합니다.</span></S.FnqContextItem>
-
-            Q. 문의 내용을 변경하고 싶을 때는 어떻게 하나요?
-            <S.FnqContextItem>A. 확인중 단계라면 <Link href="/mypage" style={{ fontWeight: '600', textDecoration: 'underline', textUnderlineOffset: '5px' }}>내정보</Link> 페이지에서 직접 문의 수정이 가능합니다. 관련 요청 사항이 있으실 경우 플랫폼으로 직접 연락해주세요.</S.FnqContextItem>
-
+            <S.GuideLabel>가이드</S.GuideLabel>
+            <S.FnqContextItem>
+              Q. 프로젝트를 어떻게 의뢰하나요?
+              <br /><br />
+              A. 진행 예정인 프로젝트 내용을 플랫폼에 문의해 주시면 저희가 세부 사항을 확인한 뒤 적합한 기술자를 찾아 연결해 드립니다. 복잡한 과정을 직접 거치실 필요 없이 필요한 기술자를 만나보세요.
+            </S.FnqContextItem>
+            <S.FnqContextItem>
+              Q. 기술자는 어떤 방식으로 연결되나요?
+              <br /><br />
+              A. 접수된 문의를 검토한 후 프로젝트의 성격과 필요 조건에 맞는 기술자를 선별해 안내해 드립니다. 프로젝트 특성에 따라 가장 적합한 분을 추천해 드리니 안심하고 맡겨주세요.
+            </S.FnqContextItem>
+            <S.FnqContextItem>
+              Q. 문의 후 답변까지 얼마나 걸리나요?
+              <br /><br />
+              A. 프로젝트 문의가 홈페이지 및 카카오채널로 접수되면 내용을 확인한 뒤, 답변까지 보통 10분 이내 답변 드립니다. 급한 작업은 전화 상담이 가능합니다.
+            </S.FnqContextItem>
           </S.FnqContext>
 
           <S.FormGroup>
@@ -431,10 +516,71 @@ function FnqContainer() {
           </S.FormGroup>
 
           <S.FormGroup>
-            <S.Label>수량</S.Label>
+            <S.Label><span style={{ color: 'red' }}>*</span> 의뢰하시는 분 성함, 소속 (개인 혹은 업체명)</S.Label>
+            <S.InputRow>
+              <S.Input
+                type="text"
+                placeholder="성함"
+                {...register('client_name', {
+                  required: '성함을 입력해주세요',
+                })}
+              />
+              <S.Input
+                type="text"
+                placeholder="소속 (개인 혹은 업체명)"
+                {...register('affiliation', {
+                  required: '소속을 입력해주세요',
+                })}
+              />
+            </S.InputRow>
+            {(errors.client_name || errors.affiliation) && (
+              <S.ErrorMessage>{errors.client_name?.message || errors.affiliation?.message}</S.ErrorMessage>
+            )}
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label><span style={{ color: 'red' }}>*</span> 주문자 전화번호</S.Label>
+            <S.Input
+              type="tel"
+              placeholder="010-0000-0000"
+              {...register('phone', {
+                required: '전화번호를 입력해주세요',
+              })}
+            />
+            {errors.phone && <S.ErrorMessage>{errors.phone.message}</S.ErrorMessage>}
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label>원하는 제조 서비스 (밀링/선반/용접 등)</S.Label>
+            <S.Caption>요청하는 제조 서비스를 아래에서 선택해주세요. 해당사항이 없다면 아래 작업 상세 내용에 기입해주세요.</S.Caption>
+            <S.ServiceTagRow>
+              {serviceTags.map((tag) => (
+                <S.ServiceTag
+                  key={tag}
+                  type="button"
+                  active={selectedServices.includes(tag)}
+                  onClick={() => toggleService(tag)}
+                >
+                  {convertMaterialNameToKorean(tag)}
+                </S.ServiceTag>
+              ))}
+              {!serviceTags.includes('그외') && (
+                <S.ServiceTag
+                  type="button"
+                  active={selectedServices.includes('그외')}
+                  onClick={() => toggleService('그외')}
+                >
+                  그외
+                </S.ServiceTag>
+              )}
+            </S.ServiceTagRow>
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label>총 수량</S.Label>
             <S.Input
               type="number"
-              placeholder="수량을 입력해주세요 (선택)"
+              placeholder="수량을 입력해주세요"
               {...register('count', {
                 min: {
                   value: 1,
@@ -446,17 +592,7 @@ function FnqContainer() {
           </S.FormGroup>
 
           <S.FormGroup>
-            <S.Label>예산</S.Label>
-            <S.Input
-              type="text"
-              placeholder="예산을 입력해주세요 (선택)"
-              {...register('budget')}
-              onChange={handleBudgetChange}
-            />
-          </S.FormGroup>
-
-          <S.FormGroup>
-            <S.Label>납기일</S.Label>
+            <S.Label>희망 납기일</S.Label>
             <S.Input
               type="date"
               {...register('due_date')}
@@ -464,14 +600,41 @@ function FnqContainer() {
           </S.FormGroup>
 
           <S.FormGroup>
-            <S.Label><span style={{ color: 'red' }}>*</span> 상세내용</S.Label>
+            <S.Label>제품용도 (예, 자동차 부품)</S.Label>
+            <S.Input
+              type="text"
+              placeholder="제품용도를 입력해주세요"
+              {...register('purpose')}
+            />
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label>추정 예산</S.Label>
+            <S.Input
+              type="text"
+              placeholder="추정 예산을 입력해주세요"
+              {...register('budget')}
+              onChange={handleBudgetChange}
+            />
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label>양산계획</S.Label>
+            <S.Input
+              type="text"
+              placeholder="양산계획을 입력해주세요"
+              {...register('production_plan')}
+            />
+          </S.FormGroup>
+
+          <S.FormGroup>
+            <S.Label><span style={{ color: 'red' }}>*</span> 작업 상세 내용</S.Label>
             <S.InputInfo style={{ color: '#444' }}>제작 목적 및 동작 시나리오를 설명해주세요. <br />상세하게 작성할수록 기술자가 프로젝트를 이해하는데 도움이 됩니다</S.InputInfo>
             <Editor ref={editorRef} data={editorData} />
           </S.FormGroup>
 
-          {/* 파일 업로드 갤러리 */}
           <S.FormGroup>
-            <S.Label>첨부파일</S.Label>
+            <S.Label>도면 파일 (선택)</S.Label>
             <S.InputInfo style={{ color: '#444' }}>프로젝트를 이해하는데 도움이 되는 도면 또는 스케치를 전달해주세요</S.InputInfo>
             <S.InputInfo>
               *5MB 이상의 파일은 아래의 이메일로 &apos;프로젝트 이름&apos;과 함께 전달해주세요.<br />
@@ -549,10 +712,12 @@ function FnqContainer() {
           </S.FormGroup>
 
           <S.SubmitButton type="submit" disabled={isLoading}>
-            {isLoading ? '전송 중...' : '문의 하기'}
+            <S.SubmitLabel>{isLoading ? '전송 중...' : '문의하기'}</S.SubmitLabel>
+            <S.SubmitArrow>→</S.SubmitArrow>
           </S.SubmitButton>
 
         </S.FnqUserForm>
+        </S.FnqCard>
 
         <Popup
           isVisible={showErrorPopup}

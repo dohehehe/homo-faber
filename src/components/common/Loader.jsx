@@ -16,6 +16,8 @@ const Loader = styled.span`
   height: 40px;
   position: relative;
   display: inline-block;
+  transform: scale(0.9);
+  transform-origin: left center;
   --base-color: #263238; 
 
   &::before {
@@ -78,10 +80,8 @@ const Loader = styled.span`
 
 const LoaderText = styled.div`
   color: rgba(67, 67, 67, 0.75);
-  font-family: var(--font-gothic);
   font-weight: 600;
   margin-top: 25px;
-  font-size: 1rem;
 `;
 
 const LoaderComponent = ({

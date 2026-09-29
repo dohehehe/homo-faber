@@ -37,9 +37,11 @@ const StoreForm = ({
   const [industryTypes, setIndustryTypes] = useState([]);
   const [capacityTypes, setCapacityTypes] = useState([]);
   const [materialTypes, setMaterialTypes] = useState([]);
+  const [categoryTypes, setCategoryTypes] = useState([]);
   const [selectedIndustryTypes, setSelectedIndustryTypes] = useState([]);
   const [selectedCapacityTypes, setSelectedCapacityTypes] = useState([]);
   const [selectedMaterialTypes, setSelectedMaterialTypes] = useState([]);
+  const [selectedCategoryTypes, setSelectedCategoryTypes] = useState([]);
 
   // 갤러리 관련 상태
   const [galleryPreviews, setGalleryPreviews] = useState({});
@@ -194,6 +196,13 @@ const StoreForm = ({
             setSelectedMaterialTypes(materialIds);
           }
 
+          if (store.store_category && store.store_category.length > 0) {
+            const categoryIds = store.store_category
+              .map(item => item.category_types?.id)
+              .filter(Boolean);
+            setSelectedCategoryTypes(categoryIds);
+          }
+
           // 갤러리 데이터 설정
           if (store.store_gallery && store.store_gallery.length > 0) {
             // order_num으로 정렬하고 유효한 이미지만 필터링
@@ -237,6 +246,7 @@ const StoreForm = ({
         setIndustryTypes(typesData.industryTypes || []);
         setCapacityTypes(typesData.capacityTypes || []);
         setMaterialTypes(typesData.materialTypes || []);
+        setCategoryTypes(typesData.categoryTypes || []);
 
         // 폼 유효성 검사 트리거 (edit 모드에서만)
         if (formMode === 'edit') {
@@ -328,6 +338,10 @@ const StoreForm = ({
       setSelectedMaterialTypes(prev =>
         checked ? [...prev, id] : prev.filter(item => item !== id)
       );
+    } else if (type === 'category') {
+      setSelectedCategoryTypes(prev =>
+        checked ? [...prev, id] : prev.filter(item => item !== id)
+      );
     }
   };
 
@@ -364,6 +378,7 @@ const StoreForm = ({
         capacities: selectedCapacityTypes,
         industries: selectedIndustryTypes,
         materials: selectedMaterialTypes,
+        categories: selectedCategoryTypes,
         gallery: [] // create 모드에서는 갤러리 데이터를 별도로 처리
       };
 
@@ -442,7 +457,7 @@ const StoreForm = ({
     } finally {
       setIsSaving(false);
     }
-  }, [formMode, formStoreId, selectedIndustryTypes, selectedCapacityTypes, selectedMaterialTypes, localImages, cardImgPreview, thumbnailImgPreview, watch, router, uploadImageToServer]);
+  }, [formMode, formStoreId, selectedIndustryTypes, selectedCapacityTypes, selectedMaterialTypes, selectedCategoryTypes, localImages, cardImgPreview, thumbnailImgPreview, watch, router, uploadImageToServer]);
 
   if (isDataLoading) {
     return (
@@ -730,7 +745,7 @@ const StoreForm = ({
             </S.TagSection>
 
             <S.TagSection>
-              <h3>재료 태그</h3>
+              <h3>공정</h3>
               <div className="tag-grid">
                 {materialTypes.map((type) => (
                   <div key={type.id} className="tag-item">
@@ -741,6 +756,23 @@ const StoreForm = ({
                       onChange={(e) => handleTagChange('material', type.id, e.target.checked)}
                     />
                     <label htmlFor={`material-${type.id}`}>{type.name}</label>
+                  </div>
+                ))}
+              </div>
+            </S.TagSection>
+
+            <S.TagSection>
+              <h3>제품개발/부품제조</h3>
+              <div className="tag-grid">
+                {categoryTypes.map((type) => (
+                  <div key={type.id} className="tag-item">
+                    <input
+                      type="checkbox"
+                      id={`category-${type.id}`}
+                      checked={selectedCategoryTypes.includes(type.id)}
+                      onChange={(e) => handleTagChange('category', type.id, e.target.checked)}
+                    />
+                    <label htmlFor={`category-${type.id}`}>{type.name}</label>
                   </div>
                 ))}
               </div>

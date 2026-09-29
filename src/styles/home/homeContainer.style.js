@@ -357,7 +357,7 @@ export const HomeToggleWrapper = styled.div`
   }
 
   ${theme.media.mobile} {
-    top: 50px;
+    top: var(--header-height, 50px);
   }
 `;
 

@@ -6,12 +6,41 @@ import AnimatedPanel from '@/components/common/AnimatedPanel';
 import styled from '@emotion/styled';
 import { motion } from 'motion/react';
 import useWindowSize from '@/hooks/useWindowSize';
+import { MAP_FEATURE_ENABLED } from '@/config/features';
 
-// MapContainer를 동적 로딩하여 초기 로딩 속도 개선
-// LandingPage가 먼저 표시된 후 지도 로드
 const MapContainer = dynamic(() => import('@/container/MapContainer'), {
   ssr: false,
-  loading: () => null, // 로딩 중에는 아무것도 표시하지 않음
+  loading: () => null,
+});
+
+const HomeContainer = dynamic(() => import('@/container/HomeContainer'), {
+  ssr: false,
+  loading: () => null,
+});
+
+const StoreContainer = dynamic(() => import('@/container/StoreContainer'), {
+  ssr: false,
+  loading: () => null,
+});
+
+const FnqContainer = dynamic(() => import('@/container/FnqContainer'), {
+  ssr: false,
+  loading: () => null,
+});
+
+const InfoContainer = dynamic(() => import('@/container/InfoContainer'), {
+  ssr: false,
+  loading: () => null,
+});
+
+const InterviewContainer = dynamic(() => import('@/container/InterviewContainer'), {
+  ssr: false,
+  loading: () => null,
+});
+
+const WordContainer = dynamic(() => import('@/container/WordContainer'), {
+  ssr: false,
+  loading: () => null,
 });
 
 const MobileBg = styled(motion.div, {
@@ -32,37 +61,30 @@ export default function ConditionalLayout() {
   const pathname = usePathname();
   const { isMobile, isReady } = useWindowSize();
 
-  // admin 라우터인지 확인
   const isAdminRoute = pathname?.startsWith('/admin');
+  const showHome =
+    pathname === '/' || pathname === '/login' || pathname === '/signup';
+  const showStore = pathname?.startsWith('/store');
+  const showFnq = pathname === '/fnq' || pathname?.startsWith('/fnq/');
+  const showMap = pathname === '/map' || pathname?.startsWith('/map/');
+  const showInfo = pathname === '/info' || pathname?.startsWith('/info/');
+  const showInterview = pathname === '/interview' || pathname?.startsWith('/interview/');
+  const showWord = pathname === '/word' || pathname?.startsWith('/word/');
 
-  // admin 라우터가 아닐 때만 Map3D, AnimatedPanel 렌더링
-  if (isAdminRoute) {
+  if (isAdminRoute || !isReady) {
     return null;
-  }
-
-  // 모든 패널을 항상 렌더링 (AnimatedPanel 내부에서 활성화/비활성화 제어)
-  // isReady가 false면 로딩 상태 표시 (하이드레이션 오류 방지)
-  if (!isReady) {
-    return (
-      <>
-        <MapContainer />
-        <AnimatedPanel baseRoute='home' />
-        <AnimatedPanel baseRoute='store' />
-        <AnimatedPanel baseRoute='interview' />
-        <AnimatedPanel baseRoute='word' />
-        <AnimatedPanel baseRoute='info' />
-        <AnimatedPanel baseRoute='login' />
-        <AnimatedPanel baseRoute='signup' />
-        <AnimatedPanel baseRoute='mypage' />
-        <AnimatedPanel baseRoute='fnq' />
-      </>
-    );
   }
 
   return (
     <>
-      <MapContainer />
-      {isMobile && (
+      {(MAP_FEATURE_ENABLED || showMap) && <MapContainer />}
+      {showHome && <HomeContainer />}
+      {showStore && <StoreContainer />}
+      {showFnq && <FnqContainer />}
+      {showInfo && <InfoContainer />}
+      {showInterview && <InterviewContainer />}
+      {showWord && <WordContainer />}
+      {isMobile && pathname !== '/' && pathname !== '/login' && !showStore && !showFnq && !showMap && !showInfo && !showInterview && !showWord && (
         <MobileBg
           pathname={pathname}
           isVisible={pathname !== '/'}
@@ -76,15 +98,8 @@ export default function ConditionalLayout() {
           }}
         />
       )}
-      <AnimatedPanel baseRoute='home' />
-      <AnimatedPanel baseRoute='store' />
-      <AnimatedPanel baseRoute='interview' />
-      <AnimatedPanel baseRoute='word' />
-      <AnimatedPanel baseRoute='info' />
-      <AnimatedPanel baseRoute='login' />
       <AnimatedPanel baseRoute='signup' />
       <AnimatedPanel baseRoute='mypage' />
-      <AnimatedPanel baseRoute='fnq' />
     </>
   );
 }

@@ -31,6 +31,7 @@ export async function POST(request) {
 
     // 파일 타입 검증 (이미지와 일반 파일 모두 허용)
     const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
     const allowedDocumentTypes = [
       'application/pdf', 
       'application/msword', 
@@ -45,11 +46,11 @@ export async function POST(request) {
       'application/x-rar-compressed',
       'application/x-7z-compressed'
     ];
-    const allowedTypes = [...allowedImageTypes, ...allowedDocumentTypes];
+    const allowedTypes = [...allowedImageTypes, ...allowedVideoTypes, ...allowedDocumentTypes];
     
     // 파일 확장자 추출
     const fileExt = file.name.split('.').pop()?.toLowerCase();
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'zip', 'rar', '7z'];
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'webm', 'mov', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'zip', 'rar', '7z'];
     
     // MIME 타입이 없거나 허용되지 않은 경우, 확장자로 검증
     if (!file.type || file.type === '') {

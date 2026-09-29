@@ -1,291 +1,196 @@
 'use client';
 
-import * as S from '@/styles/home/homeContainer.style';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
+import { useLanguage } from '@/hooks/useLanguage';
+import { getLandingSections } from '@/utils/api/landing-api';
+import { DEFAULT_LANDING_SECTIONS, isLandingVideo } from '@/config/landingSections';
+import * as S from '@/styles/home/homeLanding.style';
+
+const NOTICE_KEY = 'hf-notice-dismissed';
 
 function HomeContainer() {
   const router = useRouter();
-  const [activeSection, setActiveSection] = useState(null);
-  const storeRef = useRef(null);
-  const interviewRef = useRef(null);
-  const wordRef = useRef(null);
-  const projectRef = useRef(null);
-  const contentWrapperRef = useRef(null);
+  const { t } = useLanguage();
+  const [noticeOpen, setNoticeOpen] = useState(false);
+  const [sections, setSections] = useState(DEFAULT_LANDING_SECTIONS);
+  const videoRef = useRef(null);
 
-  const sections = [
-    { key: 'store', ref: storeRef, label: '업체' },
-    { key: 'interview', ref: interviewRef, label: '인터뷰' },
-    { key: 'word', ref: wordRef, label: '용어' },
-    { key: 'project', ref: projectRef, label: '프로젝트 문의' },
-  ];
+  const hero = sections.find((item) => item.id === 'hero') || DEFAULT_LANDING_SECTIONS[0];
+  const find = sections.find((item) => item.id === 'find') || DEFAULT_LANDING_SECTIONS[1];
+  const ask = sections.find((item) => item.id === 'ask') || DEFAULT_LANDING_SECTIONS[2];
 
-  // Intersection Observer로 섹션 감지
   useEffect(() => {
-    if (!contentWrapperRef.current) return;
-
-    const observerOptions = {
-      root: contentWrapperRef.current,
-      rootMargin: '-30% 0px -50% 0px',
-      threshold: [0, 0.1, 0.5, 1],
-    };
-
-    const sectionVisibility = new Map();
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const sectionKey = sections.find((s) => s.ref.current === entry.target)?.key;
-        if (sectionKey) {
-          sectionVisibility.set(sectionKey, entry.intersectionRatio);
-        }
-      });
-
-      // 가장 많이 보이는 섹션을 active로 설정
-      let maxRatio = 0;
-      let mostVisibleSection = null;
-      sectionVisibility.forEach((ratio, key) => {
-        if (ratio > maxRatio && ratio > 0.1) {
-          maxRatio = ratio;
-          mostVisibleSection = key;
-        }
-      });
-
-      if (mostVisibleSection) {
-        setActiveSection(mostVisibleSection);
-      }
-    }, observerOptions);
-
-    // 각 섹션 관찰 시작
-    sections.forEach(({ ref }) => {
-      if (ref.current) {
-        observer.observe(ref.current);
-      }
-    });
-
-    return () => {
-      sections.forEach(({ ref }) => {
-        if (ref.current) {
-          observer.unobserve(ref.current);
-        }
-      });
-    };
+    try {
+      setNoticeOpen(sessionStorage.getItem(NOTICE_KEY) !== '1');
+    } catch {
+      setNoticeOpen(true);
+    }
   }, []);
 
-  // 토글 클릭 시 해당 섹션으로 스크롤
-  const handleToggleClick = (sectionKey) => {
-    const targetRef = sections.find((s) => s.key === sectionKey)?.ref;
-    if (targetRef?.current && contentWrapperRef.current) {
-      const targetElement = targetRef.current;
-      const container = contentWrapperRef.current;
-      const containerRect = container.getBoundingClientRect();
-      const targetRect = targetElement.getBoundingClientRect();
-      const scrollTop = container.scrollTop;
-      const targetScrollTop = scrollTop + targetRect.top - containerRect.top - 100; // 100px offset
+  useEffect(() => {
+    getLandingSections()
+      .then(setSections)
+      .catch(() => {});
+  }, []);
 
-      container.scrollTo({
-        top: targetScrollTop,
-        behavior: 'smooth',
-      });
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    video.muted = true;
+
+    const tryPlay = () => {
+      if (reduceMotion.matches) {
+        video.pause();
+        return;
+      }
+      video.play().catch(() => {});
+    };
+
+    tryPlay();
+    video.addEventListener('canplay', tryPlay);
+    reduceMotion.addEventListener('change', tryPlay);
+    return () => {
+      video.removeEventListener('canplay', tryPlay);
+      reduceMotion.removeEventListener('change', tryPlay);
+    };
+  }, [hero.media_url]);
+
+  const dismissNotice = () => {
+    setNoticeOpen(false);
+    try {
+      sessionStorage.setItem(NOTICE_KEY, '1');
+    } catch {
+      /* ignore */
     }
   };
 
+  const go = (href) => {
+    if (!href) return;
+    if (href.startsWith('http')) {
+      window.open(href, '_blank', 'noreferrer');
+      return;
+    }
+    router.push(href);
+  };
+
+  const renderBannerMedia = (section, { yellow, grayscale } = {}) => {
+    if (isLandingVideo(section)) {
+      return (
+        <>
+          <S.BannerVideo src={section.media_url} autoPlay muted loop playsInline grayscale={grayscale} />
+          {yellow && <S.BannerTint />}
+        </>
+      );
+    }
+    return <S.BannerImage src={section.media_url} yellow={yellow} grayscale={grayscale} />;
+  };
+
   return (
-    <S.HomeWrapper>
-      <S.HomeDecoration />
-      <S.HomePageName>청계천·을지로 기술유통중개소: 호모파베르</S.HomePageName>
+    <S.Landing>
+      {noticeOpen && (
+        <S.NoticeCard>
+          <S.NoticePlus aria-hidden="true">+</S.NoticePlus>
+          <S.NoticeClose type="button" aria-label="닫기" onClick={dismissNotice}>
+            ×
+          </S.NoticeClose>
+          <S.NoticeTitle>{t('pages.home.noticeTitle')}</S.NoticeTitle>
+          <S.NoticeBody>{t('pages.home.noticeBody')}</S.NoticeBody>
+        </S.NoticeCard>
+      )}
 
-      <S.HomeContentWrapper ref={contentWrapperRef}>
-        <S.ContentContainer>
-          <S.HomeImage>
-            <Image 
-              src='/img/DSC03100.jpg' 
-              alt='청계천·을지로 기술유통중개소' 
-              fill
-              priority
-              fetchPriority="high"
-              style={{ objectFit: 'cover' }}
-              sizes="100vw"
-            />
-          </S.HomeImage>
-          <S.HomeTitle>
-            <S.Intro>을지로의 제조업을 살리다</S.Intro>
-            <S.Title>청계천·을지로 기술유통중개소: <br />호모파베르</S.Title>
-            <S.HomeButton onClick={() => {
-              router.push('/fnq');
-            }}>작업 의뢰하기</S.HomeButton>
-            <S.SubTitle>기술유통중개소에서 기술자들을 쉽게 만나보세요</S.SubTitle>
-            <S.HomeArrow>⌅</S.HomeArrow>
-          </S.HomeTitle>
-        </S.ContentContainer>
+      <S.Stack>
+      <S.Hero $layer={1}>
+        {isLandingVideo(hero) ? (
+          <S.HeroVideo
+            key={hero.media_url}
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            src={hero.media_url}
+          />
+        ) : (
+          <S.HeroImage src={hero.media_url} />
+        )}
+        <S.HeroOverlay />
+        <S.HeroContent>
+          <S.Headline>
+            {hero.title || t('pages.home.headline')}
+            {hero.body && (
+              <>
+                <br />
+                {hero.body}
+              </>
+            )}
+          </S.Headline>
+          <S.VisionButton type="button" onClick={() => go(hero.button_href || '/info')}>
+            <S.VisionLabel>{hero.button_label || t('pages.home.vision')}</S.VisionLabel>
+            <S.VisionPlus>+</S.VisionPlus>
+          </S.VisionButton>
+        </S.HeroContent>
+      </S.Hero>
 
-        <S.HomeIntroductionContainer>
-          <S.HomeToggleWrapper>
-            <S.HomeToggle
-              $active={activeSection === 'store'}
-              onClick={() => handleToggleClick('store')}
-            >
-              업체
-            </S.HomeToggle>
-            <S.HomeToggle
-              $active={activeSection === 'interview'}
-              onClick={() => handleToggleClick('interview')}
-            >
-              인터뷰
-            </S.HomeToggle>
-            <S.HomeToggle
-              $active={activeSection === 'word'}
-              onClick={() => handleToggleClick('word')}
-            >
-              용어
-            </S.HomeToggle>
-            <S.HomeToggle
-              $active={activeSection === 'project'}
-              onClick={() => handleToggleClick('project')}
-            >
-              프로젝트 문의
-            </S.HomeToggle>
-          </S.HomeToggleWrapper>
+      <S.Banner $layer={2}>
+        {renderBannerMedia(find, { yellow: true })}
+        <S.GlassCard>
+          <div>
+            <S.GlassTitle>{find.title || t('pages.home.findTitle')}</S.GlassTitle>
+            <S.GlassBody>{find.body || t('pages.home.findBody')}</S.GlassBody>
+          </div>
+          <S.GlassButton type="button" onClick={() => go(find.button_href || '/store')}>
+            <S.GlassButtonLabel>{find.button_label || t('pages.home.findCta')}</S.GlassButtonLabel>
+            <S.GlassButtonPlus>+</S.GlassButtonPlus>
+          </S.GlassButton>
+        </S.GlassCard>
+      </S.Banner>
 
-          <S.HomeIntroduction ref={storeRef} className='store'>
-            <S.HomeIntroTitle>
-              내 작업에 맞는 청계천·을지로 기술자들을 <br /> 직접 찾아볼 수 있습니다
-            </S.HomeIntroTitle>
-            <S.HomeIntroSub>
-              나에게 맞는 키워드를 선택하거나 검색하며 내 작업에 꼭 맞는 기술자를 찾아보세요!
-            </S.HomeIntroSub>
-            <S.HomeIntroButton onClick={() => {
-              router.push('/store');
-            }}>
-              기술자 찾기
-            </S.HomeIntroButton>
-            <S.HomeIntroImage>
-              <Image 
-                src='/img/store.jpg' 
-                alt='store' 
-                width={500}
-                height={500}
-                style={{ objectFit: 'cover' }}
-                loading="lazy"
-              />
-            </S.HomeIntroImage>
-            <S.HomeIntroImageSecond>
-              <Image 
-                src='/img/store-detail.jpg' 
-                alt='store-detail' 
-                width={500} 
-                height={500} 
-                style={{ objectFit: 'cover' }}
-                loading="lazy"
-              />
-            </S.HomeIntroImageSecond>
-          </S.HomeIntroduction>
+      <S.Banner $layer={3}>
+        {renderBannerMedia(ask, { grayscale: true })}
+        <S.GlassCard>
+          <div>
+            <S.GlassTitle>{ask.title || t('pages.home.askTitle')}</S.GlassTitle>
+            <S.GlassBody>{ask.body || t('pages.home.askBody')}</S.GlassBody>
+          </div>
+          <S.GlassButton type="button" onClick={() => go(ask.button_href || '/fnq')}>
+            <S.GlassButtonLabel>{ask.button_label || t('pages.home.askCta')}</S.GlassButtonLabel>
+            <S.GlassButtonPlus>+</S.GlassButtonPlus>
+          </S.GlassButton>
+        </S.GlassCard>
+      </S.Banner>
+      </S.Stack>
 
-          <S.HomeIntroduction ref={interviewRef} className='interview'>
-            <S.HomeIntroTitle>
-              청계천·을지로 기술자들의 이야기를 들어볼 수 있습니다
-            </S.HomeIntroTitle>
-            <S.HomeIntroSub>
-              기술자분들이 어떻게 작업하고 있는지 어떻게 이 장소에서 작업을 이어가고 있는지 이야기를 들어보세요!
-            </S.HomeIntroSub>
-            <S.HomeIntroButton onClick={() => {
-              router.push('/interview');
-            }}>
-              인터뷰 보러가기
-            </S.HomeIntroButton>
-            <S.HomeIntroImage style={{ marginTop: '30px' }}>
-              <Image 
-                src='/img/interview.jpg' 
-                alt='interview' 
-                width={500} 
-                height={500} 
-                style={{ objectFit: 'cover' }}
-                loading="lazy"
-              />
-            </S.HomeIntroImage>
-            <S.HomeIntroImageSecond>
-              <Image 
-                src='/img/interview-02.jpg' 
-                alt='interview-02' 
-                width={500} 
-                height={500} 
-                style={{ objectFit: 'cover' }}
-                loading="lazy"
-              />
-            </S.HomeIntroImageSecond>
-          </S.HomeIntroduction>
-
-          <S.HomeIntroduction ref={wordRef} className='word'>
-            <S.HomeIntroTitle>
-              제작에 필요한 용어를 알아볼 수 있습니다
-            </S.HomeIntroTitle>
-            <S.HomeIntroSub>
-              나에게 필요한 공정이 무엇인지 찾아보거나 새로운 용어를 발견하고 아이디어에 적용해보세요!
-            </S.HomeIntroSub>
-            <S.HomeIntroButton onClick={() => {
-              router.push('/word');
-            }}>
-              용어 공부하러 가기
-            </S.HomeIntroButton>
-            <S.HomeIntroImage style={{ marginTop: '30px' }}>
-              <Image 
-                src='/img/word.jpg' 
-                alt='word' 
-                width={500} 
-                height={500} 
-                style={{ objectFit: 'cover' }}
-                loading="lazy"
-              />
-            </S.HomeIntroImage>
-            <S.HomeIntroImageSecond>
-              <Image 
-                src='/img/word-01.jpg' 
-                alt='word-01' 
-                width={500} 
-                height={500} 
-                style={{ objectFit: 'cover' }}
-                loading="lazy"
-              />
-            </S.HomeIntroImageSecond>
-          </S.HomeIntroduction>
-
-          <S.HomeIntroduction ref={projectRef} className='project'>
-            <S.HomeIntroTitle>
-              청계천·을지로 기술자들에게 직접 작품을 의뢰해볼 수 있습니다
-            </S.HomeIntroTitle>
-            <S.HomeIntroSub>
-              작품에 대한 설명과 스케치를 보내주시면 적절한 기술자분들과 상담을 진행해드립니다!
-            </S.HomeIntroSub>
-            <S.HomeIntroButton onClick={() => {
-              router.push('/fnq');
-            }}>
-              작품 의뢰하기
-            </S.HomeIntroButton>
-            <S.HomeIntroImage style={{ marginTop: '30px' }}>
-              <Image 
-                src='/img/fnq.jpg' 
-                alt='fnq' 
-                width={500} 
-                height={500} 
-                style={{ objectFit: 'cover' }}
-                loading="lazy"
-              />
-            </S.HomeIntroImage>
-            <S.HomeIntroImageSecond>
-              <Image 
-                src='/img/fnq-02.jpg' 
-                alt='fnq-02' 
-                width={400} 
-                height={400} 
-                style={{ objectFit: 'cover' }}
-                loading="lazy"
-              />
-            </S.HomeIntroImageSecond>
-          </S.HomeIntroduction>
-        </S.HomeIntroductionContainer>
-
-      </S.HomeContentWrapper>
-    </S.HomeWrapper>
+      <S.Footer>
+        <S.FooterBrand>
+          <S.FooterLogo>
+            HomoFaber 호모파베르
+            <br />
+            청계천을지로 기술유통중개소
+          </S.FooterLogo>
+          <S.FooterCopy>{t('pages.home.footerCopy')}</S.FooterCopy>
+        </S.FooterBrand>
+        <S.FooterLinks>
+          <S.FooterCol>
+            <S.FooterLink onClick={() => router.push('/info')}>Information</S.FooterLink>
+            <S.FooterLink>Term of Use</S.FooterLink>
+            <S.FooterLink>Privacy Policy</S.FooterLink>
+          </S.FooterCol>
+          <S.FooterCol>
+            <S.FooterLink as="a" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
+              Instagram
+            </S.FooterLink>
+            <S.FooterLink as="a" href="https://blog.naver.com/" target="_blank" rel="noreferrer">
+              Naver Blog
+            </S.FooterLink>
+          </S.FooterCol>
+        </S.FooterLinks>
+      </S.Footer>
+    </S.Landing>
   );
 }
 
