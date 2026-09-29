@@ -6,7 +6,6 @@ import StoreList from '@/components/store/StoreList';
 import { useStores, useStoreFilters } from '@/hooks/useStores';
 import { getStoreTypes } from '@/utils/api/stores-api';
 import { convertIndustryNameToKorean } from '@/utils/converters';
-import { STORE_PRODUCT_CATEGORIES, STORE_PROCESSES } from '@/config/storeCategories';
 import * as S from '@/styles/store/storeContainer.style';
 import * as ListS from '@/styles/store/storeList.style';
 
@@ -24,8 +23,8 @@ function StoreContainer() {
   const [allTags, setAllTags] = useState({
     industry: [],
     capacity: [],
-    material: STORE_PROCESSES,
-    category: STORE_PRODUCT_CATEGORIES,
+    material: [],
+    category: [],
   });
 
   const filteredStores = useStoreFilters(stores, searchKeyword, selectedTags, sortBy);
@@ -58,8 +57,8 @@ function StoreContainer() {
         setAllTags({
           industry: types.industryTypes?.map((t) => t.name) || [],
           capacity: types.capacityTypes?.map((t) => t.name) || [],
-          material: STORE_PROCESSES,
-          category: STORE_PRODUCT_CATEGORIES,
+          material: types.materialTypes?.map((t) => t.name) || [],
+          category: types.categoryTypes?.map((t) => t.name) || [],
         });
       } catch (err) {
         console.error('태그 목록 가져오기 실패:', err);

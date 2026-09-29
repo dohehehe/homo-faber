@@ -31,7 +31,7 @@ function HomeContainer() {
   useEffect(() => {
     getLandingSections()
       .then(setSections)
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ function HomeContainer() {
         video.pause();
         return;
       }
-      video.play().catch(() => {});
+      video.play().catch(() => { });
     };
 
     tryPlay();
@@ -102,67 +102,67 @@ function HomeContainer() {
       )}
 
       <S.Stack>
-      <S.Hero $layer={1}>
-        {isLandingVideo(hero) ? (
-          <S.HeroVideo
-            key={hero.media_url}
-            ref={videoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            aria-hidden="true"
-            src={hero.media_url}
-          />
-        ) : (
-          <S.HeroImage src={hero.media_url} />
-        )}
-        <S.HeroOverlay />
-        <S.HeroContent>
-          <S.Headline>
-            {hero.title || t('pages.home.headline')}
-            {hero.body && (
-              <>
-                <br />
-                {hero.body}
-              </>
-            )}
-          </S.Headline>
-          <S.VisionButton type="button" onClick={() => go(hero.button_href || '/info')}>
-            <S.VisionLabel>{hero.button_label || t('pages.home.vision')}</S.VisionLabel>
-            <S.VisionPlus>+</S.VisionPlus>
-          </S.VisionButton>
-        </S.HeroContent>
-      </S.Hero>
+        <S.Hero $layer={1}>
+          {isLandingVideo(hero) ? (
+            <S.HeroVideo
+              key={hero.media_url}
+              ref={videoRef}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              aria-hidden="true"
+              src={hero.media_url}
+            />
+          ) : (
+            <S.HeroImage src={hero.media_url} />
+          )}
+          <S.HeroOverlay />
+          <S.HeroContent>
+            <S.Headline>
+              {hero.title || t('pages.home.headline')}
+              {hero.body && (
+                <>
+                  <br />
+                  {hero.body}
+                </>
+              )}
+            </S.Headline>
+            <S.VisionButton type="button" onClick={() => go(hero.button_href || '/info')}>
+              <S.VisionLabel>{hero.button_label || t('pages.home.vision')}</S.VisionLabel>
+              <S.VisionPlus>+</S.VisionPlus>
+            </S.VisionButton>
+          </S.HeroContent>
+        </S.Hero>
 
-      <S.Banner $layer={2}>
-        {renderBannerMedia(find, { yellow: true })}
-        <S.GlassCard>
-          <div>
-            <S.GlassTitle>{find.title || t('pages.home.findTitle')}</S.GlassTitle>
-            <S.GlassBody>{find.body || t('pages.home.findBody')}</S.GlassBody>
-          </div>
-          <S.GlassButton type="button" onClick={() => go(find.button_href || '/store')}>
-            <S.GlassButtonLabel>{find.button_label || t('pages.home.findCta')}</S.GlassButtonLabel>
-            <S.GlassButtonPlus>+</S.GlassButtonPlus>
-          </S.GlassButton>
-        </S.GlassCard>
-      </S.Banner>
+        <S.Banner $layer={2}>
+          {renderBannerMedia(find, { yellow: true })}
+          <S.GlassCard>
+            <div>
+              <S.GlassTitle>{find.title || t('pages.home.findTitle')}</S.GlassTitle>
+              <S.GlassBody>{find.body || t('pages.home.findBody')}</S.GlassBody>
+            </div>
+            <S.GlassButton type="button" onClick={() => go(find.button_href || '/store')}>
+              <S.GlassButtonLabel>{find.button_label || t('pages.home.findCta')}</S.GlassButtonLabel>
+              <S.GlassButtonPlus>+</S.GlassButtonPlus>
+            </S.GlassButton>
+          </S.GlassCard>
+        </S.Banner>
 
-      <S.Banner $layer={3}>
-        {renderBannerMedia(ask, { grayscale: true })}
-        <S.GlassCard>
-          <div>
-            <S.GlassTitle>{ask.title || t('pages.home.askTitle')}</S.GlassTitle>
-            <S.GlassBody>{ask.body || t('pages.home.askBody')}</S.GlassBody>
-          </div>
-          <S.GlassButton type="button" onClick={() => go(ask.button_href || '/fnq')}>
-            <S.GlassButtonLabel>{ask.button_label || t('pages.home.askCta')}</S.GlassButtonLabel>
-            <S.GlassButtonPlus>+</S.GlassButtonPlus>
-          </S.GlassButton>
-        </S.GlassCard>
-      </S.Banner>
+        <S.Banner $layer={3}>
+          {renderBannerMedia(ask, { grayscale: true })}
+          <S.GlassCard>
+            <div>
+              <S.GlassTitle>{ask.title || t('pages.home.askTitle')}</S.GlassTitle>
+              <S.GlassBody>{ask.body || t('pages.home.askBody')}</S.GlassBody>
+            </div>
+            <S.GlassButton type="button" onClick={() => go(ask.button_href || '/fnq')}>
+              <S.GlassButtonLabel>{ask.button_label || t('pages.home.askCta')}</S.GlassButtonLabel>
+              <S.GlassButtonPlus>+</S.GlassButtonPlus>
+            </S.GlassButton>
+          </S.GlassCard>
+        </S.Banner>
       </S.Stack>
 
       <S.Footer>
@@ -181,10 +181,11 @@ function HomeContainer() {
             <S.FooterLink>Privacy Policy</S.FooterLink>
           </S.FooterCol>
           <S.FooterCol>
-            <S.FooterLink as="a" href="https://www.instagram.com/" target="_blank" rel="noreferrer">
+            <S.FooterLink as="a" href="https://www.instagram.com/cheongyecheon/" target="_blank" rel="noreferrer">
               Instagram
             </S.FooterLink>
-            <S.FooterLink as="a" href="https://blog.naver.com/" target="_blank" rel="noreferrer">
+            <S.FooterLink as="a" href="https://blog.naver.com/homo-faber
+" target="_blank" rel="noreferrer">
               Naver Blog
             </S.FooterLink>
           </S.FooterCol>
