@@ -1,12 +1,15 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
 :root {
-  --white: #F8F8F8;
-  --black: #000000;
+  --white: #FFFFFF;
+  --black: #111111;
   --light-black: #434343;
   --yellow: #FFF8B8;
   --brown: #363315;
-  --gray: #A9A9A9;
+  --gray: #8A8A8A;
   --red: #FE0000;
   --neon-green: #40FF89;
+  --font-ui: 'Pretendard', var(--font-inter), var(--font-gothic), sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,29 +20,32 @@
 }
 
 html {
-  font-size: 10px;
-  /* 웹 기준 폰트 크기 */
-}
-
-@media (max-width: 768px) {
-  html {
-    font-size: 11px;
-    /* 모바일 기준 폰트 크기 */
-  }
+  font-size: 14px;
 }
 
 html,
 body {
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
   color: var(--black);
-  background: var(--white);
-  font-family: var(--font-gothic), 'Gothic A1', Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  font-family: var(--font-ui), 'Gothic A1', Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  letter-spacing: inherit;
 }
 
 * {
@@ -100,20 +106,12 @@ div[style*="background"][style*="google"] {
   display: none !important;
 }
 
-/* Leaflet Map2D — brand tiles (Google 2D 톤 근사) */
 .hf-map-2d {
-  background: #eef5f0;
+  background: #f3f3f3;
 }
 
-/* 베이스: 연녹 지면 + 초록 계열 도로 */
 .hf-map-2d .hf-map-tiles-base {
-  filter: hue-rotate(62deg) saturate(1.28) brightness(1.07) contrast(0.9);
-}
-
-/* 라벨: #322F18 계열 */
-.hf-map-2d .hf-map-tiles-labels {
-  filter: sepia(0.4) saturate(0.65) hue-rotate(8deg) brightness(0.82) contrast(1.15);
-  opacity: 0.9;
+  filter: grayscale(1) contrast(1.05);
 }
 
 .hf-map-2d .leaflet-control-attribution {

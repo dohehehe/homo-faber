@@ -35,11 +35,11 @@ export async function generateMetadata({ params }) {
     ].filter(Boolean).join(', ');
 
     return {
-      title: `${interview.stores?.name} 인터뷰 - 산림동의 만드는 사람들: 호모파베르`,
+      title: `${interview.stores?.name} 인터뷰 - 청계천을지로 기술유통중개소`,
       description: interview.intro || `${interview.stores?.name}의 ${interview.stores?.person}님과의 인터뷰를 확인하세요.`,
       keywords: keywords,
       openGraph: {
-        title: `${interview.stores?.name} 인터뷰 - 산림동의 만드는 사람들: 호모파베르`,
+        title: `${interview.stores?.name} 인터뷰 - 청계천을지로 기술유통중개소`,
         description: interview.intro || `${interview.stores?.name}의 ${interview.stores?.person}님과의 인터뷰를 확인하세요.`,
         images: interview.cover_img ? [
           {
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }) {
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${interview.stores?.name} 인터뷰 - 산림동의 만드는 사람들: 호모파베르`,
+        title: `${interview.stores?.name} 인터뷰 - 청계천을지로 기술유통중개소`,
         description: interview.intro || `${interview.stores?.name}의 ${interview.stores?.person}님과의 인터뷰를 확인하세요.`,
         images: interview.cover_img ? [interview.cover_img] : [],
       },

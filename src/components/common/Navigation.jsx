@@ -1,116 +1,244 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useLanguage } from '@/hooks/useLanguage';
+import LoginOverlay from '@/components/auth/LoginOverlay';
 import * as S from '@/styles/common/navigation.style';
-import LanguageToggle from '@/components/common/LanguageToggle';
 
 function isActive(pathname, href) {
-  // Treat '/' as home for '/home' as well
-  if (href === '/home') {
+  if (href === '/') {
     return pathname === '/' || pathname.startsWith('/home');
   }
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+const ARCHIVE_LINKS = [
+  { href: '/info', key: 'info' },
+  { href: '/interview', key: 'interview' },
+  { href: '/word', key: 'word' },
+  { href: '/map', key: 'map' },
+];
+
+function ProfileIcon() {
+  return (
+    <svg width="9" height="11" viewBox="0 0 9 11" fill="none" aria-hidden="true">
+      <circle cx="4.5" cy="3" r="2.1" stroke="currentColor" strokeWidth="1" />
+      <path
+        d="M1.2 10c.5-2.1 2.1-3.3 3.3-3.3S7.8 7.9 8.3 10"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function MenuIcon({ open }) {
+  if (open) {
+    return (
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
+      <path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export default function Navigation() {
   const pathname = usePathname();
-  const { user, loading } = useAuth();
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
   const [isClient, setIsClient] = useState(false);
-  const [isMap3D, setIsMap3D] = useState(false); // 지도 상태 추적 (기본값: 2D)
-  const { t } = useLanguage();
+  const [archiveOpen, setArchiveOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const { t, language, toggleLanguage } = useLanguage();
+  const archiveRef = useRef(null);
+  const headerRef = useRef(null);
+  const { isMobile } = useWindowSize();
 
-  // 클라이언트에서만 실행되도록 설정
+  const isAdminRoute = pathname?.startsWith('/admin');
+  const isHomeLanding =
+    pathname === '/' ||
+    pathname === '/home' ||
+    pathname === '/login' ||
+    pathname === '/signup';
+  const isArchiveActive = ARCHIVE_LINKS.some(({ href }) => isActive(pathname, href));
+  const isLoginRoute = pathname === '/login';
+
+  const closeLogin = useCallback(() => {
+    setLoginOpen(false);
+    if (pathname === '/login') {
+      router.push('/');
+    }
+  }, [pathname, router]);
+
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // 클라이언트에서만 useWindowSize 사용
-  const windowSize = useWindowSize();
-  const isMobile = isClient ? windowSize.isMobile : false;
+  useEffect(() => {
+    setArchiveOpen(false);
+    setMobileOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
-    if (isClient) {
-      setIsOpen(!isMobile);
+    if (user) {
+      setLoginOpen(false);
+      return;
     }
-  }, [isMobile, isClient]);
+    if (isLoginRoute) {
+      setLoginOpen(true);
+    }
+  }, [isLoginRoute, user]);
 
-  // 다국어 네비게이션 링크
-  const links = [
-    { href: '/', label: t('nav.home') },
-    { href: '/store', label: t('nav.store') },
-    { href: '/interview', label: t('nav.interview') },
-    { href: '/word', label: t('nav.word') },
-    { href: '/fnq', label: t('nav.fnq') },
-    { href: '/info', label: t('nav.info') },
-    { href: user ? '/mypage' : '/login', label: user ? t('nav.mypage') : t('nav.login') },
-  ];
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (archiveRef.current && !archiveRef.current.contains(event.target)) {
+        setArchiveOpen(false);
+      }
+    };
+    const openLogin = () => setLoginOpen(true);
+    document.addEventListener('click', handleClickOutside);
+    window.addEventListener('openLogin', openLogin);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      window.removeEventListener('openLogin', openLogin);
+    };
+  }, []);
 
-  const toggleNavigation = () => {
-    setIsOpen(!isOpen);
-  };
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return undefined;
 
-  const handleLinkClick = () => {
-    setIsOpen(false);
-  };
+    const updateHeaderHeight = () => {
+      document.documentElement.style.setProperty(
+        '--header-height',
+        `${Math.round(el.getBoundingClientRect().height)}px`,
+      );
+    };
 
-  // 지도 전환 함수
-  const handleMapToggle = () => {
-    setIsMap3D(!isMap3D); // 상태 업데이트
-    window.dispatchEvent(new CustomEvent('toggleMapView'));
+    updateHeaderHeight();
+    const observer = new ResizeObserver(updateHeaderHeight);
+    observer.observe(el);
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateHeaderHeight);
+    };
+  }, [archiveOpen, isArchiveActive, pathname, isClient]);
+
+  if (!isClient || isAdminRoute) {
+    return null;
+  }
+
+  const handleProfileClick = () => {
+    if (user) {
+      router.push('/mypage');
+      return;
+    }
+    setLoginOpen(true);
   };
 
   return (
     <>
-      <S.NavigationIcon
-        src="/navIcon.png"
-        alt="home"
-        onClick={toggleNavigation}
-        isOpen={isOpen}
-      />
-      <S.NavigationBg isOpen={isOpen} />
-      <S.NavigationWrapper isOpen={isOpen} onClick={isMobile ? handleLinkClick : undefined}>
-        {links.map(({ href, label }) => {
-          const active = isActive(pathname, href);
-          return (
+      <S.HeaderBar
+        ref={headerRef}
+        opaque={pathname?.startsWith('/store') || isArchiveActive}
+      >
+        <S.HeaderLeft>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <S.Brand $light={isHomeLanding}>
+              <S.BrandLine>HomoFaber 호모파베르</S.BrandLine>
+              <S.BrandLine>청계천을지로 기술유통중개소</S.BrandLine>
+            </S.Brand>
+          </Link>
+
+          <S.ArchiveCluster ref={archiveRef}>
+            <S.NavGroup>
+              <Link href="/store" style={{ textDecoration: 'none', height: '100%' }}>
+                <S.NavLink active={isActive(pathname, '/store')}>{t('nav.store')}</S.NavLink>
+              </Link>
+              <Link href="/fnq" style={{ textDecoration: 'none', height: '100%' }}>
+                <S.NavLink active={isActive(pathname, '/fnq')}>{t('nav.fnq')}</S.NavLink>
+              </Link>
+              <S.NavLink
+                as="button"
+                type="button"
+                active={isArchiveActive}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setArchiveOpen((open) => !open);
+                }}
+                aria-expanded={archiveOpen || isArchiveActive}
+              >
+                {t('nav.archive')}
+              </S.NavLink>
+            </S.NavGroup>
+
+            {(archiveOpen || isArchiveActive) && (
+              <S.NavGroup $sub>
+                {ARCHIVE_LINKS.map(({ href, key }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    style={{ textDecoration: 'none', height: '100%' }}
+                  >
+                    <S.NavLink active={isActive(pathname, href)}>{t(`nav.${key}`)}</S.NavLink>
+                  </Link>
+                ))}
+              </S.NavGroup>
+            )}
+          </S.ArchiveCluster>
+        </S.HeaderLeft>
+
+        <S.HeaderRight>
+          <S.LangButton type="button" onClick={toggleLanguage} aria-label="change language">
+            {language === 'en' ? 'KO' : 'EN'}
+          </S.LangButton>
+          <S.IconButton
+            type="button"
+            aria-label={user ? t('nav.mypage') : t('nav.login')}
+            onClick={handleProfileClick}
+          >
+            <ProfileIcon />
+          </S.IconButton>
+          <S.MenuToggle
+            type="button"
+            aria-label="menu"
+            onClick={() => setMobileOpen((open) => !open)}
+          >
+            <MenuIcon open={mobileOpen} />
+          </S.MenuToggle>
+        </S.HeaderRight>
+      </S.HeaderBar>
+
+      <S.MobilePanel isOpen={mobileOpen}>
+        <Link href="/store" style={{ textDecoration: 'none' }}>
+          <S.MobileLink active={isActive(pathname, '/store')}>{t('nav.store')}</S.MobileLink>
+        </Link>
+        <Link href="/fnq" style={{ textDecoration: 'none' }}>
+          <S.MobileLink active={isActive(pathname, '/fnq')}>{t('nav.fnq')}</S.MobileLink>
+        </Link>
+        <S.MobileLink active={isArchiveActive}>{t('nav.archive')}</S.MobileLink>
+        <S.MobileArchiveRow>
+          {ARCHIVE_LINKS.map(({ href, key }) => (
             <Link key={href} href={href} style={{ textDecoration: 'none' }}>
-              <S.NavigationItem active={active}>
-                {label}
-              </S.NavigationItem>
+              <S.MobileSubLink active={isActive(pathname, href)}>{t(`nav.${key}`)}</S.MobileSubLink>
             </Link>
-          );
-        })}
-        <LanguageToggle isOpen={isMobile && isOpen} />
+          ))}
+        </S.MobileArchiveRow>
+      </S.MobilePanel>
 
-
-        {isClient && isMobile && (
-          <S.CloseButton onClick={handleLinkClick}>
-            ✕
-          </S.CloseButton>
-        )}
-      </S.NavigationWrapper>
-
-      <S.MapToggleButton isOpen={isMobile && isOpen} onClick={handleMapToggle} isActive={isMap3D}>
-        <S.SwitchText isActive={!isMap3D}>
-          2D
-        </S.SwitchText>
-        <S.SwitchTrack isActive={isMap3D}>
-          <S.SwitchThumb isActive={isMap3D} />
-        </S.SwitchTrack>
-        <S.SwitchText isActive={isMap3D}>
-          3D
-        </S.SwitchText>
-      </S.MapToggleButton>
-
+      <LoginOverlay open={loginOpen && !user} onClose={closeLogin} />
     </>
   );
 }
-
-

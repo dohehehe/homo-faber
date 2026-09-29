@@ -10,7 +10,8 @@ export async function GET(request) {
     const [
       industryTypesResult,
       capacityTypesResult,
-      materialTypesResult
+      materialTypesResult,
+      categoryTypesResult
     ] = await Promise.all([
       supabase
         .from('industry_types')
@@ -22,6 +23,10 @@ export async function GET(request) {
         .order('name'),
       supabase
         .from('material_types')
+        .select('id, name')
+        .order('name'),
+      supabase
+        .from('category_types')
         .select('id, name')
         .order('name')
     ]);
@@ -54,7 +59,8 @@ export async function GET(request) {
     const data = {
       industryTypes: industryTypesResult.data || [],
       capacityTypes: capacityTypesResult.data || [],
-      materialTypes: materialTypesResult.data || []
+      materialTypes: materialTypesResult.data || [],
+      categoryTypes: categoryTypesResult.error ? [] : (categoryTypesResult.data || [])
     };
 
 

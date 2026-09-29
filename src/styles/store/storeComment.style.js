@@ -1,91 +1,66 @@
 import styled from '@emotion/styled';
-import theme from '@/styles/Theme';
+import { captionText } from '@/styles/typography';
 
 export const CommentsSection = styled.div`
   width: 100%;
-  margin-top: 140px;
-  padding-top: 20px;
-
-  ${theme.media.tablet} {
-    padding: 20px 10px;
-    margin-top: 20px;
-  }
+  margin-top: 10px;
 `;
 
 export const CommentsTitle = styled.h3`
-  font-family: var(--font-gothic);
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: center;
+  font-weight: 400;
+  color: #000;
+  margin: 0;
+  padding: 10px 15px;
+  text-align: left;
+  border-bottom: 0.5px solid rgba(227, 227, 227, 0.3);
 `;
 
 // 댓글 입력창
 export const CommentForm = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-bottom: 20px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  padding-top: 30px;
-
-  ${theme.media.tablet} {
-    align-items: center;
-    padding-top: 20px;
-  }
+  gap: 10px;
+  margin-bottom: 10px;
 `;
 
 export const CommentInput = styled.textarea`
   width: 100%;
-  padding: 10px;
-  border: 1px solid #999;
-  border-radius: 4px;
-  font-family: var(--font-gothic);
-  font-size: 1rem;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  background: rgba(227, 227, 227, 0.3);
   resize: vertical;
   min-height: 60px;
   
   &:focus {
     outline: none;
-    background: var(--yellow);
+    background: rgba(227, 227, 227, 0.5);
   }
 
   &:disabled {
-    background-color:rgb(200, 200, 200);
+    background-color: #f3f3f3;
     cursor: not-allowed;
   }
-
-  &:disabled::placeholder {
-    color: black;
-    text-align: center;
-  }
-
 `;
 
 export const CommentSubmitButton = styled.button`
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
+  padding: 8px;
+  background: rgba(239, 239, 239, 0.9);
+  color: #000;
   border: none;
-  border-radius: 4px;
-  font-family: var(--font-gothic);
-  font-size: 0.9rem;
+  border-radius: 5px;
   cursor: pointer;
   white-space: nowrap;
-  font-weight: 600;
-  
+  font-weight: 400;
+  align-self: flex-start;
+
   &:hover:not(:disabled) {
-    background-color: #0056b3;
+    background-color: #e4e4e4;
   }
-  
+
   &:disabled {
     background-color: #ccc;
     cursor: not-allowed;
-  }
-
-  ${theme.media.tablet} {
-    width: 100%;
   }
 `;
 
@@ -94,37 +69,37 @@ export const CommentsList = styled.ul`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 0;
   padding-bottom: 40px;
 `;
 
 export const NoComments = styled.div`
   text-align: center;
   color: #999;
-  font-family: var(--font-gothic);
-  font-size: 0.9rem;
   padding: 20px;
+`;
+
+export const CommentActions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
 `;
 
 export const CommentItem = styled.li`
   width: 100%;
-  padding: 20px 10px 14px 10px;
-  border-top: 1.5px dotted #999;
+  padding: 10px 15px;
+  border-top: 0.5px solid #efefef;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
 export const CommentContent = styled.div`
   width: 100%;
-  font-family: var(--font-gothic);
-  letter-spacing: 0.04rem;
-  font-size: 1rem;
-  line-height: 1.85;
-  color: #333;
+  color: #000;
   word-break: keep-all;
   text-align: left;
-
-  ${theme.media.tablet} {
-    font-size: 1.1rem;
-  }
 `;
 
 export const CommentGallery = styled.div`
@@ -155,32 +130,18 @@ export const CommentInfoWrapper = styled.div`
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin-top: 25px;
-
-  ${theme.media.tablet} {
-    padding: 0 2px;
-  }
+  margin-top: 0;
 `;
 
 export const CommentUser = styled.div`
-  font-family: var(--font-gothic);
-  font-size: 0.85rem;
-  color: #666;
-  font-weight: 500;
-
-  ${theme.media.tablet} {
-    font-size: 1rem;
-  }
+  ${captionText}
+  color: #a0a0a0;
+  font-weight: 400;
 `;
 
 export const CommentTime = styled.div`
-  font-family: var(--font-gothic);
-  font-size: 0.8rem;
-  color: #999;
-
-  ${theme.media.tablet} {
-    font-size: 0.9rem;
-  }
+  ${captionText}
+  color: #a0a0a0;
 `;
 
 export const CommentButtonWrapper = styled.div`
@@ -190,8 +151,6 @@ export const CommentButtonWrapper = styled.div`
 `;
 
 export const CommentButton = styled.button`
-  font-family: var(--font-gothic);
-  font-size: 0.8rem;
   font-weight: 400;
   color: #666;
   background: none;
@@ -217,8 +176,6 @@ export const CommentEditInput = styled.textarea`
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-family: var(--font-gothic);
-  font-size: 0.9rem;
   resize: vertical;
   min-height: 60px;
   margin-bottom: 10px;
@@ -237,29 +194,20 @@ export const CommentEditButtons = styled.div`
 
 
 export const ImageUploadSection = styled.div`
-  margin: 10px 0;
+  margin: 0;
 `;
 
 export const ImageUploadButton = styled.div`
-  margin-bottom: 10px;
+  margin-bottom: 0;
 
   label {
     display: inline-block;
-    padding: 8px 12px;
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-family: var(--font-gothic);
-    font-size: 0.9rem;
-    color: #666;
+    padding: 8px;
+    background: rgba(239, 239, 239, 0.9);
+    border: none;
+    border-radius: 5px;
+    color: #000;
     cursor: pointer;
-    transition: all 0.2s ease;
-    
-    &:hover {
-      background-color: #e9ecef;
-      border-color: #007bff;
-      color: #007bff;
-    }
   }
 
   input:disabled + label {
@@ -308,7 +256,6 @@ export const ImageRemoveButton = styled.button`
   background-color: #ff4444;
   color: white;
   border: none;
-  font-size: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;

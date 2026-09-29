@@ -8,26 +8,22 @@ export const SearchWrapper = styled(motion.div, {
   shouldForwardProp: (prop) => prop !== 'isMobile',
 })`
   width: 100%;
-  padding-right: 20px;
+  padding-right: 0;
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   z-index: 2;
 
   ${theme.media.mobile} {
-    position: fixed;
-    top: 14px;
-    right: 5px;
-    width: 70dvw;
+    width: 100%;
     padding-right: 0;
-    z-index: 6; /* AnimatedPanel(z-index: 6)보다 높게 설정 */
   }
 `;
 
 export const SearchBox = styled.div`
   display: flex;
-  margin-left: auto;
+  margin: 0 auto;
   padding: 1px 27px 0 27px;
   box-shadow: 1px 4px 4px 0 rgba(0,0,0,0.25);
   align-items: center;

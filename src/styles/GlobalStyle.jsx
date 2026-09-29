@@ -2,10 +2,9 @@ import theme from '@/styles/Theme';
 import { css } from '@emotion/react';
 
 const globalStyle = css`
-  /* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
+  :root {
+    --header-height: 53px;
+  }
 
   html,
   body,
@@ -91,7 +90,7 @@ const globalStyle = css`
     margin: 0;
     padding: 0;
     border: 0;
-    font-size: 100%;
+    font-size: 1rem;
     font: inherit;
     vertical-align: baseline;
 
@@ -115,7 +114,7 @@ const globalStyle = css`
     display: block;
   }
   body {
-    line-height: 1;
+    line-height: 1.6;
   }
   ol,
   ul {
@@ -137,22 +136,18 @@ const globalStyle = css`
     border-spacing: 0;
   }
 
-  /* Global Font Size Settings - globals.css와 일치하도록 설정 */
-  /* 원래 설정: 웹 10px, 모바일 11px */
-  html {
-    font-size: 13px; /* 웹 기준 폰트 크기 */
+  html, body {
+    font-size: 13px;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
   }
 
-  /* 모바일 기준 폰트 크기 */
-  @media (max-width: 768px) {
-    html {
-      font-size: 12px; /* 모바일 기준 폰트 크기 */
-    }
-  }
-
-  /* Ensure body inherits the font size */
-  body {
-    font-size: 1rem;
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    letter-spacing: inherit;
   }
 `;
 

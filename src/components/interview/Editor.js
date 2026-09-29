@@ -11,7 +11,8 @@ const EditorWrapper = styled.div`
   margin-bottom: 20px;
 
   & h1 {
-    font-size: 1.6rem !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
   }
 `;
 
@@ -63,6 +64,7 @@ const Editor = forwardRef(({ data }, ref) => {
         editor = new EditorJS({
           holder: 'editorjs',
           placeholder: '내용을 입력하세요...',
+          autofocus: false,
           tools: {
             image: {
               class: ImageTool,

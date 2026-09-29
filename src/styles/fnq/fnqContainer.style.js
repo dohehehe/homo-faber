@@ -3,94 +3,69 @@
 import styled from '@emotion/styled';
 import { motion } from 'motion/react';
 import theme from '@/styles/Theme';
+import { captionText } from '@/styles/typography';
 
 export const FnqWrapper = styled(motion.main)`
   width: 100%;
-  height: 100dvh;
-  padding-left: 70px;
-  // padding-top: 27px;
+  min-height: 100vh;
+  padding: calc(var(--header-height, 50px) + 30px) 20px 80px;
   z-index: 3;
-  background:rgb(255, 255, 255);
-  cursor: ${(props) => (props.pathname && (props.pathname === '/' || props.pathname.startsWith('/interview/'))) ? 'pointer' : 'default'};
+  background: #ffffff;
   display: flex;
   flex-direction: column;
-  border-left: solid 3px #DADADA;
-  box-shadow: -8px 4px 10px 0 rgba(0,0,0,0.25);
-  font-family: var(--font-gothic);
+  align-items: center;
   pointer-events: auto;
   position: relative;
-  overflow-y: hidden;
-  overflow-x: hidden;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  overflow: visible;
 
-  ${theme.media.mobile} { 
-    padding: 0px 12px 0px 10px;
-    height: calc(87dvh);
-    overflow-y: hidden;
-    border-left: none;
-    box-shadow: 0px -8px 10px 0 rgba(62, 62, 62, 0.76);
-    border-top: solid 1px #DADADA;
+  ${theme.media.mobile} {
+    padding: calc(var(--header-height, 50px) + 20px) 16px 60px;
   }
 `;
 
 export const FnqPageName = styled.h1`
-  font-family: var(--font-gothic);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.3rem;
-  position: absolute;
-  transform: rotate(90deg);
-  transform-origin: top left;
-  top: 17px;
-  left: 28px;
-  
-  ${theme.media.mobile} { 
-    transform: rotate(0deg);
-    transform-origin: top left;
-    position: sticky;
-    top: 12px;
-    left: 10px;
-    font-size: 1rem;
-    z-index: 3;
-  }
-`
+  display: none;
+`;
+
+export const FnqCard = styled.div`
+  width: 100%;
+  max-width: 600px;
+  padding: 15px;
+  background: #fbfbfb;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+`;
+
+export const FnqTitle = styled.h1`
+  font-weight: 400;
+  color: #000;
+`;
 
 export const FnqContext = styled.div`
-  font-size: 1.3rem;
-  font-family: var(--font-gothic);
-  font-weight: 700;
-  color: #333;
-  line-height: 1.8;
+  font-weight: 400;
+  color: #000;
   word-break: keep-all;
-  max-width: 600px;
-  padding-top: 120px;
+  width: 100%;
+  padding-top: 10px;
+  border-top: 1px solid rgba(227, 227, 227, 0.3);
+`;
 
-  ${theme.media.mobile} { 
-    font-size: 1.1rem;
-    padding-left: 0px;
-    margin-top: -20px;
-    padding-right: 10px;
-    padding-top: 70px;
-  }
-`
+export const GuideLabel = styled.p`
+  color: #a0a0a0;
+  margin-bottom: 5px;
+`;
 
 export const FnqContextItem = styled.p`
-  font-weight: 500;
-  margin-top: 15px;
-  margin-bottom: 40px;
-  padding-left: 24px;
-  text-indent: -22px;
-
-  ${theme.media.mobile} { 
-    padding-left: 20px;
-    text-indent: -18px;
-    margin-top: 10px;
-  }
-`
+  font-weight: 400;
+  margin-top: 8px;
+  margin-bottom: 0;
+  padding: 10px 0;
+  border-bottom: 0.5px solid #efefef;
+  text-indent: 0;
+  padding-left: 0;
+`;
 
 export const UserForm = styled.form`
   display: flex;
@@ -98,28 +73,11 @@ export const UserForm = styled.form`
   width: 100%;
   position: relative;
   z-index: 1;
-  gap: 90px;
-  padding-left: 5px;
-  overflow-y: scroll;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  margin-top: -13px;
-  padding-bottom: 40px;
-  height: 100%;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-
-  ${theme.media.mobile} { 
-    gap: 50px;
-    padding-top: 0px;
-    padding-left: 0px;
-    padding-right: 4px;
-    // width: 100%;
-    height: calc(87dvh - 37px);
-    padding-bottom: 50px;
-  }
+  gap: 10px;
+  overflow: visible;
+  margin-top: 0;
+  padding-bottom: 0;
+  height: auto;
 `;
 
 export const FnqUserForm = styled(UserForm)`
@@ -167,110 +125,87 @@ export const FnqEditButtonWrapper = styled(ButtonWrapper)`
 `;
 
 export const SubmitButton = styled.button`
-  padding: 7px 10px;
-  background-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  background: #efefef;
+  backdrop-filter: blur(15px);
   border: none;
-  font-size: 3.7rem;
-  font-weight: 900;
-  font-family: var(--font-gothic);
+  font-weight: 400;
   cursor: pointer;
-  transition: all 0.2s ease;
-  color: #444;
-  margin-left: auto;
-  margin-top: 70px;
-  border-radius: 20px;
-  padding-top: 14px;
-  position: sticky;
-  bottom: -30px;
-  right: 15px;
+  color: #000;
+  margin: 10px auto 0;
+  border-radius: 15px;
 
   &:hover {
-    background-color: #DADADA;
+    background-color: #e4e4e4;
   }
 
-  ${theme.media.mobile} { 
-    position: relative;
-    right: unset;
-    margin: 0 auto;
-    padding: 5px 10px;
-    font-weight: 800;
-    margin-top: 50px;
-    bottom: unset;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
+`;
+
+export const SubmitLabel = styled.span`
+  padding: 0 10px;
+`;
+
+export const SubmitArrow = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 21px;
+  border-radius: 20px;
+  background: #d5d5d5;
 `;
 
 
 export const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-width: 530px;
+  gap: 5px;
+  max-width: none;
   position: relative;
-
-  ${theme.media.mobile} { 
-    gap: 8px;
-    max-width: unset;
-  }
+  padding: 10px 0;
 `;
 
 export const Label = styled.label`
-  font-family: var(--font-gothic);
-  font-weight: 900;
-  font-size: 1.7rem;
-  transform: scaleX(0.8);
-  transform-origin: left;
-  margin-left: 4px;
+  font-weight: 700;
+  color: #000;
+`;
 
-  ${theme.media.mobile} { 
-    font-size: 1.4rem;
-    margin-left: 1px;
+export const InputRow = styled.div`
+  display: flex;
+  gap: 8px;
+
+  ${theme.media.mobile} {
+    flex-direction: column;
   }
 `;
 
+export const Caption = styled.p`
+  ${captionText}
+  color: #000;
+`;
+
 export const Input = styled.input`
-  padding: 18px 16px 15px 16px;
-  border: 1px solid #D9D9D9;
-  border-radius: 13px;
-  font-size: 1.2rem;
-  font-family: var(--font-gothic);
-  transition: border-color 0.2s ease;
-  background: #F9F9F9;
-  box-shadow: inset 1px 2px 8px 0 rgba(0, 0, 0, 0.25);
-  font-weight: 800;
+  padding: 7px 8px;
+  border: none;
+  border-radius: 5px;
+  background: rgba(227, 227, 227, 0.3);
+  font-weight: 400;
   color: #222;
   
   &:focus {
     outline: none;
-    border: 2px solid #D6D6D6;
-    background: #D6D6D6;
-    box-shadow: inset 2px 2px 8px 0 rgb(103, 103, 103, 0.48);
-    padding: 17px 16px 14px 16px;
+    background: rgba(227, 227, 227, 0.5);
   }
   
   &::placeholder {
-    color: #999;
-    font-weight: 500;
-  }
-
-  &:invalid {
-    border: 2px solid rgba(214, 214, 214, 0);
-    background: #FFFFFF;
-    box-shadow: 0px 0px 4px 2px rgba(255, 0, 0, 0.83), inset 2px 2px 8px 0 rgb(103, 103, 103, 0.48);
-    padding: 17px 16px 14px 16px;
-  }
-
-  ${theme.media.mobile} { 
-    padding: 14px 12px 11px 12px;
-    font-size: 1rem;
-
-    &:focus {
-      padding: 13px 12px 10px 12px;
-    }
-
-    &:invalid {
-      padding: 13px 12px 10px 12px;
-      box-shadow: 0px 0px 3px 1px rgba(255, 0, 0, 0.83), inset 2px 2px 8px 0 rgb(103, 103, 103, 0.48);
-    }
+    color: #c7c7c7;
   }
 `;
 
@@ -278,8 +213,6 @@ export const InputTextarea = styled.textarea`
   padding: 18px 16px 15px 16px;
   border: 1px solid #D9D9D9;
   border-radius: 13px;
-  font-size: 1.2rem;
-  font-family: var(--font-gothic);
   transition: border-color 0.2s ease;
   background: #F9F9F9;
   box-shadow: inset 1px 2px 8px 0 rgba(0, 0, 0, 0.25);
@@ -310,8 +243,6 @@ export const InputTextarea = styled.textarea`
 
   ${theme.media.mobile} { 
     padding: 14px 12px 11px 12px;
-    font-size: 1.1rem;
-
     &:focus {
       padding: 13px 12px 10px 12px;
     }
@@ -329,9 +260,7 @@ export const ErrorMessage = styled.p`
   left: 0;
   color: #dc3545;
   padding: 2px 6px;
-  font-size: 1rem;
   margin-left: 6px;
-  font-family: var(--font-gothic);
   font-weight: 600;
 
   ${theme.media.mobile} { 
@@ -341,19 +270,10 @@ export const ErrorMessage = styled.p`
 `;
 
 export const InputInfo = styled.p`
-  font-size: 1.1rem;
-  font-family: var(--font-gothic);
-  font-weight: 700;
-  color: red;
-  margin-left: 6px;
-  line-height: 1.5;
-
-  ${theme.media.mobile} { 
-    font-size: 1rem;
-    margin-left: 1px;
-    word-break: keep-all;
-  }
-`
+  ${captionText}
+  font-weight: 400;
+  color: #000;
+`;
 
 export const InputGalleryWrapper = styled.div`
   display: flex;
@@ -376,7 +296,6 @@ export const InputGalleryItem = styled.div`
 
 export const InputGalleryItemTitle = styled.div`
   font-weight: 500;
-  font-size: 1.2rem;
   margin-bottom: 10px;
 `
 
@@ -384,7 +303,6 @@ export const InputGalleryItemButton = styled.button`
   background: none;
   border: none;
   color: #dc3545;
-  font-size: 1.8rem;
   cursor: pointer;
   padding: 0 5px;
   margin-left: 2px;
@@ -392,23 +310,34 @@ export const InputGalleryItemButton = styled.button`
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-family: var(--font-gothic);
 `
 export const InputGalleryItemAddButton = styled.button`
-  background:rgb(22, 171, 22);
-  color: white;
+  background: rgba(239, 239, 239, 0.9);
+  color: #000;
   border: none;
-  border-radius: 6px;
-  padding: 10px 20px;
+  border-radius: 5px;
+  padding: 8px;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: 800;
-  margin-left: 8px;
+  font-weight: 400;
+  width: fit-content;
+`;
 
-  ${theme.media.mobile} { 
-    margin-left: 4px;
-  }
-`
+export const ServiceTagRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 3px;
+`;
+
+export const ServiceTag = styled('button', {
+  shouldForwardProp: (prop) => prop !== 'active',
+})`
+  border: none;
+  background: ${(props) => (props.active ? '#e4e4e4' : 'rgba(227, 227, 227, 0.3)')};
+  color: #000;
+  border-radius: 3px;
+  padding: 1px 3px;
+  cursor: pointer;
+`;
 
 
 // 에러 컴포넌트 스타일 (SignupContainer에서 사용)
@@ -419,8 +348,6 @@ export const Error = styled.div`
   padding: 12px 16px;
   margin: 16px 0;
   color: #dc3545;
-  font-size: 14px;
-  font-family: var(--font-gothic);
   font-weight: 500;
   text-align: center;
 `;
@@ -446,8 +373,6 @@ export const Checkbox = styled.input`
   cursor: pointer;
   border: 1px solid #D9D9D9;
   border-radius: 13px;
-  font-size: 1.2rem;
-  font-family: var(--font-gothic);
   transition: border-color 0.2s ease;
   background: #F9F9F9;
   box-shadow: inset 1px 2px 8px 0 rgba(0, 0, 0, 0.25);
@@ -474,14 +399,11 @@ export const CheckboxLabel = styled.label`
 
 // 체크박스 텍스트
 export const CheckboxText = styled.span`
-  font-family: var(--font-gothic);
-  font-size: 1.1rem;
   line-height: 1.4;
   color: #333;
   font-weight: 500;
 
   ${theme.media.mobile} { 
-    font-size: 13px;
     line-height: 1.3;
   }
 `;
@@ -501,7 +423,6 @@ export const CheckboxLink = styled.span`
   }
 
   ${theme.media.mobile} { 
-    font-size: 13px;
   }
 `;
 

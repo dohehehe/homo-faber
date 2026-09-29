@@ -118,51 +118,51 @@ const StoreCommentForm = ({ storeId, onCommentAdded }) => {
         disabled={isSubmittingComment || !user}
       />
 
-      {/* 이미지 업로드 섹션 */}
-      <S.ImageUploadSection>
-        <S.ImageUploadButton>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleImageSelect}
-            disabled={isSubmittingComment || !user}
-            style={{ display: 'none' }}
-            id="comment-image-upload"
-          />
-          <label htmlFor="comment-image-upload">
-            이미지 추가 ({commentImages.length}/4)
-          </label>
-        </S.ImageUploadButton>
+      <S.CommentActions>
+        <S.ImageUploadSection>
+          <S.ImageUploadButton>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageSelect}
+              disabled={isSubmittingComment || !user}
+              style={{ display: 'none' }}
+              id="comment-image-upload"
+            />
+            <label htmlFor="comment-image-upload">
+              이미지 추가 ( {commentImages.length} / 4 )
+            </label>
+          </S.ImageUploadButton>
+        </S.ImageUploadSection>
 
-        {/* 이미지 미리보기 */}
-        {imagePreviews.length > 0 && (
-          <S.ImagePreviewList>
-            {imagePreviews.map((preview, index) => (
-              <S.ImagePreviewItem key={index}>
-                <S.ImagePreview
-                  src={preview}
-                  alt={`미리보기 ${index + 1}`}
-                />
-                <S.ImageRemoveButton
-                  onClick={(e) => handleImageRemove(e, index)}
-                  disabled={isSubmittingComment}
-                  type="button"
-                >
-                  ✕
-                </S.ImageRemoveButton>
-              </S.ImagePreviewItem>
-            ))}
-          </S.ImagePreviewList>
-        )}
-      </S.ImageUploadSection>
+        <S.CommentSubmitButton
+          type="submit"
+          disabled={isSubmittingComment || !user || (!newComment.trim() && commentImages.length === 0)}
+        >
+          {isSubmittingComment ? '작성 중...' : '후기 작성'}
+        </S.CommentSubmitButton>
+      </S.CommentActions>
 
-      <S.CommentSubmitButton
-        type="submit"
-        disabled={isSubmittingComment || !user || (!newComment.trim() && commentImages.length === 0)}
-      >
-        {isSubmittingComment ? '작성 중...' : '후기 작성'}
-      </S.CommentSubmitButton>
+      {imagePreviews.length > 0 && (
+        <S.ImagePreviewList>
+          {imagePreviews.map((preview, index) => (
+            <S.ImagePreviewItem key={index}>
+              <S.ImagePreview
+                src={preview}
+                alt={`미리보기 ${index + 1}`}
+              />
+              <S.ImageRemoveButton
+                onClick={(e) => handleImageRemove(e, index)}
+                disabled={isSubmittingComment}
+                type="button"
+              >
+                ✕
+              </S.ImageRemoveButton>
+            </S.ImagePreviewItem>
+          ))}
+        </S.ImagePreviewList>
+      )}
     </S.CommentForm>
   );
 };

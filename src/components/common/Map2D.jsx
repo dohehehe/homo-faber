@@ -6,14 +6,10 @@ import { useCallback, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-/** 예전 Google 2D 톤: 연녹 지면 · #42ff89 도로 · #322F18 라벨 */
 const BRAND_MAP = {
-  baseUrl:
-    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
-  labelsUrl:
-    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png',
+  tileUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   colors: {
     brown: '#322F18',
     neonGreen: '#42ff89',
@@ -28,12 +24,12 @@ function getInitialView() {
     : { center: [37.567836, 126.997402], zoom: 18.8 };
 }
 
-function createMarkerIcon(fillColor) {
+function createMarkerIcon(fillColor, displaySize, strokeColor, strokeWidth) {
   return L.divIcon({
     className: 'hf-map-marker',
     html: `
-      <svg width="10" height="10" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="5" cy="5" r="5" fill="${fillColor}" stroke="#ffffff" stroke-width="1"/>
+      <svg width="${displaySize}" height="${displaySize}" viewBox="0 0 20 20" overflow="visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="6" cy="6" r="4.5" fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
       </svg>
     `,
     iconSize: [20, 20],
@@ -41,8 +37,8 @@ function createMarkerIcon(fillColor) {
   });
 }
 
-const defaultMarkerIcon = createMarkerIcon(BRAND_MAP.colors.brown);
-const hoverMarkerIcon = createMarkerIcon(BRAND_MAP.colors.neonGreen);
+const defaultMarkerIcon = createMarkerIcon(BRAND_MAP.colors.neonGreen, 10, '#000000', 2.5);
+const hoverMarkerIcon = createMarkerIcon('#000000', 14, '#ffffff', 1.5);
 
 function buildTooltipHtml(store) {
   const hasImage = store.thumbnail_img;
@@ -216,25 +212,15 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
           attributionControl: true,
         });
 
-        const tileOptions = {
+        const tileLayer = L.tileLayer(BRAND_MAP.tileUrl, {
           maxZoom: 20,
-          subdomains: 'abcd',
+          maxNativeZoom: 19,
           attribution: BRAND_MAP.attribution,
-        };
-
-        const baseLayer = L.tileLayer(BRAND_MAP.baseUrl, {
-          ...tileOptions,
           className: 'hf-map-tiles-base',
         });
 
-        const labelsLayer = L.tileLayer(BRAND_MAP.labelsUrl, {
-          ...tileOptions,
-          className: 'hf-map-tiles-labels',
-        });
-
-        baseLayer.addTo(map);
-        labelsLayer.addTo(map);
-        tileLayersRef.current = [baseLayer, labelsLayer];
+        tileLayer.addTo(map);
+        tileLayersRef.current = [tileLayer];
 
         mapInstanceRef.current = map;
 
