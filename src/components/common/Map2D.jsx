@@ -24,12 +24,12 @@ function getInitialView() {
     : { center: [37.567836, 126.997402], zoom: 18.8 };
 }
 
-function createMarkerIcon(fillColor) {
+function createMarkerIcon(fillColor, displaySize, strokeColor, strokeWidth) {
   return L.divIcon({
     className: 'hf-map-marker',
     html: `
-      <svg width="10" height="10" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="5" cy="5" r="5" fill="${fillColor}" stroke="#ffffff" stroke-width="1"/>
+      <svg width="${displaySize}" height="${displaySize}" viewBox="0 0 20 20" overflow="visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="6" cy="6" r="4.5" fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
       </svg>
     `,
     iconSize: [20, 20],
@@ -37,8 +37,8 @@ function createMarkerIcon(fillColor) {
   });
 }
 
-const defaultMarkerIcon = createMarkerIcon(BRAND_MAP.colors.brown);
-const hoverMarkerIcon = createMarkerIcon(BRAND_MAP.colors.neonGreen);
+const defaultMarkerIcon = createMarkerIcon(BRAND_MAP.colors.neonGreen, 10, '#000000', 2.5);
+const hoverMarkerIcon = createMarkerIcon('#000000', 14, '#ffffff', 1.5);
 
 function buildTooltipHtml(store) {
   const hasImage = store.thumbnail_img;
@@ -216,6 +216,7 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
           maxZoom: 20,
           maxNativeZoom: 19,
           attribution: BRAND_MAP.attribution,
+          className: 'hf-map-tiles-base',
         });
 
         tileLayer.addTo(map);

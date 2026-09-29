@@ -107,7 +107,11 @@ div[style*="background"][style*="google"] {
 }
 
 .hf-map-2d {
-  background: #eef5f0;
+  background: #f3f3f3;
+}
+
+.hf-map-2d .hf-map-tiles-base {
+  filter: grayscale(1) contrast(1.05);
 }
 
 .hf-map-2d .leaflet-control-attribution {
