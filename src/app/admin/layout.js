@@ -96,6 +96,12 @@ export default function AdminLayout({ children }) {
         >
           랜딩페이지 관리
         </Button>
+        <Button
+          active={isActive('keyword')}
+          onClick={() => handleTabClick('keyword')}
+        >
+          키워드 수정
+        </Button>
       </ButtonGroup>
 
       <ContentArea>
