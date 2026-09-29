@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:changes": "node scripts/db-changes.mjs",
+    "db:watch": "node scripts/db-changes.mjs --watch"
   },
   "dependencies": {
     "@editorjs/editorjs": "^2.30.8",
