@@ -6,14 +6,10 @@ import { useCallback, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-/** 예전 Google 2D 톤: 연녹 지면 · #42ff89 도로 · #322F18 라벨 */
 const BRAND_MAP = {
-  baseUrl:
-    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
-  labelsUrl:
-    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png',
+  tileUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   colors: {
     brown: '#322F18',
     neonGreen: '#42ff89',
@@ -216,25 +212,14 @@ export default function Map2D({ onStoreHover, onStoreLeave }) {
           attributionControl: true,
         });
 
-        const tileOptions = {
+        const tileLayer = L.tileLayer(BRAND_MAP.tileUrl, {
           maxZoom: 20,
-          subdomains: 'abcd',
+          maxNativeZoom: 19,
           attribution: BRAND_MAP.attribution,
-        };
-
-        const baseLayer = L.tileLayer(BRAND_MAP.baseUrl, {
-          ...tileOptions,
-          className: 'hf-map-tiles-base',
         });
 
-        const labelsLayer = L.tileLayer(BRAND_MAP.labelsUrl, {
-          ...tileOptions,
-          className: 'hf-map-tiles-labels',
-        });
-
-        baseLayer.addTo(map);
-        labelsLayer.addTo(map);
-        tileLayersRef.current = [baseLayer, labelsLayer];
+        tileLayer.addTo(map);
+        tileLayersRef.current = [tileLayer];
 
         mapInstanceRef.current = map;
 
