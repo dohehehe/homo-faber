@@ -187,16 +187,17 @@ export function useStoreDetail(storeId) {
 
 /**
  * 모든 스토어를 가져오는 훅 (지도용 - 페이지네이션 없음)
+ * @param {{ fresh?: boolean }} [options] fresh면 5분 캐시를 쓰지 않고 항상 다시 조회합니다.
  * @returns {Object} stores, isLoading, error, refetch
  */
-export function useAllStores() {
+export function useAllStores({ fresh = false } = {}) {
   const [stores, setStores] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchAllStores = useCallback(async (forceRefresh = false) => {
     // 캐시가 유효하고 강제 새로고침이 아닌 경우 캐시 사용
-    if (!forceRefresh && allStoresCache && allStoresCacheTimestamp &&
+    if (!fresh && !forceRefresh && allStoresCache && allStoresCacheTimestamp &&
       (Date.now() - allStoresCacheTimestamp) < ALL_STORES_CACHE_DURATION) {
       setStores(allStoresCache);
       setIsLoading(false);
@@ -239,7 +240,7 @@ export function useAllStores() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [fresh]);
 
   useEffect(() => {
     fetchAllStores();

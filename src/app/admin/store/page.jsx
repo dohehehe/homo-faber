@@ -1,6 +1,6 @@
 "use client";
 
-import { useStores } from '@/hooks/useStores';
+import { useAllStores } from '@/hooks/useStores';
 import { deleteStore } from '@/utils/api/stores-api';
 import AdminPage from '@/components/admin/AdminPage';
 import styled from '@emotion/styled';
@@ -52,7 +52,7 @@ const StatusIndicator = styled.span`
 `;
 
 const StoreAdminPage = () => {
-  const { stores, isLoading, error } = useStores();
+  const { stores, isLoading, error } = useAllStores({ fresh: true });
 
   const renderStoreItem = (store) => (
     <StoreInfo>
