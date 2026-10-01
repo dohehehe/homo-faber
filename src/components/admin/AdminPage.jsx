@@ -11,6 +11,7 @@ const AdminPage = ({
   renderItem,
   onDelete,
   emptyMessage,
+  toolbar,
 }) => {
   const router = useRouter();
 
@@ -68,6 +69,7 @@ const AdminPage = ({
         <h1>{title}</h1>
         <Button className="create" onClick={handleCreateNew}>등록하기</Button>
       </S.AdminHeader>
+      {toolbar}
       {items.length === 0 ? (
         <S.EmptyMessage>{emptyMessage}</S.EmptyMessage>
       ) : (

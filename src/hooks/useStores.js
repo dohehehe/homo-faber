@@ -5,6 +5,7 @@ import { storeMatchesCategory, storeMatchesProcess } from '@/config/storeCategor
 // 전역 캐시 객체
 let storesCache = null;
 let storesCacheTimestamp = null;
+let storesCacheComplete = false;
 const CACHE_DURATION = 5 * 60 * 1000; // 5분
 
 // 전역 캐시 객체 (스토어 ID별로 캐시)
@@ -27,6 +28,9 @@ export function useStores() {
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const offsetRef = useRef(0);
+  const completeRef = useRef(false);
+  const requestIdRef = useRef(0);
+  const loadAllRef = useRef(null);
   const INITIAL_LIMIT = 20;
 
   const fetchStores = useCallback(async (forceRefresh = false, append = false) => {
@@ -34,12 +38,15 @@ export function useStores() {
     if (!append && !forceRefresh && storesCache && storesCacheTimestamp &&
       storesCache[0]?.labelNumber &&
       (Date.now() - storesCacheTimestamp) < CACHE_DURATION) {
+      completeRef.current = storesCacheComplete;
       setStores(storesCache);
       setIsLoading(false);
-      setHasMore(storesCache.length >= INITIAL_LIMIT);
+      setHasMore(!storesCacheComplete);
       offsetRef.current = storesCache.length;
       return;
     }
+
+    const requestId = ++requestIdRef.current;
 
     try {
       if (append) {
@@ -47,16 +54,20 @@ export function useStores() {
       } else {
         setIsLoading(true);
         offsetRef.current = 0;
+        completeRef.current = false;
       }
       setError(null);
 
       // 현재 offset 계산
       const currentOffset = append ? offsetRef.current : 0;
       const result = await getStores('', INITIAL_LIMIT, currentOffset);
+      if (requestId !== requestIdRef.current) return;
+
       const storesArray = (Array.isArray(result.data) ? result.data : []).map((store, i) => ({
         ...store,
         labelNumber: currentOffset + i + 1,
       }));
+      const more = result.pagination?.hasMore || false;
 
       if (append) {
         setStores(prev => [...prev, ...storesArray]);
@@ -67,14 +78,18 @@ export function useStores() {
         // 캐시 업데이트 (첫 로드만)
         storesCache = storesArray;
         storesCacheTimestamp = Date.now();
+        storesCacheComplete = !more;
       }
 
-      setHasMore(result.pagination?.hasMore || false);
+      completeRef.current = !more;
+      setHasMore(more);
     } catch (err) {
-      setError(err);
+      if (requestId === requestIdRef.current) setError(err);
     } finally {
-      setIsLoading(false);
-      setIsLoadingMore(false);
+      if (requestId === requestIdRef.current) {
+        setIsLoading(false);
+        setIsLoadingMore(false);
+      }
     }
   }, []);
 
@@ -89,10 +104,60 @@ export function useStores() {
     }
   }, [isLoadingMore, hasMore, isLoading, fetchStores]);
 
+  // 검색·필터는 아직 스크롤로 불러오지 않은 가게도 포함해야 한다.
+  const loadAll = useCallback(async () => {
+    if (completeRef.current) return;
+    if (loadAllRef.current) return loadAllRef.current;
+
+    const requestId = ++requestIdRef.current;
+    const job = (async () => {
+      setIsLoadingMore(true);
+      setError(null);
+      try {
+        const result = await getStores('', 10000, 0);
+        let rows = Array.isArray(result.data) ? result.data : [];
+        let offset = rows.length;
+        let more = result.pagination?.hasMore || false;
+
+        while (more) {
+          const nextResult = await getStores('', 10000, offset);
+          const nextRows = Array.isArray(nextResult.data) ? nextResult.data : [];
+          if (nextRows.length === 0) break;
+          rows = rows.concat(nextRows);
+          offset += nextRows.length;
+          more = nextResult.pagination?.hasMore || false;
+        }
+
+        if (requestId !== requestIdRef.current) return;
+
+        const withLabels = rows.map((store, i) => ({
+          ...store,
+          labelNumber: i + 1,
+        }));
+        setStores(withLabels);
+        offsetRef.current = withLabels.length;
+        setHasMore(false);
+        completeRef.current = true;
+      } catch (err) {
+        if (requestId === requestIdRef.current) setError(err);
+      } finally {
+        if (requestId === requestIdRef.current) {
+          setIsLoading(false);
+          setIsLoadingMore(false);
+        }
+        loadAllRef.current = null;
+      }
+    })();
+
+    loadAllRef.current = job;
+    return job;
+  }, []);
+
   // 캐시 무효화 함수
   const invalidateCache = useCallback(() => {
     storesCache = null;
     storesCacheTimestamp = null;
+    storesCacheComplete = false;
   }, []);
 
   // 새로고침 함수
@@ -109,6 +174,7 @@ export function useStores() {
     error,
     hasMore,
     loadMore,
+    loadAll,
     refetch,
     invalidateCache
   };
@@ -187,16 +253,17 @@ export function useStoreDetail(storeId) {
 
 /**
  * 모든 스토어를 가져오는 훅 (지도용 - 페이지네이션 없음)
+ * @param {{ fresh?: boolean }} [options] fresh면 5분 캐시를 쓰지 않고 항상 다시 조회합니다.
  * @returns {Object} stores, isLoading, error, refetch
  */
-export function useAllStores() {
+export function useAllStores({ fresh = false } = {}) {
   const [stores, setStores] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchAllStores = useCallback(async (forceRefresh = false) => {
     // 캐시가 유효하고 강제 새로고침이 아닌 경우 캐시 사용
-    if (!forceRefresh && allStoresCache && allStoresCacheTimestamp &&
+    if (!fresh && !forceRefresh && allStoresCache && allStoresCacheTimestamp &&
       (Date.now() - allStoresCacheTimestamp) < ALL_STORES_CACHE_DURATION) {
       setStores(allStoresCache);
       setIsLoading(false);
@@ -239,7 +306,7 @@ export function useAllStores() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [fresh]);
 
   useEffect(() => {
     fetchAllStores();

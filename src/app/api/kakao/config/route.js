@@ -6,9 +6,11 @@ import { NextResponse } from 'next/server';
  */
 export async function GET() {
   try {
-    const kakaoJsKey = process.env.KAKAO_JS_KEY;
+    const kakaoJsKey = process.env.KAKAO_JS_KEY || process.env.NEXT_PUBLIC_KAKAO_JS_KEY;
+    const kakaoRestKey = process.env.KAKAO_REST_API_KEY;
+    const hasKakaoKey = Boolean(kakaoJsKey || kakaoRestKey);
 
-    if (!kakaoJsKey) {
+    if (!hasKakaoKey) {
       return NextResponse.json(
         { error: 'Kakao API 키가 설정되지 않았습니다.' },
         { status: 500 }
@@ -19,7 +21,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       config: {
-        hasKakaoKey: true,
+        hasKakaoKey: Boolean(kakaoRestKey),
         // 실제 API 키는 서버에서만 사용하고 클라이언트에는 노출하지 않음
       }
     });
