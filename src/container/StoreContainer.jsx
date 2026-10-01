@@ -11,7 +11,7 @@ import * as ListS from '@/styles/store/storeList.style';
 
 function StoreContainer() {
   const pathname = usePathname();
-  const { stores, isLoading, isLoadingMore, error, hasMore, loadMore } = useStores();
+  const { stores, isLoading, isLoadingMore, error, hasMore, loadMore, loadAll } = useStores();
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedTags, setSelectedTags] = useState({
     industry: [],
@@ -123,12 +123,20 @@ function StoreContainer() {
     setSortBy(sortBy === 'reviews' ? 'labelAsc' : 'reviews');
   };
 
-  const shouldUseInfiniteScroll =
-    !searchKeyword &&
-    selectedTags.industry.length === 0 &&
-    selectedTags.capacity.length === 0 &&
-    selectedTags.material.length === 0 &&
-    selectedTags.category.length === 0;
+  const needsFullCatalog =
+    searchKeyword.trim().length > 0 ||
+    selectedTags.industry.length > 0 ||
+    selectedTags.capacity.length > 0 ||
+    selectedTags.material.length > 0 ||
+    selectedTags.category.length > 0;
+
+  useEffect(() => {
+    if (!needsFullCatalog) return;
+    loadAll();
+  }, [needsFullCatalog, loadAll]);
+
+  const shouldUseInfiniteScroll = !needsFullCatalog;
+  const catalogPending = needsFullCatalog && hasMore && !error;
 
   return (
     <S.StoreWrapper hasDetail={hasDetail}>
@@ -259,7 +267,7 @@ function StoreContainer() {
 
       <StoreList
         stores={filteredStores}
-        isLoading={isLoading}
+        isLoading={isLoading || catalogPending}
         isLoadingMore={isLoadingMore}
         error={error}
         hasMore={shouldUseInfiniteScroll ? hasMore : false}

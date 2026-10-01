@@ -28,6 +28,7 @@ export async function GET(request) {
         ),
         comments(count)
       `, { count: 'exact' })
+      .order('id', { ascending: true })
       .range(offset, offset + limit - 1);
 
     // 검색 키워드가 있는 경우
@@ -38,7 +39,7 @@ export async function GET(request) {
     const { data, error, count } = await query;
 
     if (error && /store_category|category_types/.test(error.message || '')) {
-      const fallback = await supabase
+      let fallbackQuery = supabase
         .from('stores')
         .select(`
           *,
@@ -53,15 +54,23 @@ export async function GET(request) {
           ),
           comments(count)
         `, { count: 'exact' })
+        .order('id', { ascending: true })
         .range(offset, offset + limit - 1);
+
+      if (searchKeyword && searchKeyword.trim() !== '') {
+        fallbackQuery = fallbackQuery.or(`name.ilike.%${searchKeyword}%,keyword.cs.{${searchKeyword}}`);
+      }
+
+      const fallback = await fallbackQuery;
       if (!fallback.error) {
+        const rows = fallback.data || [];
         return NextResponse.json({
-          data: fallback.data || [],
+          data: rows,
           pagination: {
             total: fallback.count || 0,
             limit,
             offset,
-            hasMore: fallback.count ? offset + limit < fallback.count : false
+            hasMore: fallback.count ? offset + rows.length < fallback.count : false
           }
         });
       }
@@ -75,13 +84,14 @@ export async function GET(request) {
       );
     }
 
+    const rows = data || [];
     return NextResponse.json({ 
-      data: data || [],
+      data: rows,
       pagination: {
         total: count || 0,
         limit,
         offset,
-        hasMore: count ? offset + limit < count : false
+        hasMore: count ? offset + rows.length < count : false
       }
     });
   } catch (error) {

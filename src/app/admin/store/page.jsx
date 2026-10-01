@@ -1,6 +1,7 @@
 "use client";
 
-import { useStores } from '@/hooks/useStores';
+import { useMemo, useState } from 'react';
+import { useAllStores } from '@/hooks/useStores';
 import { deleteStore } from '@/utils/api/stores-api';
 import AdminPage from '@/components/admin/AdminPage';
 import styled from '@emotion/styled';
@@ -51,8 +52,32 @@ const StatusIndicator = styled.span`
   color: ${props => props.hasImage ? '#28a745' : '#dc3545'};
 `;
 
+const SearchField = styled.input`
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #333;
+
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+`;
+
 const StoreAdminPage = () => {
-  const { stores, isLoading, error } = useStores();
+  const { stores, isLoading, error } = useAllStores({ fresh: true });
+  const [nameQuery, setNameQuery] = useState('');
+  const keyword = nameQuery.trim().toLowerCase();
+  const filteredStores = useMemo(() => {
+    if (!keyword) return stores;
+    return stores.filter((store) =>
+      (store.name || '').toLowerCase().includes(keyword),
+    );
+  }, [stores, keyword]);
 
   const renderStoreItem = (store) => (
     <StoreInfo>
@@ -91,9 +116,19 @@ const StoreAdminPage = () => {
       createPath="/admin/store"
       isLoading={isLoading}
       error={error}
-      items={stores}
+      items={filteredStores}
       renderItem={renderStoreItem}
       onDelete={deleteStore}
+      emptyMessage={keyword ? '일치하는 가게가 없습니다.' : '등록된 가게가 없습니다.'}
+      toolbar={(
+        <SearchField
+          type="search"
+          value={nameQuery}
+          onChange={(event) => setNameQuery(event.target.value)}
+          placeholder="가게 이름으로 검색"
+          aria-label="가게 이름 검색"
+        />
+      )}
     />
   );
 };
